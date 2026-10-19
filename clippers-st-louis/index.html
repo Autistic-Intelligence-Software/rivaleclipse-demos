@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<!-- HAND-CUSTOMIZED for Clippers (St. Louis, MI) — do NOT regenerate with build_local_demos.py or this gets clobbered. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clippers Barbershop — St. Louis MI (Concept Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#1e3a8a;--navy2:#172c6b;--red:#dc2626;--red2:#b91c1c;--paper:#f4f4f5;--ink:#111827;--mut:#6b7280;--line:#e5e7eb}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Barlow',system-ui,sans-serif;line-height:1.55}
+  .demo-banner{background:#0d0d0d;color:#b9b2a6;text-align:center;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;padding:9px 14px;font-family:'Barlow'}
+  .demo-banner b{color:var(--red)}
+  /* hero — stadium energy */
+  .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;clip-path:polygon(0 0,100% 0,100% calc(100% - 42px),0 100%)}
+  .hero-in{max-width:1060px;margin:0 auto;padding:26px 20px 84px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{font-family:'Archivo Black',sans-serif;font-size:1.5rem;letter-spacing:.02em}
+  .logo span{color:var(--red)}
+  .top a.tel{font-family:'Barlow Condensed';font-weight:700;font-size:1.05rem;letter-spacing:.08em;color:#fff;text-decoration:none;
+    border:2px solid #fff;padding:10px 20px}
+  .hero h1{font-family:'Archivo Black',sans-serif;font-size:clamp(2.6rem,10vw,5.4rem);line-height:.98;margin:44px 0 0;text-transform:uppercase}
+  .hero h1 span{color:var(--red);-webkit-text-stroke:2px #fff}
+  .hero .sub{font-family:'Barlow Condensed';font-size:1.35rem;font-weight:600;letter-spacing:.04em;max-width:30em;margin:18px 0 0;color:#dbe2f5}
+  .hero .sub b{color:#fff}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
+  .btn{font-family:'Barlow Condensed';font-weight:700;font-size:1.1rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;
+    background:var(--red);color:#fff;padding:16px 34px;display:inline-block;transform:skewX(-8deg)}
+  .btn span{display:inline-block;transform:skewX(8deg)}
+  .btn.ghost{background:transparent;border:2px solid #fff}
+  /* scoreboard stats */
+  .score{max-width:1060px;margin:-30px auto 0;padding:0 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;position:relative;z-index:2}
+  .cell{background:#fff;border-top:6px solid var(--red);padding:18px 10px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+  .cell .big{font-family:'Archivo Black',sans-serif;font-size:2rem;color:var(--navy);line-height:1}
+  .cell .lbl{font-family:'Barlow Condensed';font-weight:700;font-size:.85rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+  /* lineup — service cards */
+  .sec{max-width:1060px;margin:0 auto;padding:60px 20px}
+  .sec .k{font-family:'Barlow Condensed';font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--red);font-size:.9rem}
+  .sec h2{font-family:'Archivo Black',sans-serif;text-transform:uppercase;font-size:clamp(1.8rem,6vw,2.8rem);margin:8px 0 26px;line-height:1.05}
+  .lineup{display:grid;gap:16px}
+  @media(min-width:760px){.lineup{grid-template-columns:repeat(3,1fr)}}
+  .pcard{background:#fff;border:2px solid var(--ink);padding:26px 22px;position:relative}
+  .pcard::after{content:"";position:absolute;top:8px;right:8px;bottom:8px;left:8px;border:1px dashed var(--line);pointer-events:none}
+  .pcard .pos{font-family:'Barlow Condensed';font-weight:700;font-size:.8rem;letter-spacing:.24em;text-transform:uppercase;color:var(--red)}
+  .pcard .nm{font-family:'Archivo Black',sans-serif;font-size:1.3rem;text-transform:uppercase;margin:8px 0 4px}
+  .pcard .ds{color:var(--mut);font-size:.92rem}
+  .pcard .pr{font-family:'Archivo Black',sans-serif;font-size:1.8rem;color:var(--navy);margin-top:14px}
+  .pcard .pr small{font-family:'Barlow Condensed';font-size:.85rem;font-weight:700;color:var(--mut)}
+  /* waitlist — ticket */
+  .wait{background:var(--ink);color:#fff;clip-path:polygon(0 42px,100% 0,100% 100%,0 100%);padding:96px 20px 60px;margin-top:20px}
+  .wait-in{max-width:720px;margin:0 auto}
+  .wait .k{font-family:'Barlow Condensed';font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--red);font-size:.9rem;text-align:center}
+  .wait h2{font-family:'Archivo Black',sans-serif;text-transform:uppercase;font-size:clamp(1.8rem,6vw,2.6rem);text-align:center;margin:8px 0 6px;line-height:1.05}
+  .wait .sub{text-align:center;color:#9ca3af;max-width:32em;margin:0 auto 28px}
+  .ticket{background:#fff;color:var(--ink);padding:30px 26px;position:relative}
+  .ticket::before,.ticket::after{content:"";position:absolute;top:50%;width:34px;height:34px;background:var(--ink);border-radius:50%;transform:translateY(-50%)}
+  .ticket::before{left:-17px}.ticket::after{right:-17px}
+  .qnow{display:flex;justify-content:space-between;align-items:center;background:#f8fafc;border:2px dashed var(--navy);
+    padding:16px 20px;margin-bottom:20px}
+  .qnow .n{font-family:'Archivo Black',sans-serif;font-size:2.4rem;color:var(--navy);line-height:1}
+  .qnow .t{font-family:'Barlow Condensed';font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);font-size:.85rem}
+  .field{margin:14px 0}
+  .field label{display:block;font-family:'Barlow Condensed';font-weight:700;font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
+  .field input,.field select{width:100%;border:2px solid var(--ink);padding:13px;font-size:1rem;font-family:'Barlow'}
+  .svc-row{display:flex;gap:10px;flex-wrap:wrap}
+  .svc-row .pick{border:2px solid var(--ink);background:#fff;font-family:'Barlow Condensed';font-weight:700;font-size:1rem;
+    letter-spacing:.06em;padding:11px 20px;cursor:pointer}
+  .svc-row .pick.sel{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .go{width:100%;background:var(--red);color:#fff;border:none;font-family:'Barlow Condensed';font-weight:700;letter-spacing:.14em;
+    text-transform:uppercase;font-size:1.15rem;padding:18px;cursor:pointer;margin-top:10px}
+  .go:disabled{opacity:.4;cursor:not-allowed}
+  .stub{display:none;margin-top:20px;border:3px solid var(--navy);padding:22px;text-align:center;background:#f8fafc}
+  .stub .big{font-family:'Archivo Black',sans-serif;font-size:3rem;color:var(--navy);line-height:1}
+  .stub .lbl{font-family:'Barlow Condensed';font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);font-size:.85rem}
+  .fine{font-size:.75rem;color:#9ca3af;margin-top:14px;text-align:center}
+  /* visit */
+  .visit{display:grid;gap:30px}
+  @media(min-width:760px){.visit{grid-template-columns:1fr 1fr}}
+  .hours{width:100%;border-collapse:collapse}
+  .hours td{padding:13px 0;border-bottom:3px solid var(--line);font-family:'Barlow Condensed';font-weight:600;font-size:1.15rem;letter-spacing:.04em}
+  .hours td:last-child{text-align:right;color:var(--navy)}
+  .hours .closed{color:var(--mut)}
+  address{font-style:normal;font-size:1.05rem;line-height:1.7;font-family:'Barlow'}
+  address a{color:var(--red);font-weight:700}
+  /* reviews */
+  .rev-score{font-family:'Archivo Black',sans-serif;font-size:3rem;color:var(--navy);line-height:1;text-transform:uppercase}
+  .rev-score small{font-size:1rem;color:var(--mut);font-family:'Barlow';font-weight:400;text-transform:none}
+  .rev{padding:20px 0;border-bottom:3px solid var(--line)}
+  .rev .stars{color:var(--red);letter-spacing:3px}
+  .rev .who{font-family:'Barlow Condensed';font-weight:700;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-top:6px}
+  .stars-in{font-size:2rem;letter-spacing:8px;color:#d1d5db;cursor:pointer;user-select:none;margin:10px 0}
+  .stars-in .on{color:var(--red)}
+  footer{background:#0d0d0d;color:#8a857e;text-align:center;padding:36px 20px;font-size:.8rem}
+  footer .fb{font-family:'Archivo Black',sans-serif;color:#fff;font-size:1.1rem;text-transform:uppercase}
+  .sticky{position:fixed;bottom:14px;left:14px;right:14px;z-index:60;display:flex;justify-content:center;pointer-events:none}
+  .sticky a{pointer-events:auto;background:var(--red);color:#fff;text-decoration:none;font-family:'Barlow Condensed';font-weight:700;
+    font-size:1rem;letter-spacing:.1em;text-transform:uppercase;padding:14px 32px}
+  @media(min-width:700px){.sticky{display:none}}
+  body{padding-bottom:70px}
+</style>
+</head>
+<body>
+<div class="demo-banner">A concept preview — <b>not affiliated</b> with Clippers</div>
+
+<div class="hero">
+  <div class="hero-in">
+    <div class="top">
+      <div class="logo">CLIPPERS<span>.</span></div>
+      <a class="tel" href="tel:+19896813400">(989) 681-3400</a>
+    </div>
+    <h1>Sharp cuts.<br><span>No waiting</span><br>around.</h1>
+    <p class="sub">St. Louis's <b>4.9-star barbershop</b>. Join the waitlist from your phone, walk in when it's your turn.</p>
+    <div class="cta-row">
+      <a class="btn" href="#wait"><span>Join the waitlist</span></a>
+      <a class="btn ghost" href="#lineup"><span>See services</span></a>
+    </div>
+  </div>
+</div>
+
+<div class="score">
+  <div class="cell"><div class="big">4.9★</div><div class="lbl">35 reviews</div></div>
+  <div class="cell"><div class="big">~20<span style="font-size:1.2rem">min</span></div><div class="lbl">Avg. cut</div></div>
+  <div class="cell"><div class="big">$16+</div><div class="lbl">Haircuts</div></div>
+</div>
+
+<section class="sec" id="lineup">
+  <div class="k">The lineup</div>
+  <h2>Services</h2>
+  <div class="lineup">
+    <div class="pcard"><div class="pos">Starter</div><div class="nm">Haircut</div><div class="ds">Classic barber cut</div><div class="pr">from $16</div></div>
+    <div class="pcard"><div class="pos">Cleanup</div><div class="nm">Beard Trim</div><div class="ds">Clean-ups and shaping</div><div class="pr">from $10</div></div>
+    <div class="pcard"><div class="pos">Young gun</div><div class="nm">Kids Cut</div><div class="ds">Young gents welcome</div><div class="pr">from $14</div></div>
+  </div>
+  <p class="fine" style="color:var(--mut)">Sample pricing shown — the shop sets the real menu.</p>
+</section>
+
+<div class="wait" id="wait">
+  <div class="wait-in">
+    <div class="k">Skip the lobby</div>
+    <h2>Join the waitlist</h2>
+    <p class="sub">Put your name down from anywhere. On the live site the shop sees you coming and texts when your chair is ready.</p>
+    <div class="ticket">
+      <div class="qnow"><div><div class="n" id="qNum">3</div><div class="t">Ahead of you now</div></div>
+        <div style="text-align:right"><div class="n" id="qMin" style="font-size:1.8rem">~45<span style="font-size:1rem">min</span></div><div class="t">Est. wait</div></div></div>
+      <div class="field"><label>Service</label>
+        <div class="svc-row" id="wSvc"></div></div>
+      <div class="field"><label>Name</label><input id="wName" type="text" placeholder="What name should we put this under?"></div>
+      <div class="field"><label>Phone <span style="font-weight:400">(we text you when it's your turn)</span></label><input id="wPhone" type="tel" placeholder="Phone number"></div>
+      <button class="go" id="wGo" disabled>Get in line</button>
+      <div class="stub" id="wStub"></div>
+      <p class="fine" style="color:var(--mut)">Demo only — no real waitlist spot is held.</p>
+    </div>
+  </div>
+</div>
+
+<section class="sec">
+  <div class="k">Find us</div>
+  <h2>Hours &amp; location</h2>
+  <div class="visit">
+    <table class="hours">
+      <tr><td>Tuesday</td><td>9 AM – 5:30 PM</td></tr>
+      <tr><td>Wednesday</td><td>9 AM – 7 PM</td></tr>
+      <tr><td>Thursday</td><td>9 AM – 5 PM</td></tr>
+      <tr><td>Friday</td><td>9 AM – 5:30 PM</td></tr>
+      <tr><td>Saturday</td><td>9 AM – 1 PM</td></tr>
+      <tr><td>Sunday – Monday</td><td class="closed">Closed</td></tr>
+    </table>
+    <p style="margin:8px 0 0;font-size:.85rem;opacity:.75">Closed for lunch Tue – Fri, 1 – 2:15 PM</p>
+    <address>
+      603 E Washington Ave<br>St. Louis, MI 48880<br><br>
+      <a href="tel:+19896813400">(989) 681-3400</a><br><br>
+      <a href="https://www.google.com/maps/search/?api=1&query=Clippers+603+E+Washington+Ave+St+Louis+MI" target="_blank" rel="noopener">Get directions →</a>
+    </address>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0" data-greviews="Clippers, 603 E Washington Ave, St. Louis, MI">
+  <div class="k">Proof</div>
+  <h2>Reviews</h2>
+  <div class="rev-score"><span id="gNum">4.9</span><small> / 5 · <span id="gCount">35 reviews</span></small></div>
+  <div style="max-width:560px;margin-top:18px">
+    <div class="rev"><div class="stars">★★★★★</div>35 reviews at <b>4.9</b> — St. Louis keeps coming back.<div class="who">Google listing</div></div>
+    <div class="stars-in" id="starsIn"><span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span></div>
+    <div class="field"><label>Name</label><input id="rName" type="text" placeholder="What name should we put this under?"></div>
+    <div class="field"><label>Review</label><input id="rText" type="text" placeholder="How was the cut?"></div>
+    <button class="go" id="rGo">Send my review</button>
+    <div class="stub" id="rOk" style="display:none;border-color:var(--navy)">Thanks — on the live site this goes straight to the shop.</div>
+    <p class="fine"><a href="https://www.google.com/maps/search/?api=1&query=Clippers+603+E+Washington+Ave+St+Louis+MI" target="_blank" rel="noopener" style="color:var(--red);font-weight:700">Post it on Google too →</a> · Example only — not a live feed in this demo</p>
+  </div>
+</section>
+
+<footer>
+  <div class="fb">Clippers · St. Louis, MI</div>
+  <p>Concept preview — not affiliated. Built by Rival Eclipse.</p>
+</footer>
+
+<div class="sticky"><a href="tel:+19896813400">Call the shop — (989) 681-3400</a></div>
+
+<script>
+const SVCS=['Haircut','Beard Trim','Kids Cut'];
+let wSvc=0;
+const wBox=document.getElementById('wSvc');
+SVCS.forEach((s,i)=>{const b=document.createElement('button');b.className='pick'+(i===0?' sel':'');b.textContent=s;
+  b.onclick=()=>{wSvc=i;wBox.querySelectorAll('.pick').forEach((el,j)=>el.classList.toggle('sel',j===i));};wBox.appendChild(b);});
+const wName=document.getElementById('wName'),wPhone=document.getElementById('wPhone'),wGo=document.getElementById('wGo');
+function wcheck(){wGo.disabled=!(wName.value.trim()&&wPhone.value.trim());}
+[wName,wPhone].forEach(el=>el.addEventListener('input',wcheck));
+let ahead=3;
+function drawQ(){document.getElementById('qNum').textContent=ahead;
+  document.getElementById('qMin').innerHTML='~'+(ahead*15)+'<span style="font-size:1rem">min</span>';}
+drawQ();
+wGo.onclick=()=>{ahead++;drawQ();
+  const st=document.getElementById('wStub');
+  st.innerHTML='<div class="lbl">You\'re in line</div><div class="big">#'+(ahead)+'</div><div class="lbl" style="margin-top:8px">'+SVCS[wSvc]+' · '+wName.value.trim()+'</div><div style="margin-top:10px;font-size:.9rem;color:var(--mut)">We\'ll text <b>'+wPhone.value.trim()+'</b> when your chair is ready.</div>';
+  st.style.display='block';
+  wName.value='';wPhone.value='';wcheck();};
+document.querySelectorAll('#starsIn span').forEach(s=>{s.addEventListener('click',()=>{
+  const v=parseInt(s.dataset.v);
+  document.querySelectorAll('#starsIn span').forEach(x=>x.classList.toggle('on',parseInt(x.dataset.v)<=v));});});
+document.getElementById('rGo').onclick=()=>{document.getElementById('rOk').style.display='block';};
+(function(){const sec=document.querySelector('[data-greviews]');if(!sec)return;
+  fetch('/api/google-reviews?q='+encodeURIComponent(sec.getAttribute('data-greviews')))
+    .then(r=>{if(!r.ok)throw 0;return r.json();}).then(d=>{if(!d||d.error)throw 0;
+      if(d.rating)document.getElementById('gNum').textContent=Number(d.rating).toFixed(1);
+      if(d.count)document.getElementById('gCount').textContent=d.count+' reviews';}).catch(()=>{});})();
+</script>
+</body>
+</html>
