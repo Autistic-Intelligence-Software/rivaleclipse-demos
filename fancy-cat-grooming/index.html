@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<!-- HAND-CUSTOMIZED for The Fancy Cat LLC (Elwell, MI) — do NOT regenerate with build_local_demos.py or this gets clobbered. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Fancy Cat — Cat-Only Grooming, Elwell MI (Concept Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500;1,600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--plum:#2a1430;--plum2:#3b1d44;--blush:#f7e8ee;--rose:#e8a4c0;--gold:#d9a441;--cream:#fdf8f4;--ink:#3a2430;--mut:#8d7586}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:'Quicksand',system-ui,sans-serif;line-height:1.65}
+.demo-banner{background:var(--plum);color:#b89aae;text-align:center;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;padding:9px 14px;font-weight:600}
+.demo-banner b{color:var(--rose)}
+.pill{display:inline-block;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;padding:3px 10px;border-radius:99px;vertical-align:middle;margin-left:8px;font-weight:700}
+.pill.example{background:#f3e2ec;color:#a24a7c;border:1px solid var(--rose)}
+.pill.opt{background:#e8f5e9;color:#2e7d32;border:1px solid #81c784}
+.wrap{max-width:960px;margin:0 auto;padding:0 22px}
+/* hero */
+.hero{text-align:center;padding:64px 20px 30px;background:linear-gradient(180deg,var(--blush),var(--cream));position:relative;overflow:hidden}
+.hero .paws{font-size:1.6rem;letter-spacing:.6em;opacity:.5}
+.hero .kicker{letter-spacing:.35em;font-size:.7rem;text-transform:uppercase;color:var(--mut);font-weight:700}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.6rem,8vw,4.4rem);margin:.15em 0 .1em;color:var(--plum)}
+.hero h1 em{color:#b0528a}
+.hero .tag{max-width:30rem;margin:0 auto;color:var(--mut)}
+.hero .yrs{display:inline-block;margin-top:18px;background:var(--plum);color:var(--gold);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem;padding:9px 22px;border-radius:99px}
+/* journey timeline */
+.journey{padding:56px 0 20px}
+.journey h2{font-family:'Playfair Display',serif;font-size:2rem;text-align:center;color:var(--plum);margin:0 0 6px}
+.journey .lede{text-align:center;color:var(--mut);margin-bottom:36px}
+.tl{position:relative;max-width:640px;margin:0 auto;padding:10px 0 10px}
+.tl:before{content:"";position:absolute;left:23px;top:0;bottom:0;width:3px;background:repeating-linear-gradient(180deg,var(--rose) 0 10px,transparent 10px 20px);border-radius:3px}
+.step{position:relative;padding:0 0 30px 64px}
+.step .paw{position:absolute;left:0;top:0;width:50px;height:50px;border-radius:50%;background:var(--plum);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 6px 16px rgba(42,20,48,.25)}
+.step h3{font-family:'Playfair Display',serif;margin:2px 0 4px;color:var(--plum);font-size:1.25rem}
+.step p{margin:0;color:#5c4454;font-size:.94rem}
+.step .svc{font-weight:700;color:#b0528a}
+/* spa builder */
+.builder{margin:44px 0;background:var(--plum);color:#f3e2ec;border-radius:22px;padding:34px 30px;box-shadow:0 20px 50px rgba(42,20,48,.3)}
+.builder h2{font-family:'Playfair Display',serif;margin:0 0 4px;font-size:1.8rem;color:#fff}
+.builder h2 em{color:var(--rose)}
+.builder .sub{color:#c9a9bd;font-size:.9rem;margin-bottom:22px}
+.q{margin-bottom:18px}
+.q .qlab{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px}
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{background:var(--plum2);border:1px solid #5c3a63;color:#f3e2ec;padding:10px 18px;border-radius:99px;cursor:pointer;font-family:inherit;font-size:.92rem;font-weight:600}
+.chip.sel{background:var(--rose);border-color:var(--rose);color:var(--plum)}
+.result{display:none;margin-top:20px;background:#fff;color:var(--ink);border-radius:14px;padding:22px}
+.result.show{display:block}
+.result h3{font-family:'Playfair Display',serif;margin:0 0 6px;color:var(--plum);font-size:1.3rem}
+.result .rec{font-size:1rem;margin-bottom:6px}
+.result .price{font-size:1.6rem;font-weight:700;color:#b0528a}
+.result .why{font-size:.88rem;color:#6b5563;margin-top:8px}
+/* booking */
+.book{margin:44px 0 10px}
+.book h2{font-family:'Playfair Display',serif;font-size:1.9rem;text-align:center;color:var(--plum);margin:0 0 6px}
+.book .lede{text-align:center;color:var(--mut);margin-bottom:24px;font-size:.94rem}
+.bform{max-width:600px;margin:0 auto;background:#fff;border:1px solid #ecd9e2;border-radius:18px;padding:28px;box-shadow:0 12px 30px rgba(42,20,48,.08)}
+.bform .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bform label{display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);font-weight:700;margin-bottom:4px}
+.bform input,.bform select,.bform textarea{width:100%;border:1px solid #e3cdd8;border-radius:10px;padding:12px;font-family:inherit;font-size:.95rem;margin-bottom:14px;background:#fffdfb;color:var(--ink)}
+.bbtn{width:100%;background:var(--plum);color:#fff;border:0;border-radius:12px;padding:15px;font-family:inherit;font-weight:700;font-size:1.02rem;letter-spacing:.06em;cursor:pointer}
+.bbtn:hover{background:var(--plum2)}
+.bnote{display:none;margin-top:14px;background:#e8f5e9;border:1px solid #81c784;color:#2e7d32;padding:14px;border-radius:10px;font-size:.92rem}
+/* reviews */
+.revs{margin:48px 0}
+.revs h2{font-family:'Playfair Display',serif;font-size:1.8rem;text-align:center;color:var(--plum);margin:0 0 6px}
+.revs .lede{text-align:center;color:var(--mut);margin-bottom:22px;font-size:.9rem}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.rcard{background:#fff;border:1px solid #ecd9e2;border-radius:16px;padding:20px;position:relative}
+.rcard .stars{color:var(--gold);letter-spacing:.15em;margin-bottom:8px}
+.rcard p{margin:0 0 10px;font-style:italic;font-family:'Playfair Display',serif;font-size:.98rem}
+.rcard .who{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+/* visit */
+.visit{margin:48px 0 70px;text-align:center;background:var(--blush);border-radius:22px;padding:36px 24px}
+.visit h2{font-family:'Playfair Display',serif;color:var(--plum);margin:0 0 10px;font-size:1.7rem}
+.hrow{display:flex;justify-content:space-between;max-width:380px;margin:0 auto;padding:7px 0;border-bottom:1px dashed #d9b9c9;font-size:.95rem}
+.bigcall{display:inline-block;margin-top:20px;background:var(--plum);color:#fff;text-decoration:none;padding:14px 34px;border-radius:99px;font-weight:700;font-size:1.05rem}
+footer{text-align:center;padding:24px 16px 90px;color:#a68d9d;font-size:.8rem}
+.sticky{position:fixed;left:0;right:0;bottom:0;background:var(--plum);color:#fff;text-align:center;padding:15px;font-weight:700;font-size:1.02rem;text-decoration:none;display:none;z-index:50}
+@media(max-width:640px){.sticky{display:block}.bform .grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="demo-banner">Concept preview for <b>The Fancy Cat</b> — not their official site. Built by Rival Eclipse.</div>
+
+<div class="hero">
+  <div class="paws">🐾 🐾 🐾</div>
+  <div class="kicker">Elwell, Michigan · Cats Only</div>
+  <h1>The <em>Fancy</em> Cat</h1>
+  <p class="tag">18 years of cat-only grooming. No dogs barking next door, no rushed appointments — just cats, calm, and people who get them.</p>
+  <div><span class="yrs">18 years · Cat-exclusive salon</span></div>
+</div>
+
+<div class="wrap">
+  <div class="journey">
+    <h2>The Fancy Cat Grooming Journey</h2>
+    <p class="lede">Every appointment follows the same calm, cat-first ritual.</p>
+    <div class="tl">
+      <div class="step"><div class="paw">🐾</div><h3>1 · Settle In</h3><p>A quiet, dog-free salon. Your cat gets time to decompress — no cages stacked in a noisy back room. <span class="svc">Included in every visit.</span></p></div>
+      <div class="step"><div class="paw">🛁</div><h3>2 · Bath &amp; Blowout <span class="svc">from $45</span></h3><p>Gentle cat-safe bath, thorough low-stress dry. The foundation of everything.</p></div>
+      <div class="step"><div class="paw">✂️</div><h3>3 · The Cut</h3><p><span class="svc">Lion Cut</span> — the signature summer cut — plus sanitary trims and mat removal for long-haired cats.</p></div>
+      <div class="step"><div class="paw">🧹</div><h3>4 · De-shedding <span class="svc">from $55</span></h3><p>For long-haired cats: undercoat removal that actually lasts, not a quick brush-out.</p></div>
+      <div class="step"><div class="paw">💅</div><h3>5 · Finishing Touches <span class="svc">$15</span></h3><p>Quick, stress-free nail trim, ear check, and a bow if they're feeling fancy.</p></div>
+    </div>
+  </div>
+
+  <div class="builder">
+    <h2>Build Your Cat's <em>Spa Day</em></h2>
+    <p class="sub">Answer three questions — we'll recommend the right groom and estimate the price, the way the real site's booking flow would.</p>
+    <div class="q"><div class="qlab">Coat type</div><div class="chips" id="q-coat">
+      <button class="chip" data-v="short">Short-haired</button><button class="chip" data-v="medium">Medium</button><button class="chip" data-v="long">Long-haired</button>
+    </div></div>
+    <div class="q"><div class="qlab">Temperament</div><div class="chips" id="q-temp">
+      <button class="chip" data-v="chill">Chill lap cat</button><button class="chip" data-v="wary">Nervous / wary</button><button class="chip" data-v="spicy">Spicy</button>
+    </div></div>
+    <div class="q"><div class="qlab">What does your cat need most?</div><div class="chips" id="q-need">
+      <button class="chip" data-v="tidy">Just a tidy-up</button><button class="chip" data-v="shed">Shedding everywhere</button><button class="chip" data-v="mats">Mats / tangles</button><button class="chip" data-v="full">The full fancy treatment</button>
+    </div></div>
+    <div class="result" id="result">
+      <h3 id="r-title"></h3>
+      <div class="rec" id="r-rec"></div>
+      <div class="price" id="r-price"></div>
+      <div class="why" id="r-why"></div>
+    </div>
+  </div>
+
+  <div class="book">
+    <h2>Book the Appointment</h2>
+    <p class="lede">Demo booking — on the real site this would hold your slot and send a confirmation text.</p>
+    <div class="bform">
+      <div class="grid2">
+        <div><label>Your name</label><input id="b-name" placeholder="Jane"></div>
+        <div><label>Phone</label><input id="b-phone" placeholder="(989) 555-0100"></div>
+      </div>
+      <div class="grid2">
+        <div><label>Cat's name</label><input id="b-cat" placeholder="Miso"></div>
+        <div><label>Breed / coat</label><input id="b-breed" placeholder="Domestic longhair"></div>
+      </div>
+      <label>Preferred day</label>
+      <select id="b-day"><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select>
+      <label>Anything we should know? (medications, fears, favorite treats…)</label>
+      <textarea id="b-notes" rows="2" placeholder="Tell us about your cat"></textarea>
+      <button class="bbtn" onclick="bookCat()">Request Appointment</button>
+      <div class="bnote" id="bnote"></div>
+    </div>
+  </div>
+
+  <div class="revs">
+    <h2>Happy Cats, Happy Humans <span class="pill example">For example only — not a live feed in this demo</span></h2>
+    <p class="lede">Live Google reviews would appear here on the real site.</p>
+    <div class="rgrid">
+      <div class="rcard"><div class="stars">★★★★★</div><p>"The only place my longhair doesn't come home traumatized. Worth every penny."</p><div class="who">Longhair mom of two</div></div>
+      <div class="rcard"><div class="stars">★★★★★</div><p>"Eighteen years of experience shows. The lion cut is adorable and lasted all summer."</p><div class="who">First-time lion cut</div></div>
+      <div class="rcard"><div class="stars">★★★★★</div><p>"My spicy boy actually purred. I don't know what kind of magic this is."</p><div class="who">Reformed skeptic</div></div>
+    </div>
+  </div>
+
+  <div class="visit">
+    <h2>Visit the Salon</h2>
+    <div class="hrow"><span>Mon – Fri</span><span><b>9 AM – 5 PM</b></span></div>
+    <div class="hrow"><span>Sat – Sun</span><span>Closed</span></div>
+    <p style="margin-top:14px">6335 Wildwood Dr, Elwell, MI<br><span style="color:var(--mut)">Cat-only · By appointment</span></p>
+    <a class="bigcall" href="tel:9897634908">(989) 763-4908</a>
+  </div>
+</div>
+
+<footer><p><strong>The Fancy Cat LLC</strong> — Elwell, MI &middot; Concept demo, not the official site.</p></footer>
+<a class="sticky" href="tel:9897634908">Call The Fancy Cat</a>
+
+<script>
+const picks={coat:null,temp:null,need:null};
+document.querySelectorAll('.chips').forEach(group=>{
+  group.addEventListener('click',e=>{
+    const c=e.target.closest('.chip');if(!c)return;
+    group.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));
+    c.classList.add('sel');
+    picks[group.id.replace('q-','')]=c.dataset.v;
+    recommend();
+  });
+});
+function recommend(){
+  if(!picks.coat||!picks.temp||!picks.need)return;
+  const r=document.getElementById('result');
+  let title,rec,price,why;
+  if(picks.need==='mats'||(picks.coat==='long'&&picks.need==='full')){
+    title="The Full Fancy Treatment";rec="Bath & Blowout + De-shedding + Lion Cut + Nail Trim";
+    price="from $115";why="Long coats with matting need the works — bath first, then careful mat removal, then the cut. We never rush a matted cat.";
+  }else if(picks.need==='shed'){
+    title="De-shedding Spa Day";rec="Bath & Blowout + De-shedding treatment";
+    price="from $100";why="Undercoat removal plus a bath resets the shed cycle — most cats go weeks longer between tumbleweeds.";
+  }else if(picks.need==='full'){
+    title="The Full Fancy Treatment";rec="Bath & Blowout + your choice of cut + Nail Trim";
+    price="from $75";why="The works: bath, cut, nails, and the bow. For the cat who deserves it all.";
+  }else{
+    title="Tidy-Up Visit";rec="Bath & Blowout + Nail Trim";
+    price="from $60";why="A fresh bath, a careful dry, and trimmed nails — the maintenance visit that keeps coats healthy.";
+  }
+  if(picks.temp==='spicy'){why+=" Note: for spicy cats we book a longer, quieter slot at no extra charge — tell us in the booking notes.";}
+  if(picks.temp==='wary'){why+=" For nervous cats we allow extra settle-in time before we begin.";}
+  document.getElementById('r-title').textContent=title;
+  document.getElementById('r-rec').textContent=rec;
+  document.getElementById('r-price').textContent=price;
+  document.getElementById('r-why').textContent=why;
+  r.classList.add('show');
+}
+function bookCat(){
+  const n=document.getElementById('b-name').value.trim(),c=document.getElementById('b-cat').value.trim();
+  const note=document.getElementById('bnote');
+  if(!n||!c){alert('Tell us your name and your cat\'s name!');return;}
+  note.style.display='block';
+  note.innerHTML='<b>Request received!</b> We\'ll text you to confirm '+c+'\'s appointment for '+document.getElementById('b-day').value+'. Demo only — nothing was sent.';
+  note.scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+</body>
+</html>
