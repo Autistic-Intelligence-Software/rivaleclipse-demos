@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<!-- HAND-CUSTOMIZED for The Barber Shop (Alma, MI) — do NOT regenerate with build_local_demos.py or this gets clobbered. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Barber Shop — Alma, MI (Concept Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#faf5ea; --cream2:#f3ecdb; --ink:#191512; --red:#c1272d; --red-d:#9c1f24;
+    --blue:#1e4fa3; --gold:#c9a227; --mut:#6f655a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--cream);color:var(--ink);line-height:1.55}
+  /* ---- animated barber poles, fixed to both sides ---- */
+  .pole{position:fixed;top:0;bottom:0;width:34px;z-index:60;pointer-events:none;
+    background-image:repeating-linear-gradient(-45deg,#c1272d 0 16px,#fdfdf8 16px 32px,#1e4fa3 32px 48px,#fdfdf8 48px 64px);
+    animation:polemove 2.6s linear infinite;
+    box-shadow:0 0 12px rgba(0,0,0,.25)}
+  .pole.left{left:0;border-right:2px solid #2a2a2a}
+  .pole.right{right:0;border-left:2px solid #2a2a2a}
+  .pole::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(90deg,rgba(255,255,255,.5),rgba(255,255,255,0) 35%,rgba(0,0,0,.18) 90%)}
+  @keyframes polemove{from{background-position:0 0}to{background-position:0 90.51px}}
+  @media(max-width:640px){.pole{width:14px}}
+
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
+  @media(min-width:641px){.wrap{padding:0 34px}}
+
+  .demo-banner{background:#191512;color:#f5eeda;text-align:center;font-size:.8rem;padding:9px 44px;letter-spacing:.02em}
+  .demo-banner b{color:var(--gold)}
+
+  header.hero{text-align:center;padding:52px 20px 40px;position:relative;overflow:hidden}
+  .kicker{letter-spacing:.35em;font-size:.72rem;color:var(--mut);text-transform:uppercase;margin-bottom:10px}
+  h1.display{font-family:'Bebas Neue',Impact,sans-serif;font-size:clamp(3.2rem,11vw,6rem);letter-spacing:.04em;margin:0;line-height:.95}
+  h1.display .amp{color:var(--red)}
+  .rule{display:flex;align-items:center;gap:12px;justify-content:center;margin:14px 0}
+  .rule::before,.rule::after{content:"";height:3px;width:min(120px,22vw);background:repeating-linear-gradient(90deg,var(--red) 0 14px,var(--cream) 14px 20px,var(--blue) 20px 34px,var(--cream) 34px 40px)}
+  .stars{font-size:1.05rem;margin:6px 0}
+  .stars .n{font-weight:700}
+  .tagline{font-size:1.02rem;color:#3d362e;max-width:34em;margin:10px auto 0}
+  .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+  .btn{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.08em;font-size:1.15rem;text-decoration:none;
+    background:var(--red);color:#fff;padding:12px 30px;border-radius:6px;border:2px solid var(--red-d);
+    box-shadow:0 3px 0 var(--red-d);transition:transform .12s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--ink);box-shadow:0 3px 0 var(--ink)}
+  .hours-badge{display:inline-block;margin-top:18px;background:#191512;color:#f5eeda;font-size:.85rem;
+    padding:7px 16px;border-radius:999px;letter-spacing:.03em}
+  .hours-badge .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e05252;margin-right:7px}
+
+  .checker{height:26px;background:repeating-conic-gradient(#191512 0 25%,#faf5ea 0 50%);background-size:26px 26px;border-top:2px solid #191512;border-bottom:2px solid #191512}
+
+  section{padding:44px 0}
+  h2.sec{font-family:'Bebas Neue',Impact,sans-serif;font-size:2.3rem;letter-spacing:.05em;margin:0 0 6px;text-align:center}
+  h2.sec .u{color:var(--red)}
+  .sec-sub{text-align:center;color:var(--mut);margin:0 0 26px;font-size:.95rem}
+
+  /* services price list */
+  .price-card{background:#fffdf6;border:2px solid #191512;border-radius:10px;overflow:hidden;box-shadow:6px 6px 0 #191512}
+  .price-row{display:flex;align-items:baseline;gap:10px;padding:14px 18px;border-bottom:1px dashed #d8cdb4}
+  .price-row:last-child{border-bottom:none}
+  .price-row .svc{font-weight:600}
+  .price-row .dur{font-size:.8rem;color:var(--mut);margin-left:2px}
+  .price-row .dots{flex:1;border-bottom:2px dotted #c9bfa8;transform:translateY(-4px)}
+  .price-row .pr{font-family:'Bebas Neue',Impact,sans-serif;font-size:1.5rem;color:var(--red)}
+  .fine{text-align:center;font-size:.8rem;color:var(--mut);margin-top:12px}
+
+  /* booking demo */
+  .book{background:#191512;color:#f5eeda;border-radius:14px;padding:28px 22px;box-shadow:6px 6px 0 var(--red)}
+  .book h2.sec{color:#f5eeda}
+  .book .sec-sub{color:#b9ac93}
+  .step-label{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.1em;font-size:1rem;color:var(--gold);margin:20px 0 10px}
+  .svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .pick{border:2px solid #4a4238;background:#221d17;color:#f5eeda;border-radius:8px;padding:12px;cursor:pointer;text-align:left;font-family:inherit;transition:border-color .15s,transform .12s}
+  .pick:hover{transform:translateY(-2px)}
+  .pick.sel{border-color:var(--gold);background:#2b2419}
+  .pick .pn{font-weight:600;font-size:.92rem}
+  .pick .pp{font-size:.82rem;color:#b9ac93}
+  .day-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
+  .day{flex:0 0 auto;min-width:86px;border:2px solid #4a4238;background:#221d17;color:#f5eeda;border-radius:8px;padding:10px 6px;cursor:pointer;font-family:inherit;text-align:center}
+  .day.sel{border-color:var(--gold);background:#2b2419}
+  .day .dw{font-size:.72rem;letter-spacing:.08em;color:#b9ac93;text-transform:uppercase}
+  .day .dn{font-family:'Bebas Neue',Impact,sans-serif;font-size:1.4rem}
+  .day.closed{opacity:.35;cursor:not-allowed;text-decoration:line-through}
+  .slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+  .slot{border:2px solid #4a4238;background:#221d17;color:#f5eeda;border-radius:8px;padding:9px 4px;cursor:pointer;font-family:inherit;font-size:.88rem}
+  .slot.sel{border-color:var(--gold);background:#2b2419;font-weight:700}
+  .slot.taken{opacity:.32;cursor:not-allowed;text-decoration:line-through}
+  .field{margin:10px 0}
+  .field input{width:100%;padding:12px 14px;border-radius:8px;border:2px solid #4a4238;background:#221d17;color:#f5eeda;font-size:1rem;font-family:inherit}
+  .field input::placeholder{color:#8a7f6c}
+  .confirm{width:100%;margin-top:14px;font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.1em;font-size:1.25rem;
+    background:var(--red);color:#fff;border:2px solid var(--red-d);border-radius:8px;padding:13px;cursor:pointer;box-shadow:0 3px 0 var(--red-d)}
+  .confirm:disabled{opacity:.4;cursor:not-allowed}
+  .done{background:#1f2b1a;border:2px solid #7bc47f;border-radius:10px;padding:22px;text-align:center;margin-top:16px}
+  .done h3{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.06em;font-size:1.7rem;margin:0 0 8px;color:#a9e6ac}
+  .done p{margin:6px 0;color:#d9e6d4}
+  .demo-note{font-size:.78rem;color:#8a7f6c;margin-top:12px;text-align:center}
+
+  /* reviews */
+  .rev-head{text-align:center;margin-bottom:18px}
+  .rev-score{font-family:'Bebas Neue',Impact,sans-serif;font-size:4rem;line-height:1;color:var(--ink)}
+  .rev-count{color:var(--mut);font-size:.9rem}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .chip{background:#fffdf6;border:2px solid #191512;border-radius:999px;padding:7px 16px;font-size:.85rem;font-weight:600;box-shadow:3px 3px 0 #191512}
+  .rev-quote{max-width:36em;margin:22px auto 0;background:#fffdf6;border:2px solid #191512;border-radius:10px;padding:16px 20px;font-style:italic;box-shadow:4px 4px 0 #191512}
+
+  /* visit */
+  .visit-grid{display:grid;gap:14px}
+  @media(min-width:640px){.visit-grid{grid-template-columns:1fr 1fr}}
+  .vcard{background:#fffdf6;border:2px solid #191512;border-radius:10px;padding:18px;box-shadow:4px 4px 0 #191512}
+  .vcard h3{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.06em;font-size:1.35rem;margin:0 0 10px}
+  .hrow{display:flex;justify-content:space-between;font-size:.92rem;padding:5px 0;border-bottom:1px dashed #e2d8bd}
+  .hrow:last-child{border-bottom:none}
+  .hrow.closeday{color:#a09a8c}
+  .big-call{display:block;text-align:center;margin-top:6px}
+
+  footer{background:#191512;color:#b9ac93;text-align:center;padding:30px 44px;font-size:.82rem}
+  footer .fb{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.08em;color:#f5eeda;font-size:1.05rem}
+  .sticky-call{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:70;background:var(--red);color:#fff;
+    font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.08em;font-size:1.2rem;text-decoration:none;
+    padding:12px 38px;border-radius:999px;border:2px solid var(--red-d);box-shadow:0 4px 14px rgba(0,0,0,.35)}
+  @media(min-width:641px){.sticky-call{display:none}}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .5s,transform .5s}
+  .reveal.in{opacity:1;transform:none}
+  /* ---- around the web ---- */
+  .soc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+  @media(max-width:640px){.soc-grid{grid-template-columns:1fr}}
+  .soc-card{background:#fffdf6;border:2px solid #191512;border-radius:10px;padding:20px;box-shadow:4px 4px 0 #191512}
+  .soc-card h3{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.06em;font-size:1.4rem;margin:0 0 4px;text-align:center}
+  .soc-card .why{text-align:center;font-size:.85rem;color:var(--mut);margin:0 0 12px}
+  .g-big{font-family:'Bebas Neue',Impact,sans-serif;font-size:3.4rem;line-height:1;text-align:center}
+  .g-stars{text-align:center;color:#d99a16;font-size:1.3rem;letter-spacing:3px}
+  .g-count{text-align:center;color:var(--mut);font-size:.88rem;margin-bottom:8px}
+  .mini-rev{background:var(--cream2);border-radius:8px;padding:10px 12px;margin:8px 0;font-size:.88rem}
+  .mini-rev .who{font-weight:700}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+  .btn2{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.06em;font-size:1.05rem;text-decoration:none;background:var(--red);color:#fff;padding:10px 22px;border-radius:6px;border:2px solid var(--red-d);box-shadow:0 3px 0 var(--red-d)}
+  .fb-empty{border:3px dashed #b9ac93;border-radius:10px;padding:26px 16px;text-align:center;color:var(--mut);font-size:.92rem}
+  .fb-empty .big{font-size:2rem}
+  .stars-in{font-size:2rem;cursor:pointer;color:#d8cdb4;letter-spacing:6px;text-align:center;margin:10px 0 4px;user-select:none}
+  .stars-in .on{color:#d99a16}
+  .rev-form input,.rev-form textarea{width:100%;padding:11px 13px;border:2px solid #191512;border-radius:8px;font-size:.95rem;font-family:inherit;margin-bottom:10px;background:#fff}
+  .rev-form button{width:100%;font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.08em;font-size:1.15rem;background:#191512;color:#f5eeda;border:none;border-radius:8px;padding:12px;cursor:pointer}
+  #rev-ok2{display:none;background:#e6f7ec;color:#157a3a;padding:12px;border-radius:8px;margin-top:10px;font-size:.9rem;text-align:center}
+  .pill{display:inline-block;font-size:.75rem;font-weight:700;background:#fffdf6;border:2px solid #191512;color:#191512;border-radius:999px;padding:4px 14px;margin:2px;box-shadow:2px 2px 0 #191512}
+</style>
+</head>
+<body>
+<div class="pole left" aria-hidden="true"></div>
+<div class="pole right" aria-hidden="true"></div>
+
+<div class="demo-banner">A friendly concept preview — <b>not affiliated</b> with The Barber Shop. Built to show what's possible.</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Alma · Michigan</div>
+    <h1 class="display">THE BARBER <span class="amp">SHOP</span></h1>
+    <div class="rule" aria-hidden="true"></div>
+    <div class="stars"><span class="n">★★★★★ 4.8</span> · 122 Google reviews</div>
+    <p class="tagline">Classic barber shop. Skilled cuts at honest prices. Walk in looking rough, walk out sharp.</p>
+    <div class="cta-row">
+      <a class="btn" href="#book">Book a Chair</a>
+      <a class="btn ghost" href="tel:+19892859000">Call (989) 285-9000</a>
+    </div>
+    <div><span class="hours-badge"><span class="dot"></span>Closed now · opens 8 AM Tuesday</span></div>
+  </div>
+</header>
+
+<div class="checker" aria-hidden="true"></div>
+
+<section id="services">
+  <div class="wrap">
+    <h2 class="reveal">Services <span class="u">&amp;</span> Prices</h2>
+    <p class="sec-sub reveal">Straightforward menu. No surprises at the register.</p>
+    <div class="price-card reveal">
+      <div class="price-row"><span class="svc">Classic Haircut</span><span class="dur">· 30 min</span><span class="dots"></span><span class="pr">$20</span></div>
+      <div class="price-row"><span class="svc">Skin Fade</span><span class="dur">· 35 min</span><span class="dots"></span><span class="pr">$25</span></div>
+      <div class="price-row"><span class="svc">Beard Trim &amp; Shape</span><span class="dur">· 15 min</span><span class="dots"></span><span class="pr">$10</span></div>
+      <div class="price-row"><span class="svc">Hot Towel Shave</span><span class="dur">· 30 min</span><span class="dots"></span><span class="pr">$25</span></div>
+      <div class="price-row"><span class="svc">Kids Cut <span style="font-weight:400;font-size:.85rem">(12 &amp; under)</span></span><span class="dur">· 25 min</span><span class="dots"></span><span class="pr">$15</span></div>
+      <div class="price-row"><span class="svc">Cut + Beard Combo</span><span class="dur">· 45 min</span><span class="dots"></span><span class="pr">$28</span></div>
+    </div>
+    <p class="fine">Sample pricing shown for the demo — the shop sets the real menu.</p>
+  </div>
+</section>
+
+<div class="checker" aria-hidden="true"></div>
+
+<section id="book">
+  <div class="wrap">
+    <div class="book reveal">
+      <h2 class="sec">Book <span class="u">a</span> Chair</h2>
+      <p class="sec-sub">No more calling at 8 AM sharp hoping for a spot — pick your time right here.</p>
+
+      <div class="step-label">1 · Pick your service</div>
+      <div class="svc-grid" id="svcGrid"></div>
+
+      <div class="step-label">2 · Pick a day</div>
+      <div class="day-row" id="dayRow"></div>
+
+      <div class="step-label">3 · Pick a time</div>
+      <div class="slot-grid" id="slotGrid"><p style="color:#8a7f6c;font-size:.9rem">Choose a day first.</p></div>
+
+      <div class="step-label">4 · Your details</div>
+      <div class="field"><input id="fName" type="text" placeholder="What name should we put this under?" autocomplete="name"></div>
+      <div class="field"><input id="fPhone" type="tel" placeholder="Phone number" autocomplete="tel"></div>
+
+      <button class="confirm" id="confirmBtn" disabled>Confirm booking</button>
+      <div class="demo-note">Demo only — this doesn't book a real chair. In the live version, the shop gets notified instantly.</div>
+      <div class="done" id="doneBox" style="display:none">
+        <h3>You're on the books ✂</h3>
+        <p id="doneText"></p>
+        <p style="font-size:.85rem">The shop would text you a confirmation + reminder before your cut.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="checker" aria-hidden="true"></div>
+
+<section id="reviews">
+  <div class="wrap">
+    <h2 class="reveal">What Alma <span class="u">Says</span></h2>
+    <p class="sec-sub reveal">Real reputation, straight from Google.</p>
+    <div class="rev-head reveal">
+      <div class="rev-score">4.8</div>
+      <div class="stars">★★★★★</div>
+      <div class="rev-count">122 Google reviews</div>
+    </div>
+    <div class="chips reveal">
+      <span class="chip">friendly staff</span>
+      <span class="chip">talented barbers</span>
+      <span class="chip">customer loyalty</span>
+      <span class="chip">great pricing</span>
+      <span class="chip">sharp fades</span>
+      <span class="chip">consistent cuts</span>
+    </div>
+    <p class="rev-quote reveal">"The best barbers in and around central Michigan. Spots fill up quick — they open at 8 AM and are usually booked by 9." <span style="font-style:normal;font-size:.82rem;color:var(--mut)">— recent Google review</span></p>
+  </div>
+</section>
+
+<div class="checker" aria-hidden="true"></div>
+
+<section id="visit">
+  <div class="wrap">
+    <h2 class="reveal">Come <span class="u">On</span> In</h2>
+    <p class="sec-sub reveal">Right on Gratiot Ave in downtown Alma.</p>
+    <div class="visit-grid">
+      <div class="vcard reveal">
+        <h3>Hours</h3>
+        <div class="hrow"><span>Tuesday – Friday</span><b>8:00 AM – 5:00 PM</b></div>
+        <div class="hrow"><span>Saturday</span><b>8:00 AM – 12:00 PM</b></div>
+        <div class="hrow closeday"><span>Sunday</span><b>Closed</b></div>
+        <div class="hrow closeday"><span>Monday</span><b>Closed</b></div>
+      </div>
+      <div class="vcard reveal">
+        <h3>Find Us</h3>
+        <p style="margin:0 0 4px">412 Gratiot Ave<br>Alma, MI 48801</p>
+        <p style="margin:8px 0"><a href="tel:+19892859000" style="color:var(--red);font-weight:700">(989) 285-9000</a></p>
+        <a class="btn big-call" href="tel:+19892859000">Call the shop</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="checker" aria-hidden="true"></div>
+
+<section id="web">
+  <div class="wrap">
+    <h2 class="reveal">Around the <span class="u">Web</span></h2>
+    <p class="sec-sub reveal">Fresh posts and honest reviews, live from their pages.</p>
+    <p class="reveal" style="text-align:center;margin:-14px 0 22px"><span class="pill">For example only — not a live feed in this demo</span> <span class="pill">Optional add-on</span></p>
+    <div class="soc-grid">
+      <div class="soc-card reveal">
+        <h3>Facebook</h3>
+        <p class="why">Posts, photos &amp; shop updates</p>
+        <div class="fb-empty">
+          <div class="big">📘</div>
+          <p><b>The shop isn't on Facebook yet.</b><br>Their timeline feed will live right here once the page exists — one more reason to claim it.</p>
+        </div>
+      </div>
+      <div class="soc-card reveal" data-greviews="The Barber Shop, 412 Gratiot Ave, Alma, MI">
+        <h3>Google Reviews</h3>
+        <p class="why">Straight from their Google listing</p>
+        <div class="g-big">4.8</div>
+        <div class="g-stars">★★★★★</div>
+        <div class="g-count">122 Google reviews</div>
+        <div class="rev-list">
+        <div class="mini-rev"><span class="who">★★★★★</span> "The best barbers in and around central Michigan. Spots fill up quick — they open at 8 AM and are usually booked by 9." <span class="who">— Google review</span></div>
+        <div class="mini-rev"><span class="who">★★★★★</span> "Consistent cuts, clean shop, and the barber really listens to what I want. Nothing fancy, just solid and reliable." <span class="who">— Google review</span></div>
+        </div>
+        <p class="why" style="margin-top:12px">Had a great cut? Leave your stars right here:</p>
+        <div class="stars-in" id="starsIn2"><span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span></div>
+        <form class="rev-form" onsubmit="document.getElementById('rev-ok2').style.display='block';return false;">
+          <input placeholder="What name should we put this under?" required>
+          <textarea placeholder="How was your cut?" rows="2"></textarea>
+          <button type="submit">Send My Review</button>
+        </form>
+        <p id="rev-ok2">Thanks! On the live site this goes straight to the shop.</p>
+        <div class="btn-row">
+          <a class="btn2" href="https://www.google.com/maps/search/?api=1&query=The+Barber+Shop+412+Gratiot+Ave+Alma+MI" target="_blank" rel="noopener">Post it on Google too</a>
+        </div>
+      </div>
+    </div>
+    <p class="fine">Demo only — ratings and counts refresh automatically on the live site.</p>
+  </div>
+</section>
+
+<div class="checker" aria-hidden="true"></div>
+
+<footer>
+  <div class="fb">THE BARBER SHOP · ALMA, MI</div>
+  <p>A friendly concept preview — not affiliated with The Barber Shop.<br>Made with care by Rival Eclipse.</p>
+</footer>
+
+<a class="sticky-call" href="tel:+19892859000">Call Us!</a>
+
+<script>
+// ---------- booking demo (simulated schedule) ----------
+const SERVICES = [
+  {name:"Classic Haircut", price:"$20", mins:30},
+  {name:"Skin Fade", price:"$25", mins:35},
+  {name:"Beard Trim & Shape", price:"$10", mins:15},
+  {name:"Hot Towel Shave", price:"$25", mins:30},
+  {name:"Kids Cut (12 & under)", price:"$15", mins:25},
+  {name:"Cut + Beard Combo", price:"$28", mins:45},
+];
+// Real shop hours: Tue–Fri 8a–5p, Sat 8a–12p, Sun/Mon closed
+const OPEN = {2:[8,17],3:[8,17],4:[8,17],5:[8,17],6:[8,12]}; // day-of-week -> [open, close)
+let selSvc = 0, selDay = null, selSlot = null;
+
+const svcGrid = document.getElementById('svcGrid');
+SERVICES.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.className='pick'+(i===0?' sel':'');
+  b.innerHTML='<div class="pn">'+s.name+'</div><div class="pp">'+s.price+' · '+s.mins+' min</div>';
+  b.onclick=()=>{selSvc=i;document.querySelectorAll('#svcGrid .pick').forEach((el,j)=>el.classList.toggle('sel',j===i));validate();};
+  svcGrid.appendChild(b);
+});
+
+const dayRow=document.getElementById('dayRow');
+const days=[];
+for(let d=0; d<14; d++){
+  const dt=new Date(); dt.setDate(dt.getDate()+d);
+  const dow=dt.getDay(), open=!!OPEN[dow];
+  days.push({dt,open});
+  const b=document.createElement('button');
+  b.className='day'+(open?'':' closed');
+  const wd=dt.toLocaleDateString('en-US',{weekday:'short'});
+  b.innerHTML='<div class="dw">'+(d===0?'Today':wd)+'</div><div class="dn">'+dt.getDate()+'</div>';
+  if(open){ b.onclick=()=>{selDay=d;selSlot=null;document.querySelectorAll('#dayRow .day').forEach((el,j)=>el.classList.toggle('sel',j===d));renderSlots();validate();}; }
+  dayRow.appendChild(b);
+}
+// deterministic "booked" simulation: ~40% of slots taken
+function isTaken(dateStr,t){
+  let h=0; const s=dateStr+t;
+  for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))>>>0;}
+  return (h%10)<4;
+}
+function renderSlots(){
+  const g=document.getElementById('slotGrid'); g.innerHTML='';
+  if(selDay===null){g.innerHTML='<p style="color:#8a7f6c;font-size:.9rem">Choose a day first.</p>';return;}
+  const dt=days[selDay].dt, dow=dt.getDay();
+  const oh=OPEN[dow][0], ch=OPEN[dow][1];
+  const dstr=dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
+  for(let h=oh; h<ch; h++){ for(const m of [0,30]){
+    const t=h+':'+(m===0?'00':'30');
+    const d2=new Date(dt); d2.setHours(h,m,0,0);
+    const label=d2.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    const taken=isTaken(dstr,t);
+    const b=document.createElement('button');
+    b.className='slot'+(taken?' taken':'');
+    b.textContent=label; b.disabled=taken;
+    b.onclick=()=>{selSlot=label;document.querySelectorAll('#slotGrid .slot').forEach(el=>el.classList.remove('sel'));b.classList.add('sel');validate();};
+    g.appendChild(b);
+  }}
+}
+const confirmBtn=document.getElementById('confirmBtn');
+function validate(){
+  confirmBtn.disabled=!(selDay!==null&&selSlot&&document.getElementById('fName').value.trim()&&document.getElementById('fPhone').value.trim());
+}
+['fName','fPhone'].forEach(id=>document.getElementById(id).addEventListener('input',validate));
+confirmBtn.onclick=()=>{
+  const s=SERVICES[selSvc], d=days[selDay].dt;
+  const dstr=d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+  document.getElementById('doneText').innerHTML=
+    '<b>'+s.name+'</b> — '+s.price+'<br>'+dstr+' at '+selSlot+'<br>for '+document.getElementById('fName').value.trim();
+  document.getElementById('doneBox').style.display='block';
+  document.getElementById('doneBox').scrollIntoView({behavior:'smooth',block:'center'});
+};
+// ---------- scroll reveal ----------
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+// ---------- review star picker ----------
+document.querySelectorAll('#starsIn2 span').forEach(function(s){
+  s.addEventListener('click',function(){
+    const v=parseInt(s.getAttribute('data-v'));
+    document.querySelectorAll('#starsIn2 span').forEach(function(x){
+      x.classList.toggle('on',parseInt(x.getAttribute('data-v'))<=v);
+    });
+  });
+});
+// ---------- live Google reviews: tries /api/google-reviews, keeps static fallback ----------
+(function(){
+  const card=document.querySelector('[data-greviews]');
+  if(!card) return;
+  const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  fetch('/api/google-reviews?q='+encodeURIComponent(card.getAttribute('data-greviews')))
+    .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+    .then(d=>{
+      if(!d||d.error) throw 0;
+      const big=card.querySelector('.g-big'), cnt=card.querySelector('.g-count'), st=card.querySelector('.g-stars');
+      if(d.rating&&big) big.textContent=Number(d.rating).toFixed(1);
+      if(d.count&&cnt) cnt.textContent=d.count+' Google reviews';
+      if(d.rating&&st){ const f=Math.round(d.rating); st.textContent='★★★★★'.slice(0,f)+'☆☆☆☆☆'.slice(0,5-f); }
+      if(d.reviews&&d.reviews.length){
+        const box=card.querySelector('.rev-list');
+        if(box) box.innerHTML=d.reviews.slice(0,3).map(r=>{
+          const s='★'.repeat(Math.max(1,Math.min(5,r.rating||5)));
+          return '<div class="mini-rev"><span class="who">'+s+'</span> "'+esc((r.text||'').slice(0,220))+'" <span class="who">— '+esc(r.author||'Google user')+'</span></div>';
+        }).join('');
+      }
+    })
+    .catch(()=>{/* worker not deployed yet — static numbers stay */});
+})();
+</script>
+</body>
+</html>
