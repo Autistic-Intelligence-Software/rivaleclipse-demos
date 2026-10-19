@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<!-- HAND-CUSTOMIZED for The Gym 24/7 Fitness (Alma, MI) — do NOT regenerate with build_local_demos.py or this gets clobbered.
+     ARCHITECTURE NOTE (Shane's rule): every demo gets its own structure. This one is built de-boxed —
+     no rounded content cards, no kicker-pill/H2/sub formula. Full-bleed bands, watermark type, menu-board
+     prices, pull-quote reviews. Do not reintroduce the card-grid grammar here. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Gym 24/7 Fitness — Real Gym, Alma MI (Concept Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0b0c0b;--ink2:#101210;--acid:#46e04a;--acid-d:#1f9e2c;--bone:#eceee9;--dim:#9aa096;
+    --yel:#ffd21f;--paper:#e8e6df}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ink);color:var(--bone);font-family:'Barlow',system-ui,sans-serif;line-height:1.5;overflow-x:hidden}
+  .demo-banner{background:#000;color:#c9cdc7;text-align:center;font-size:.75rem;padding:8px 14px;border-bottom:3px solid var(--acid);font-family:monospace;letter-spacing:.04em}
+  .demo-banner b{color:var(--acid)}
+  .util{display:flex;align-items:center;gap:10px;background:#000;padding:9px 16px;font-family:monospace;font-size:.78rem;letter-spacing:.06em;color:var(--dim);border-bottom:1px solid #222}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--acid);box-shadow:0 0 8px var(--acid);animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{opacity:.35}}
+  .util .sp{flex:1}
+  .util a{color:var(--acid);font-weight:700;text-decoration:none}
+  /* ---------- HERO: overlapping collage, no boxes ---------- */
+  .hero{position:relative;padding:64px 20px 70px;overflow:hidden;
+    background:radial-gradient(1000px 420px at 85% -60px, rgba(70,224,74,.12), transparent 60%), var(--ink)}
+  .hero .mark{position:absolute;top:8px;right:-10px;font-family:'Black Ops One';font-size:clamp(5rem,18vw,11rem);
+    color:transparent;-webkit-text-stroke:2px #232823;letter-spacing:.02em;user-select:none;pointer-events:none;line-height:1}
+  .hero-in{position:relative;max-width:1020px;margin:0 auto}
+  .hl{font-family:'Black Ops One';font-size:clamp(2.7rem,9vw,5rem);line-height:.94;margin:0;text-transform:uppercase}
+  .hl em{font-style:normal;color:transparent;-webkit-text-stroke:2px var(--acid)}
+  .hl .solid{color:var(--acid)}
+  .lede{max-width:34em;color:var(--dim);font-size:1.05rem;margin:18px 0 0;border-left:5px solid var(--acid);padding-left:16px}
+  .hero-fig{margin:34px 0 0;max-width:420px;transform:rotate(-2deg)}
+  .hero-fig img{width:100%;display:block;filter:contrast(1.05)}
+  .hero-fig figcaption{font-family:monospace;font-size:.7rem;color:var(--dim);margin-top:8px;letter-spacing:.1em}
+  .hero-cta{margin-top:30px;display:flex;flex-wrap:wrap}
+  .hero-cta a{font-family:'Black Ops One';text-decoration:none;letter-spacing:.05em;padding:16px 30px;font-size:1.05rem}
+  .hero-cta .a1{background:var(--acid);color:#04140a;clip-path:polygon(0 0,100% 0,calc(100% - 16px) 50%,100% 100%,0 100%);padding-right:44px}
+  .hero-cta .a2{color:var(--bone);border-bottom:3px solid var(--acid);padding:16px 6px;margin-left:18px}
+  .jag{height:26px;background:var(--yel);clip-path:polygon(0 100%,0 40%,3% 75%,6% 35%,9% 70%,12% 30%,15% 68%,18% 32%,21% 72%,24% 28%,27% 66%,30% 34%,33% 70%,36% 30%,39% 66%,42% 36%,45% 72%,48% 28%,51% 68%,54% 34%,57% 70%,60% 30%,63% 66%,66% 36%,69% 72%,72% 28%,75% 68%,78% 34%,81% 70%,84% 30%,87% 66%,90% 36%,93% 72%,96% 30%,100% 65%,100% 100%)}
+  .tape{background:repeating-linear-gradient(-45deg,var(--yel) 0 26px,#111 26px 52px);transform:rotate(-1.6deg) scale(1.02);
+    margin:30px 0 0;overflow:hidden;border-top:3px solid #000;border-bottom:3px solid #000}
+  .tape div{background:rgba(0,0,0,.55);color:#fff;font-family:'Black Ops One';letter-spacing:.14em;font-size:.95rem;padding:9px 0;white-space:nowrap;overflow:hidden}
+  .tape span{display:inline-block;padding-left:100%;animation:tick 22s linear infinite}
+  @keyframes tick{to{transform:translateX(-100%)}}
+  /* ---------- section scaffold: watermark + numbered title, no kickers ---------- */
+  section{position:relative;padding:64px 0;overflow:hidden}
+  .wm{position:absolute;top:18px;left:50%;transform:translateX(-50%);font-family:'Black Ops One';white-space:nowrap;
+    font-size:clamp(4rem,15vw,9rem);color:transparent;-webkit-text-stroke:1.5px #20241f;letter-spacing:.04em;user-select:none;pointer-events:none}
+  .sec-in{position:relative;max-width:1020px;margin:0 auto;padding:0 20px}
+  .sec-no{font-family:'Black Ops One';color:var(--acid);font-size:.95rem;letter-spacing:.2em}
+  .sec-t{font-family:'Black Ops One';font-size:clamp(1.9rem,6vw,2.9rem);text-transform:uppercase;margin:4px 0 6px;line-height:1}
+  .sec-d{color:var(--dim);max-width:40em;margin:0 0 30px;font-size:1rem}
+  .sec-d b{color:var(--bone)}
+  .rule{border:none;border-top:4px solid #1e221e;margin:0}
+  /* ---------- prices: chalkboard menu, no cards ---------- */
+  .menu{border-top:2px solid #2a2e2a}
+  .mrow{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:baseline;padding:22px 4px;border-bottom:2px solid #2a2e2a}
+  .mrow .amt{font-family:'Black Ops One';font-size:clamp(2.4rem,7vw,3.6rem);color:var(--acid);line-height:1}
+  .mrow .what{font-weight:800;text-transform:uppercase;letter-spacing:.05em;font-size:1.05rem}
+  .mrow .what small{display:block;text-transform:none;letter-spacing:0;font-weight:400;color:var(--dim);font-size:.88rem;margin-top:4px;max-width:34em}
+  .mrow .dots{border-bottom:3px dotted #33382f;transform:translateY(-8px)}
+  .mrow .go{font-family:'Black Ops One';color:var(--bone);text-decoration:none;font-size:.95rem;letter-spacing:.06em;
+    border-bottom:3px solid var(--acid);padding-bottom:2px;white-space:nowrap}
+  /* ---------- trainer desk: open ledger, no container ---------- */
+  .desk-step{font-family:monospace;font-size:.78rem;letter-spacing:.14em;color:var(--acid);margin:26px 0 10px}
+  .days{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+  .day{font-family:'Black Ops One';font-size:.9rem;background:transparent;border:2px solid #2c312c;color:var(--bone);
+    padding:12px 4px;min-width:76px;cursor:pointer;text-align:center}
+  .day small{display:block;font-family:'Barlow';font-weight:600;font-size:.7rem;color:var(--dim);margin-top:2px}
+  .day.sel{border-color:var(--acid);color:var(--acid);background:#0e1a0e}
+  .slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px;margin-top:4px}
+  .slot{background:transparent;border:2px solid #2c312c;color:var(--bone);padding:14px 6px;font-weight:800;cursor:pointer;font-family:inherit;font-size:.95rem}
+  .slot.sel{border-color:var(--acid);color:var(--acid);background:#0e1a0e}
+  .slot.taken{opacity:.25;text-decoration:line-through;cursor:not-allowed}
+  /* underline inputs + slab buttons */
+  .field{margin:14px 0;max-width:560px}
+  .field label{display:block;font-family:monospace;font-size:.72rem;letter-spacing:.12em;color:var(--dim);margin-bottom:2px}
+  .field input{background:transparent;border:none;border-bottom:2px solid #33382f;color:var(--bone);
+    padding:12px 2px;font-size:1.1rem;font-family:inherit;width:100%;border-radius:0}
+  .field input:focus{outline:none;border-bottom-color:var(--acid)}
+  .field input::placeholder{color:#4c534c}
+  .slab{width:100%;max-width:560px;background:var(--acid);color:#04140a;border:none;padding:18px;font-family:'Black Ops One';
+    font-size:1.15rem;letter-spacing:.08em;cursor:pointer;margin-top:10px;text-transform:uppercase}
+  .slab:disabled{opacity:.3;cursor:not-allowed}
+  .slab.ghost{background:transparent;color:var(--bone);border:2px solid var(--bone)}
+  .okline{display:none;max-width:560px;margin-top:16px;border-left:5px solid var(--acid);padding:12px 16px;background:#0e1a0e;font-weight:600}
+  .dnote{font-family:monospace;font-size:.72rem;color:#5c635c;margin-top:12px;letter-spacing:.04em}
+  /* ---------- photo strip: full-bleed, captions as stamps ---------- */
+  .strip{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 20px 8px;max-width:1180px;margin:0 auto}
+  .strip figure{scroll-snap-align:center;flex:0 0 84%;margin:0;position:relative}
+  @media(min-width:700px){.strip figure{flex-basis:52%}}
+  .strip img{width:100%;display:block}
+  .stamp{position:absolute;left:12px;bottom:12px;background:var(--yel);color:#111;font-family:'Black Ops One';font-size:.72rem;
+    letter-spacing:.08em;padding:7px 12px;transform:rotate(-2deg)}
+  /* ---------- proof: giant type + pull quotes, no cards ---------- */
+  .bignum{font-family:'Black Ops One';font-size:clamp(6rem,22vw,12rem);line-height:.9;color:var(--bone)}
+  .bignum .of{font-size:.35em;color:var(--dim);letter-spacing:.06em}
+  .starsline{color:var(--yel);font-size:1.6rem;letter-spacing:6px;margin:6px 0}
+  .proofsub{color:var(--dim);max-width:36em}
+  .proofsub b{color:var(--bone)}
+  .quotes{margin-top:34px;border-top:2px solid #2a2e2a}
+  .quote{padding:26px 4px 26px 0;border-bottom:2px solid #2a2e2a;position:relative}
+  .quote::before{content:"\201C";font-family:'Black Ops One';font-size:3.4rem;color:var(--acid);line-height:0;vertical-align:-.35em;margin-right:10px}
+  .quote p{display:inline;font-size:clamp(1.15rem,3.6vw,1.6rem);font-weight:600;line-height:1.35}
+  .quote .who{display:block;margin-top:10px;font-family:monospace;font-size:.75rem;letter-spacing:.1em;color:var(--acid)}
+  .leaverev{margin-top:36px;max-width:560px}
+  .leaverev .stars{font-size:2.4rem;letter-spacing:10px;color:#33382f;cursor:pointer;user-select:none}
+  .leaverev .stars .on{color:var(--yel)}
+  /* ---------- extras: full-width bands, no outer box ---------- */
+  .xband{border-top:2px solid #2a2e2a;padding:20px 0;display:grid;gap:6px}
+  .xband:last-child{border-bottom:2px solid #2a2e2a}
+  .xband .k{font-family:'Black Ops One';color:var(--acid);letter-spacing:.1em;font-size:.85rem}
+  .xband .v{font-size:1.02rem}
+  .xband .v small{color:var(--dim)}
+  /* ---------- hours: big rows, no plate ---------- */
+  .hrow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 4px;border-bottom:2px solid #2a2e2a;font-family:'Black Ops One';letter-spacing:.04em}
+  .hrow:first-of-type{border-top:2px solid #2a2e2a}
+  .hrow .d{font-size:clamp(1.1rem,4vw,1.6rem)}
+  .hrow .o{color:var(--acid);font-size:clamp(.85rem,3vw,1.05rem)}
+  .visit{font-size:1.1rem;margin:26px 0 6px}
+  .visit a{color:var(--acid);font-weight:800}
+  /* ---------- social band ---------- */
+  .socband{background:#0e100e;border-top:4px solid #1e221e}
+  .tagrow{margin:4px 0 18px}
+  .tag{font-family:monospace;font-size:.72rem;letter-spacing:.08em;border:1px solid var(--yel);color:var(--yel);padding:5px 10px;
+    display:inline-block;transform:rotate(-1.2deg);margin:0 8px 8px 0}
+  .tag.dim{border-color:#3a403a;color:var(--dim);transform:rotate(1deg)}
+  footer{background:#000;border-top:3px solid var(--acid);padding:28px 20px;text-align:center;font-family:monospace;font-size:.75rem;color:var(--dim)}
+  footer .f{font-family:'Black Ops One';color:var(--bone);font-size:1rem;letter-spacing:.06em}
+  .stickybar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#000;border-top:2px solid var(--acid);display:flex;font-family:'Black Ops One'}
+  .stickybar .t{flex:1;display:flex;align-items:center;padding:0 16px;font-size:.85rem;letter-spacing:.06em;color:var(--bone)}
+  .stickybar a{background:var(--acid);color:#04140a;text-decoration:none;padding:14px 26px;font-size:1rem;letter-spacing:.06em}
+  body{padding-bottom:58px}
+</style>
+</head>
+<body>
+<div class="demo-banner">CONCEPT PREVIEW — <b>not affiliated</b> with The Gym 24/7 Fitness. Built to show what's possible.</div>
+<div class="util"><span class="dot"></span><span id="openNow">CHECKING HOURS…</span><span class="sp"></span><a href="tel:+19892851622">(989) 285-1622</a></div>
+
+<header class="hero">
+  <div class="mark">24/7</div>
+  <div class="hero-in">
+    <h1 class="hl">Real gym.<br>Real people.<br><em>Open</em> <span class="solid">24/7.</span></h1>
+    <p class="lede">The Gym 24/7 Fitness in Alma — a family-oriented, community-driven gym where the staff knows your name and the equipment just works. Train at 2pm or 2am. It's always open.</p>
+    <figure class="hero-fig">
+      <img src="img/logo.png" alt="The Gym 24/7 Fitness logo">
+      <figcaption>THEIR ACTUAL LOGO, STRAIGHT OFF GOOGLE</figcaption>
+    </figure>
+    <div class="hero-cta">
+      <a class="a1" href="#trial">Claim free workout</a>
+      <a class="a2" href="#prices">See prices ↓</a>
+    </div>
+  </div>
+</header>
+<div class="jag"></div>
+<div class="tape"><div><span>NO CROWDS · FAMILY OWNED · CHILD CARE · MILITARY DISCOUNTS · SILVER SNEAKERS ACCEPTED · TRAINERS ON SITE ·&nbsp;</span></div></div>
+
+<!-- 01 PRICES -->
+<section id="prices">
+  <div class="wm">PRICES</div>
+  <div class="sec-in">
+    <div class="sec-no">01 / PRICING</div>
+    <div class="sec-t">Pay. Train. That's it.</div>
+    <p class="sec-d">Straight from their Google listing — <b>no contracts</b>, no fine-print maze.</p>
+    <div class="menu">
+      <div class="mrow">
+        <div class="amt">$35</div>
+        <div class="what">1-Month Gym Package<small>Full access, open 24 hours a day. Renew month to month.</small></div>
+        <div class="dots"></div><a class="go" href="#trial">START →</a>
+      </div>
+      <div class="mrow">
+        <div class="amt">$25</div>
+        <div class="what">Personal Training<small>Packages built around your goals — support, guidance, nutrition. Trainers on site 5 days a week, 8am–7pm.</small></div>
+        <div class="dots"></div><a class="go" href="#trainer">BOOK →</a>
+      </div>
+      <div class="mrow">
+        <div class="amt">$35</div>
+        <div class="what">Youth Classes<small>Young lifters learn it right — form, safety, and confidence.</small></div>
+        <div class="dots"></div><a class="go" href="#trial">ASK →</a>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="rule">
+
+<!-- 02 TRAINER -->
+<section id="trainer">
+  <div class="wm">COACH</div>
+  <div class="sec-in">
+    <div class="sec-no">02 / TRAINER DESK</div>
+    <div class="sec-t">Book a trainer.</div>
+    <p class="sec-d">Pick a day, grab a time. On the live site this lands on the gym's phone <b>instantly</b>.</p>
+    <div class="desk-step">STEP 1 — PICK A DAY</div>
+    <div class="days" id="tDays"></div>
+    <div class="desk-step">STEP 2 — PICK A TIME · TRAINERS ON SITE 8A–7P</div>
+    <div class="slots" id="tSlots"></div>
+    <div class="desk-step">STEP 3 — YOUR DETAILS</div>
+    <div class="field"><label>NAME</label><input id="tName" type="text" placeholder="What name should we put this under?"></div>
+    <div class="field"><label>PHONE</label><input id="tPhone" type="tel" placeholder="Phone number"></div>
+    <button class="slab" id="tGo" disabled>Lock in my session</button>
+    <div class="okline" id="tOk"></div>
+    <div class="dnote">DEMO — NO REAL BOOKING IS MADE</div>
+  </div>
+</section>
+<hr class="rule">
+
+<!-- 03 PHOTOS -->
+<section>
+  <div class="wm">FAMILY</div>
+  <div class="sec-in">
+    <div class="sec-no">03 / THE FAMILY</div>
+    <div class="sec-t">Shot at the gym.</div>
+    <p class="sec-d">Real photos from their listings — members, events, the actual floor.</p>
+  </div>
+  <div class="strip">
+    <figure><img src="img/members.jpg" alt="Two members training at The Gym 24/7 Fitness"><span class="stamp">MEMBERS ON THE FLOOR</span></figure>
+    <figure><img src="img/gnc-event.jpg" alt="Supplement event at The Gym 24/7 Fitness"><span class="stamp">SUPPLEMENT NIGHT W/ GNC</span></figure>
+  </div>
+</section>
+<hr class="rule">
+
+<!-- 04 PROOF -->
+<section id="proof">
+  <div class="wm">PROOF</div>
+  <div class="sec-in" data-greviews="The Gym 24/7 Fitness, 217 N State St, Alma, MI">
+    <div class="sec-no">04 / PROOF</div>
+    <div class="bignum"><span id="gNum">4.9</span><span class="of"> / 5</span></div>
+    <div class="starsline" id="gStars">★★★★★</div>
+    <p class="proofsub"><b id="gCount">47 Google reviews</b> and counting. Reviewers say the <b>staff is helpful</b> and the <b>equipment is clean</b>.</p>
+    <div class="quotes" id="revStrip"></div>
+    <div class="leaverev">
+      <div class="sec-no" style="margin-bottom:6px">TRAIN HERE? LEAVE YOUR STARS</div>
+      <div class="stars" id="starsIn"><span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span></div>
+      <div class="field"><label>NAME</label><input id="rName" type="text" placeholder="What name should we put this under?"></div>
+      <div class="field"><label>REVIEW</label><input id="rText" type="text" placeholder="How's the gym treating you?"></div>
+      <button class="slab" id="rGo">Send my review</button>
+      <div class="okline" id="rOk">Thanks — on the live site this goes straight to the gym.</div>
+      <div class="dnote" style="text-align:left"><a href="https://www.google.com/maps/search/?api=1&query=The+Gym+24/7+Fitness+217+N+State+St+Alma+MI" target="_blank" rel="noopener" style="color:var(--acid);font-weight:700">POST IT ON GOOGLE TOO →</a> · RATINGS REFRESH AUTOMATICALLY ON THE LIVE SITE · [ EXAMPLE — NOT A LIVE FEED IN THIS DEMO ]</div>
+    </div>
+  </div>
+</section>
+<hr class="rule">
+
+<!-- 05 EXTRAS -->
+<section>
+  <div class="wm">MORE</div>
+  <div class="sec-in">
+    <div class="sec-no">05 / FIELD MANUAL</div>
+    <div class="sec-t">More than a weight room.</div>
+    <p class="sec-d">The stuff that makes this place different, straight from the gym.</p>
+    <div class="xband"><div class="k">CHILD CARE</div><div class="v">Bring the kids — child care for members while you train.</div></div>
+    <div class="xband"><div class="k">MILITARY</div><div class="v">Active military discounts. <small>Ask at the front desk.</small></div></div>
+    <div class="xband"><div class="k">SENIORS</div><div class="v">Silver Sneakers &amp; Silver &amp; Fit accepted — join through your insurance, verified in a few clicks.</div></div>
+    <div class="xband"><div class="k">RECOVERY</div><div class="v">HB Massage on site — <b>10% off massages</b> with a 1-year membership. <small>(989) 285-1057</small></div></div>
+    <div class="xband"><div class="k">COACHING</div><div class="v">Experienced trainers on site 5 days a week, 8am–7pm — workouts, nutrition, accountability.</div></div>
+  </div>
+</section>
+<hr class="rule">
+
+<!-- 06 VISIT -->
+<section>
+  <div class="wm">VISIT</div>
+  <div class="sec-in">
+    <div class="sec-no">06 / FIND US</div>
+    <div class="sec-t">We're <span style="color:var(--acid)">always</span> open.</div>
+    <div class="hrow"><span class="d">MONDAY</span><span class="o">OPEN 24 HOURS</span></div>
+    <div class="hrow"><span class="d">TUESDAY</span><span class="o">OPEN 24 HOURS</span></div>
+    <div class="hrow"><span class="d">WEDNESDAY</span><span class="o">OPEN 24 HOURS</span></div>
+    <div class="hrow"><span class="d">THURSDAY</span><span class="o">OPEN 24 HOURS</span></div>
+    <div class="hrow"><span class="d">FRIDAY</span><span class="o">OPEN 24 HOURS</span></div>
+    <div class="hrow"><span class="d">SATURDAY</span><span class="o">OPEN 24 HOURS</span></div>
+    <div class="hrow"><span class="d">SUNDAY</span><span class="o">OPEN 24 HOURS</span></div>
+    <p class="visit">217 N State St, Alma, MI 48801 · <a href="tel:+19892851622">(989) 285-1622</a></p>
+    <a class="slab ghost" style="display:block;text-align:center;text-decoration:none;margin-top:14px" href="https://www.google.com/maps/search/?api=1&query=The+Gym+24/7+Fitness+217+N+State+St+Alma+MI" target="_blank" rel="noopener">Get directions</a>
+  </div>
+</section>
+<hr class="rule">
+
+<!-- 07 TRIAL -->
+<section id="trial">
+  <div class="wm">FREE</div>
+  <div class="sec-in">
+    <div class="sec-no">07 / FIRST WORKOUT</div>
+    <div class="sec-t">Come try it free.</div>
+    <p class="sec-d">One workout, on the house. If it's not for you, no hard feelings.</p>
+    <div class="field"><label>NAME</label><input id="fName" type="text" placeholder="What name should we put this under?"></div>
+    <div class="field"><label>PHONE</label><input id="fPhone" type="tel" placeholder="Phone number"></div>
+    <button class="slab" id="fGo" disabled>Text me my free pass</button>
+    <div class="okline" id="fOk">You're on the list — show this at the front desk anytime. It's always open.</div>
+    <div class="dnote">DEMO — ON THE LIVE SITE YOUR PHONE BUZZES WITH THE PASS</div>
+  </div>
+</section>
+
+<!-- SOCIAL -->
+<div class="socband">
+  <section style="padding:56px 0">
+    <div class="sec-in">
+      <div class="sec-no">08 / FROM THEIR PAGE</div>
+      <div class="sec-t">Straight off Facebook.</div>
+      <div class="tagrow"><span class="tag">[ OPTIONAL ADD-ON ]</span><span class="tag dim">[ EXAMPLE — NOT A LIVE FEED IN THIS DEMO ]</span></div>
+      <p class="sec-d">Their latest posts, live on the real site.</p>
+      <div style="display:flex;justify-content:center">
+        <div class="fb-page" data-href="https://www.facebook.com/thegym247fitness/" data-tabs="timeline" data-width="360" data-height="480" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/thegym247fitness/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/thegym247fitness/">The Gym 24/7 Fitness</a></blockquote></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="f">THE GYM 24/7 FITNESS · ALMA, MI</div>
+  <p>Concept preview — not affiliated. Built by Rival Eclipse.</p>
+</footer>
+
+<div class="stickybar"><div class="t" id="stickyT">TRAIN AT 2AM? WE'RE OPEN.</div><a href="tel:+19892851622">CALL NOW</a></div>
+<div id="fb-root"></div>
+
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v21.0"></script>
+<script>
+// ---------- open-now clock ----------
+(function(){
+  const el=document.getElementById('openNow');
+  try{
+    const t=new Date().toLocaleTimeString('en-US',{timeZone:'America/Detroit',hour:'numeric',minute:'2-digit'});
+    el.textContent='OPEN NOW · '+t+' ET · 7 DAYS A WEEK';
+  }catch(e){ el.textContent='OPEN NOW · 24 HOURS · 7 DAYS A WEEK'; }
+  const msgs=['TRAIN AT 2AM? WE\u2019RE OPEN.','FIRST WORKOUT FREE.','NO CONTRACTS. NO EXCUSES.','STAFF KNOWS YOUR NAME.'];
+  let i=0; const st=document.getElementById('stickyT');
+  setInterval(()=>{ i=(i+1)%msgs.length; st.textContent=msgs[i]; },4000);
+})();
+// ---------- reviews (real, condensed) ----------
+const REVS=[
+  {q:'Best real gym experience around. Staff and members are great and helpful. 24hrs.',w:'JOHN F.'},
+  {q:'Clean, friendly, helpful and equipment all works.',w:'FRANCES K.'},
+  {q:'I love this gym so much! Awesome caring staff!! This gym is my family to me.',w:'KACEY J.'},
+];
+document.getElementById('revStrip').innerHTML=REVS.map(r=>'<div class="quote"><p>'+r.q+'</p><span class="who">— '+r.w+' · GOOGLE REVIEW</span></div>').join('')
+  +'<div class="quote"><p>47 reviews averaging <b>4.9 stars</b> — read them all on Google.</p><span class="who">— LIVE ON THE REAL SITE</span></div>';
+// ---------- trainer booking ----------
+const daysEl=document.getElementById('tDays'), slotsEl=document.getElementById('tSlots');
+const now=new Date(); let selDay=0, selSlot=null;
+const dayNames=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+for(let i=0;i<7;i++){
+  const d=new Date(now); d.setDate(now.getDate()+i);
+  const b=document.createElement('button');
+  b.className='day'+(i===0?' sel':'');
+  b.innerHTML=dayNames[d.getDay()]+'<small>'+(d.getMonth()+1)+'/'+d.getDate()+'</small>';
+  b.onclick=()=>{selDay=i;selSlot=null;daysEl.querySelectorAll('.day').forEach((el,j)=>el.classList.toggle('sel',j===i));drawSlots();checkT();};
+  daysEl.appendChild(b);
+}
+function drawSlots(){
+  slotsEl.innerHTML='';
+  const times=['8:00a','9:30a','11:00a','12:30p','2:00p','3:30p','5:00p','6:30p'];
+  times.forEach((t,idx)=>{
+    const taken=((selDay*7+idx*3)%4===0);
+    const b=document.createElement('button');
+    b.className='slot'+(taken?' taken':'');
+    b.textContent=t;
+    if(!taken) b.onclick=()=>{selSlot=t;slotsEl.querySelectorAll('.slot').forEach(el=>el.classList.remove('sel'));b.classList.add('sel');checkT();};
+    slotsEl.appendChild(b);
+  });
+}
+drawSlots();
+const tName=document.getElementById('tName'),tPhone=document.getElementById('tPhone'),tGo=document.getElementById('tGo');
+function checkT(){tGo.disabled=!(selSlot&&tName.value.trim()&&tPhone.value.trim());}
+[tName,tPhone].forEach(el=>el.addEventListener('input',checkT));
+tGo.onclick=()=>{
+  const d=new Date(now); d.setDate(now.getDate()+selDay);
+  const ok=document.getElementById('tOk');
+  ok.innerHTML='LOCKED IN: <b>'+dayNames[d.getDay()]+' '+(d.getMonth()+1)+'/'+d.getDate()+' AT '+selSlot+'</b> WITH A TRAINER.<br><span style="font-weight:400">The gym confirms by text.</span>';
+  ok.style.display='block';
+};
+// ---------- trial ----------
+const fName=document.getElementById('fName'),fPhone=document.getElementById('fPhone'),fGo=document.getElementById('fGo');
+[fName,fPhone].forEach(el=>el.addEventListener('input',()=>{fGo.disabled=!(fName.value.trim()&&fPhone.value.trim());}));
+fGo.onclick=()=>{document.getElementById('fOk').style.display='block';};
+// ---------- stars + review ----------
+document.querySelectorAll('#starsIn span').forEach(s=>{
+  s.addEventListener('click',()=>{
+    const v=parseInt(s.dataset.v);
+    document.querySelectorAll('#starsIn span').forEach(x=>x.classList.toggle('on',parseInt(x.dataset.v)<=v));
+  });
+});
+document.getElementById('rGo').onclick=()=>{document.getElementById('rOk').style.display='block';};
+// ---------- live Google rating ----------
+(function(){
+  const card=document.querySelector('[data-greviews]');
+  if(!card) return;
+  fetch('/api/google-reviews?q='+encodeURIComponent(card.getAttribute('data-greviews')))
+    .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+    .then(d=>{
+      if(!d||d.error) throw 0;
+      if(d.rating) document.getElementById('gNum').textContent=Number(d.rating).toFixed(1);
+      if(d.count) document.getElementById('gCount').textContent=d.count+' Google reviews';
+      if(d.rating){ const f=Math.round(d.rating); document.getElementById('gStars').textContent='★★★★★'.slice(0,f)+'☆☆☆☆☆'.slice(0,5-f); }
+    })
+    .catch(()=>{});
+})();
+</script>
+</body>
+</html>
