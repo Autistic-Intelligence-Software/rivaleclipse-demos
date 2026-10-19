@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sweet Lilly's Cakes — Alma, MI | Custom &amp; Wedding Cakes</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--wine:#831843;--wine-d:#5c1030;--blush:#f9a8d4;--blush-l:#fbcfe8;--cream:#fff9f5;--ink:#3d2430;--muted:#9a7a88}
+body{font-family:'Didot','Bodoni MT',Georgia,serif;background:var(--cream);color:var(--ink);line-height:1.7}
+.demo-banner{background:#fff3cd;color:#664d03;text-align:center;padding:8px;font-size:13px;border-bottom:2px solid #ffda6a;font-family:system-ui,sans-serif}
+.hero{position:relative;min-height:92vh;display:flex;align-items:flex-end;overflow:hidden;background:var(--wine-d)}
+.hero img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5}
+.hero .veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(92,16,48,.92) 0%,rgba(92,16,48,.35) 55%,rgba(92,16,48,.15) 100%)}
+.hero-inner{position:relative;max-width:860px;margin:0 auto;padding:80px 28px 70px;text-align:center;color:#fff;width:100%}
+.hero .over{font-family:system-ui,sans-serif;font-size:12px;letter-spacing:6px;text-transform:uppercase;color:var(--blush-l);margin-bottom:18px}
+.hero h1{font-size:clamp(54px,10vw,110px);font-weight:400;line-height:1.02;margin-bottom:10px}
+.hero h1 em{color:var(--blush);font-style:italic}
+.hero .tag{font-style:italic;font-size:21px;color:#f3d9e4;margin-bottom:26px}
+.hero .stars{font-family:system-ui,sans-serif;font-size:14px;letter-spacing:2px;color:var(--blush)}
+.rule{width:64px;height:1px;background:var(--blush);margin:34px auto}
+.occasions{padding:84px 26px;max-width:1080px;margin:0 auto}
+.occasions .kicker{text-align:center;font-family:system-ui,sans-serif;font-size:12px;letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.occasions h2{text-align:center;font-size:clamp(34px,5vw,52px);font-weight:400;margin-bottom:10px}
+.occasions .sub{text-align:center;font-style:italic;color:var(--muted);font-size:18px;margin-bottom:48px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:26px}
+.card{border:1px solid #eed9e2;background:#fff;padding:44px 38px;position:relative;transition:transform .25s}
+.card:hover{transform:translateY(-4px)}
+.card .no{font-family:system-ui,sans-serif;font-size:12px;letter-spacing:4px;color:var(--blush);margin-bottom:12px}
+.card h3{font-size:30px;font-weight:400;margin-bottom:10px}
+.card p{font-size:16.5px;color:#6b4a57;margin-bottom:16px}
+.card .price{font-family:system-ui,sans-serif;font-weight:700;color:var(--wine);letter-spacing:1px}
+.card.featured{background:var(--wine);border-color:var(--wine);color:#fff}
+.card.featured p{color:#f3d9e4}
+.card.featured .price{color:var(--blush)}
+.process{background:var(--wine-d);color:#fff;padding:84px 26px}
+.process-inner{max-width:960px;margin:0 auto}
+.process .kicker{text-align:center;font-family:system-ui,sans-serif;font-size:12px;letter-spacing:6px;text-transform:uppercase;color:var(--blush);margin-bottom:12px}
+.process h2{text-align:center;font-size:clamp(32px,5vw,48px);font-weight:400;margin-bottom:52px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.step{padding:0 34px;text-align:center;position:relative}
+.step + .step{border-left:1px solid rgba(249,168,212,.25)}
+.step .n{font-size:64px;color:var(--blush);opacity:.5;font-style:italic;line-height:1;margin-bottom:14px}
+.step h3{font-size:23px;font-weight:400;margin-bottom:10px}
+.step p{font-size:15.5px;color:#e6c8d4}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.gallery figure{position:relative;overflow:hidden;min-height:380px}
+.gallery img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.gallery figure:hover img{transform:scale(1.04)}
+.gallery figcaption{position:absolute;bottom:0;left:0;right:0;padding:34px 28px 22px;background:linear-gradient(transparent,rgba(61,36,48,.85));color:#fff;font-style:italic;font-size:17px}
+.visit{padding:84px 26px;text-align:center;max-width:720px;margin:0 auto}
+.visit .kicker{font-family:system-ui,sans-serif;font-size:12px;letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.visit h2{font-size:clamp(32px,5vw,46px);font-weight:400;margin-bottom:26px}
+.hours{font-family:system-ui,sans-serif;font-size:16px;max-width:420px;margin:0 auto 30px}
+.hrow{display:flex;justify-content:space-between;padding:11px 4px;border-bottom:1px dotted #d9b8c6}
+.visit address{font-style:normal;font-size:18px;line-height:2.1}
+.visit address a{color:var(--wine);font-weight:700;text-decoration:none;font-family:system-ui,sans-serif}
+footer{background:var(--wine-d);color:#c99fb2;text-align:center;padding:24px;font-family:system-ui,sans-serif;font-size:13px;letter-spacing:1px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}.steps{grid-template-columns:1fr;gap:36px}.step + .step{border-left:0;border-top:1px solid rgba(249,168,212,.25);padding-top:36px}.gallery{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="demo-banner">A friendly concept preview of what Sweet Lilly's Cakes' website could look like — not their official site.</div>
+<section class="hero">
+<img class="bg" src="img/wedding-cake.jpg" alt="Elegant white wedding cake with flowers">
+<div class="veil"></div>
+<div class="hero-inner">
+<div class="over">Alma, Michigan · Custom Bakery</div>
+<h1>Sweet <em>Lilly's</em></h1>
+<div class="tag">Custom cakes including weddings — baked to be remembered</div>
+<div class="stars">★★★★★ &nbsp;5.0 — "the cake was almost too pretty to cut"</div>
+</div>
+</section>
+<section class="occasions">
+<div class="kicker">What we bake</div>
+<h2>Every celebration deserves its cake</h2>
+<p class="sub">Designed with you, baked from scratch, finished by hand</p>
+<div class="cards">
+<div class="card featured"><div class="no">No. 01</div><h3>Wedding Cakes</h3><p>Your once-in-a-lifetime cake, designed around your day. Consultation and tasting available — let's talk tiers, flavors, and flowers.</p><span class="price">Consultation → custom quote</span></div>
+<div class="card"><div class="no">No. 02</div><h3>Custom Cakes</h3><p>Birthdays, showers, graduations, "just because" — any occasion, any theme, decorated to order.</p><span class="price">from $40</span></div>
+<div class="card"><div class="no">No. 03</div><h3>Cupcakes</h3><p>All the celebration, by the half-dozen or dozen. Mix flavors across the box.</p><span class="price">from $18</span></div>
+<div class="card"><div class="no">No. 04</div><h3>Cookies</h3><p>Decorated sugar cookies — the little detail that makes a party feel finished.</p><span class="price">priced per dozen</span></div>
+</div>
+</section>
+<section class="process">
+<div class="process-inner">
+<div class="kicker">How it works</div>
+<h2>From idea to "oh wow"</h2>
+<div class="steps">
+<div class="step"><div class="n">1</div><h3>Consult</h3><p>Tell us the occasion, the servings, the vibe. Tastings available for wedding orders.</p></div>
+<div class="step"><div class="n">2</div><h3>Design</h3><p>We sketch your cake — flavors, tiers, colors, and every piped detail.</p></div>
+<div class="step"><div class="n">3</div><h3>Celebrate</h3><p>Pick up fresh, or ask about delivery and setup for the big day.</p></div>
+</div>
+</div>
+</section>
+<section class="gallery">
+<figure><img src="img/wedding-cake.jpg" alt="White wedding cake with fresh flowers"><figcaption>Weddings — designed around your day</figcaption></figure>
+<figure><img src="img/birthday-cake.jpg" alt="Decorated celebration cake"><figcaption>Celebrations — birthdays, showers &amp; more</figcaption></figure>
+</section>
+<section class="visit">
+<div class="kicker">Visit the bakery</div>
+<h2>Let's talk cake</h2>
+<div class="hours">
+<div class="hrow"><span>Tuesday – Saturday</span><b>10 AM – 6 PM</b></div>
+<div class="hrow"><span>Sunday – Monday</span><b>Closed</b></div>
+</div>
+<address>4303 W Harrison Rd, Alma, MI<br><a href="tel:+19895600467">(989) 560-0467</a></address>
+</section>
+<footer>Concept demo by Rival Eclipse — Sweet Lilly's Cakes, Alma MI</footer>
+</body>
+</html>
