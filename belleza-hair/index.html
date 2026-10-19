@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<!-- HAND-CUSTOMIZED for Belleza Hair Designs (Alma, MI) — do NOT regenerate with build_local_demos.py or this gets clobbered. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Belleza Hair Designs — Alma MI (Concept Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--blush:#fdf4f6;--cream:#fffdfb;--ink:#241f26;--lav:#7c5cbf;--lav-d:#5b3f9e;--rose:#e8b4c8;--mut:#8d8494;--line:#eee3e8}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Jost',system-ui,sans-serif;font-weight:400;line-height:1.75;letter-spacing:.01em}
+  .demo-banner{background:#0d0d0d;color:#b9b2a6;text-align:center;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;padding:9px 14px;font-family:'Jost'}
+  .demo-banner b{color:var(--rose)}
+  /* centered airy masthead */
+  .mast{max-width:760px;margin:0 auto;padding:40px 24px 0;text-align:center}
+  .mast .over{font-size:.72rem;letter-spacing:.42em;text-transform:uppercase;color:var(--mut)}
+  .mast h1{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:clamp(2.6rem,9vw,4.6rem);
+    line-height:1.08;margin:14px 0 0;letter-spacing:0}
+  .mast .rule{width:64px;height:2px;background:var(--rose);margin:26px auto}
+  .mast .tag{font-size:1.02rem;color:var(--mut);max-width:34em;margin:0 auto}
+  .mast .tel{display:inline-block;margin-top:22px;font-size:1rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink);text-decoration:none;border-bottom:1px solid var(--lav);padding-bottom:3px}
+  /* whisper strip */
+  .whisper{background:var(--blush);margin:44px 0 0;padding:40px 24px;text-align:center}
+  .whisper p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.3rem,4.5vw,1.9rem);
+    max-width:30em;margin:0 auto;color:var(--ink);line-height:1.5}
+  .whisper .n{font-family:'Jost';font-style:normal;font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--mut);margin-top:16px;display:block}
+  /* section rhythm — centered, generous */
+  .sec{max-width:760px;margin:0 auto;padding:64px 24px}
+  .sec .eyebrow{text-align:center;font-size:.72rem;letter-spacing:.42em;text-transform:uppercase;color:var(--lav);margin-bottom:14px}
+  .sec h2{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:clamp(1.9rem,6vw,2.7rem);
+    text-align:center;margin:0 0 34px;letter-spacing:0}
+  /* service menu — long elegant rows */
+  .svc{padding:20px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:2px 18px;align-items:baseline}
+  .svc .nm{font-size:1.12rem;font-weight:500}
+  .svc .pr{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.25rem;color:var(--lav-d)}
+  .svc .ds{grid-column:1/-1;color:var(--mut);font-size:.92rem}
+  /* threading feature card */
+  .feat{background:var(--ink);color:var(--cream);border-radius:2px;padding:44px 34px;text-align:center;margin-top:40px;position:relative;overflow:hidden}
+  .feat::before{content:"";position:absolute;inset:12px;border:1px solid rgba(232,180,200,.35);pointer-events:none}
+  .feat h3{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:1.9rem;margin:0 0 10px;color:var(--rose)}
+  .feat p{max-width:30em;margin:0 auto;color:#d9d0d8;font-size:.98rem}
+  .feat .pr{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.4rem;color:var(--rose);margin-top:14px}
+  /* booking — soft card */
+  .book{background:var(--blush);padding:64px 24px}
+  .card{max-width:640px;margin:0 auto;background:var(--cream);border:1px solid var(--line);padding:40px 32px;box-shadow:0 18px 50px rgba(124,92,191,.10)}
+  .card h2{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:2rem;text-align:center;margin:0 0 6px}
+  .card .sub{text-align:center;color:var(--mut);font-size:.92rem;margin:0 0 26px}
+  .field{margin:16px 0}
+  .field label{display:block;font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+  .field input,.field select{width:100%;background:#fff;border:1px solid var(--line);padding:14px;font-size:1rem;font-family:'Jost';color:var(--ink)}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--lav)}
+  .slots{display:flex;flex-wrap:wrap;gap:10px}
+  .slot{border:1px solid var(--line);background:#fff;padding:11px 18px;font-family:'Jost';font-size:.9rem;cursor:pointer;color:var(--ink)}
+  .slot.sel{border-color:var(--lav);background:var(--lav);color:#fff}
+  .slot.off{opacity:.3;text-decoration:line-through;cursor:default}
+  .go{width:100%;background:var(--ink);color:var(--cream);border:none;font-family:'Jost';font-weight:500;letter-spacing:.3em;
+    text-transform:uppercase;font-size:.85rem;padding:19px;cursor:pointer;margin-top:14px}
+  .go:disabled{opacity:.35;cursor:not-allowed}
+  .confirm{display:none;margin-top:18px;border:1px solid var(--lav);background:#f6f1fe;padding:20px;font-size:.95rem;text-align:center}
+  .confirm b{color:var(--lav-d)}
+  .fine{font-size:.75rem;color:var(--mut);margin-top:12px;text-align:center}
+  /* visit */
+  .visit-grid{display:grid;gap:30px;margin-top:8px}
+  @media(min-width:720px){.visit-grid{grid-template-columns:1fr 1fr}}
+  .day-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line);font-size:.96rem}
+  .day-row .closed{color:var(--mut);font-style:italic}
+  address{font-style:normal;text-align:center;font-size:1.05rem;line-height:1.9}
+  address a{color:var(--lav-d)}
+  /* reviews */
+  .big-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:4rem;text-align:center;line-height:1;color:var(--ink)}
+  .big-num small{font-size:1.1rem;font-family:'Jost';font-style:normal;color:var(--mut)}
+  .rev{padding:22px 0;border-bottom:1px solid var(--line);font-size:.98rem}
+  .rev .stars{color:var(--lav);letter-spacing:3px}
+  .rev .who{font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--mut);margin-top:8px}
+  .stars-in{font-size:1.9rem;letter-spacing:8px;color:#e3d9e8;cursor:pointer;user-select:none;margin:10px 0;text-align:center}
+  .stars-in .on{color:var(--lav)}
+  footer{text-align:center;padding:44px 24px;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+  footer .sig{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.3rem;text-transform:none;letter-spacing:0;color:var(--ink);margin-bottom:10px}
+  .sticky{position:fixed;bottom:14px;left:14px;right:14px;z-index:60;display:flex;justify-content:center;pointer-events:none}
+  .sticky a{pointer-events:auto;background:var(--ink);color:var(--cream);text-decoration:none;font-size:.8rem;
+    letter-spacing:.26em;text-transform:uppercase;padding:15px 34px;font-family:'Jost'}
+  @media(min-width:700px){.sticky{display:none}}
+  body{padding-bottom:70px}
+</style>
+</head>
+<body>
+<div class="demo-banner">A concept preview — <b>not affiliated</b> with Belleza Hair Designs</div>
+
+<header class="mast">
+  <div class="over">Alma, Michigan</div>
+  <h1>Belleza Hair Designs</h1>
+  <div class="rule"></div>
+  <p class="tag">Specialty hair &amp; threading — near-perfect <b>4.9 stars across 41 reviews</b>. Precision cuts, dimensional color, and brow threading done right.</p>
+  <a class="tel" href="tel:+19897633861">(989) 763-3861</a>
+</header>
+
+<div class="whisper">
+  <p>"My brows have never looked this good. I won't trust anyone else with my hair."</p>
+  <span class="n">— the kind of thing 41 reviewers keep saying</span>
+</div>
+
+<section class="sec">
+  <div class="eyebrow">The Menu</div>
+  <h2>Services</h2>
+  <div class="svc"><div class="nm">Haircut &amp; Style</div><div class="pr">from $30</div><div class="ds">Precision cuts and finishing</div></div>
+  <div class="svc"><div class="nm">Color Services</div><div class="pr">from $70</div><div class="ds">Color, balayage, and highlights</div></div>
+  <div class="svc"><div class="nm">Threading</div><div class="pr">from $12</div><div class="ds">Brows and facial threading specialty</div></div>
+  <div class="svc"><div class="nm">Special Occasion</div><div class="pr">consult</div><div class="ds">Updos for weddings and events</div></div>
+  <p class="fine">Sample pricing shown — the salon sets the real menu.</p>
+  <div class="feat">
+    <h3>The Threading Specialty</h3>
+    <p>Belleza's signature — precise brow and facial threading that keeps clients coming back. Gentle, exact, and finished in minutes.</p>
+    <div class="pr">from $12</div>
+  </div>
+</section>
+
+<div class="book" id="book">
+  <div class="card">
+    <h2>Book an Appointment</h2>
+    <p class="sub">Choose your service and a time that suits you.</p>
+    <div class="field"><label>Service</label>
+      <select id="kSvc"><option>Haircut &amp; Style</option><option>Color Services</option><option>Threading</option><option>Special Occasion</option></select></div>
+    <div class="field"><label>Day</label><div class="slots" id="kDay"></div></div>
+    <div class="field"><label>Time</label><div class="slots" id="kTime"></div></div>
+    <div class="field"><label>Name</label><input id="kName" type="text" placeholder="What name should we put this under?"></div>
+    <div class="field"><label>Phone</label><input id="kPhone" type="tel" placeholder="Phone number"></div>
+    <button class="go" id="kGo" disabled>Request appointment</button>
+    <div class="confirm" id="kOk"></div>
+    <p class="fine">Demo only — no real booking is made.</p>
+  </div>
+</div>
+
+<section class="sec">
+  <div class="eyebrow">Visit</div>
+  <h2>Hours &amp; Location</h2>
+  <div class="visit-grid">
+    <div>
+      <div class="day-row"><span>Monday – Thursday</span><span>10 AM – 8 PM</span></div>
+      <div class="day-row"><span>Friday</span><span>10 AM – 5 PM</span></div>
+      <div class="day-row"><span>Saturday</span><span>10 AM – 4 PM</span></div>
+      <div class="day-row"><span>Sunday</span><span class="closed">Closed</span></div>
+    </div>
+    <address>
+      116 W Superior St<br>Alma, MI 48801<br><br>
+      <a href="tel:+19897633861">(989) 763-3861</a><br><br>
+      <a href="https://www.google.com/maps/search/?api=1&query=Belleza+Hair+Designs+116+W+Superior+St+Alma+MI" target="_blank" rel="noopener">Get directions →</a>
+    </address>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0" data-greviews="Belleza Hair Designs, 116 W Superior St, Alma, MI">
+  <div class="eyebrow">Reviews</div>
+  <div class="big-num"><span id="gNum">4.9</span><small> / 5 · <span id="gCount">41 reviews</span></small></div>
+  <div style="margin-top:26px">
+    <div class="rev"><div class="stars">★★★★★</div>41 reviews averaging a near-perfect <b>4.9</b> — the kind of rating you only get by being consistently excellent.<div class="who">Google listing</div></div>
+    <div class="stars-in" id="starsIn"><span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span></div>
+    <div class="field"><label>Name</label><input id="rName" type="text" placeholder="What name should we put this under?"></div>
+    <div class="field"><label>Review</label><input id="rText" type="text" placeholder="How'd we do?"></div>
+    <button class="go" id="rGo">Send my review</button>
+    <div class="confirm" id="rOk" style="display:none">Thank you — on the live site this goes straight to the salon.</div>
+    <p class="fine"><a href="https://www.google.com/maps/search/?api=1&query=Belleza+Hair+Designs+116+W+Superior+St+Alma+MI" target="_blank" rel="noopener" style="color:var(--lav-d)">Post it on Google too →</a> · Example only — not a live feed in this demo</p>
+  </div>
+</section>
+
+<footer>
+  <div class="sig">Belleza Hair Designs · Alma, MI</div>
+  Concept preview — not affiliated. Built by Rival Eclipse.
+</footer>
+
+<div class="sticky"><a href="tel:+19897633861">Call to book</a></div>
+
+<script>
+const days=[];const now=new Date();
+for(let i=0;i<14;i++){const d=new Date(now);d.setDate(now.getDate()+i);const dow=d.getDay();
+  if(dow===0||dow===1)continue;
+  days.push(d);if(days.length>=7)break;}
+let sDay=0,sTime=null;
+const dayEl=document.getElementById('kDay'),timeEl=document.getElementById('kTime');
+days.forEach((d,i)=>{const b=document.createElement('button');b.className='slot'+(i===0?' sel':'');
+  b.textContent=d.toLocaleDateString('en-US',{weekday:'short'})+' '+(d.getMonth()+1)+'/'+d.getDate();
+  b.onclick=()=>{sDay=i;sTime=null;dayEl.querySelectorAll('.slot').forEach((el,j)=>el.classList.toggle('sel',j===i));drawTimes();check();};dayEl.appendChild(b);});
+function drawTimes(){timeEl.innerHTML='';sTime=null;
+  ['9:00a','10:30a','12:00p','1:30p','3:00p','4:30p'].forEach((t,idx)=>{const taken=((sDay*3+idx*2)%5===0);
+    const b=document.createElement('button');b.className='slot'+(taken?' off':'');b.textContent=t;
+    if(!taken)b.onclick=()=>{sTime=t;timeEl.querySelectorAll('.slot').forEach(el=>el.classList.remove('sel'));b.classList.add('sel');check();};
+    timeEl.appendChild(b);});}
+drawTimes();
+const kName=document.getElementById('kName'),kPhone=document.getElementById('kPhone'),kGo=document.getElementById('kGo');
+function check(){kGo.disabled=!(sTime&&kName.value.trim()&&kPhone.value.trim());}
+[kName,kPhone].forEach(el=>el.addEventListener('input',check));
+kGo.onclick=()=>{const d=days[sDay];const ok=document.getElementById('kOk');
+  ok.innerHTML='Request received, <b>'+kName.value.trim()+'</b> — <b>'+document.getElementById('kSvc').value+'</b>, '+d.toLocaleDateString('en-US',{weekday:'long'})+' at <b>'+sTime+'</b>.<br><span style="font-size:.85rem">The salon would confirm by text.</span>';
+  ok.style.display='block';};
+document.querySelectorAll('#starsIn span').forEach(s=>{s.addEventListener('click',()=>{
+  const v=parseInt(s.dataset.v);
+  document.querySelectorAll('#starsIn span').forEach(x=>x.classList.toggle('on',parseInt(x.dataset.v)<=v));});});
+document.getElementById('rGo').onclick=()=>{document.getElementById('rOk').style.display='block';};
+(function(){const sec=document.querySelector('[data-greviews]');if(!sec)return;
+  fetch('/api/google-reviews?q='+encodeURIComponent(sec.getAttribute('data-greviews')))
+    .then(r=>{if(!r.ok)throw 0;return r.json();}).then(d=>{if(!d||d.error)throw 0;
+      if(d.rating)document.getElementById('gNum').textContent=Number(d.rating).toFixed(1);
+      if(d.count)document.getElementById('gCount').textContent=d.count+' reviews';}).catch(()=>{});})();
+</script>
+</body>
+</html>
