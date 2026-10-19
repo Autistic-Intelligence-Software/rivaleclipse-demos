@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<!-- HAND-CUSTOMIZED for Le Zebra Zalon (Alma, MI) — do NOT regenerate with build_local_demos.py or this gets clobbered. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Zebra Zalon — Salon & Nails, Alma MI (Concept Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0d0d0d;--paper:#f7f3ee;--pink:#ec4899;--pink-d:#be185d;--mut:#8a857e;--line:#e5ddd2}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.6}
+  .demo-banner{background:#0d0d0d;color:#b9b2a6;text-align:center;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;padding:9px 14px;font-family:'Inter'}
+  .demo-banner b{color:var(--pink)}
+  .stripe{height:14px;background:repeating-linear-gradient(-55deg,#0d0d0d 0 18px,#f7f3ee 18px 36px)}
+  .stripe.inv{background:repeating-linear-gradient(-55deg,#f7f3ee 0 18px,#0d0d0d 18px 36px)}
+  .mast{max-width:1080px;margin:0 auto;padding:26px 22px 0;display:flex;justify-content:space-between;align-items:baseline}
+  .mast .brand{font-family:'Playfair Display',serif;font-weight:900;font-size:1.5rem;letter-spacing:.02em}
+  .mast .brand em{color:var(--pink);font-style:normal}
+  .mast a{color:var(--ink);text-decoration:none;font-weight:600;font-size:.9rem;border-bottom:2px solid var(--pink)}
+  .hero{max-width:1080px;margin:0 auto;padding:56px 22px 20px;display:grid;gap:26px}
+  @media(min-width:820px){.hero{grid-template-columns:1.15fr .85fr;align-items:end}}
+  .kick{font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--pink-d);font-weight:700}
+  h1{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(2.8rem,8vw,5.2rem);line-height:1.02;margin:14px 0 0;letter-spacing:-.01em}
+  h1 em{font-style:italic;color:var(--pink-d)}
+  .deck{font-size:1.08rem;color:#4a453e;max-width:34em;margin:18px 0 0}
+  .hero-fig{margin:0;position:relative}
+  .hero-fig .ph{aspect-ratio:4/5;background:#0d0d0d;color:#f7f3ee;display:flex;align-items:center;justify-content:center;
+    font-family:'Playfair Display',serif;font-style:italic;font-size:1.4rem;text-align:center;padding:30px;
+    background-image:repeating-linear-gradient(-55deg,transparent 0 26px,rgba(236,72,153,.14) 26px 52px)}
+  .hero-fig figcaption{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);margin-top:10px}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px}
+  .btn{font-family:'Inter';font-weight:700;font-size:.92rem;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;
+    background:var(--ink);color:#f7f3ee;padding:16px 30px;display:inline-block}
+  .btn.alt{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+  .pull{max-width:1080px;margin:0 auto;padding:44px 22px;display:grid;gap:18px}
+  @media(min-width:820px){.pull{grid-template-columns:repeat(3,1fr)}}
+  .pull blockquote{margin:0;font-family:'Playfair Display',serif;font-size:1.5rem;font-style:italic;line-height:1.35;border-top:3px solid var(--ink);padding-top:16px}
+  .pull blockquote b{color:var(--pink-d);font-style:normal}
+  .pull .src{font-family:'Inter';font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-style:normal;display:block;margin-top:10px}
+  .sec{max-width:1080px;margin:0 auto;padding:56px 22px}
+  .sec-head{display:flex;align-items:baseline;gap:18px;border-bottom:3px solid var(--ink);padding-bottom:12px;margin-bottom:6px}
+  .sec-head .n{font-family:'Playfair Display',serif;font-style:italic;font-size:1.1rem;color:var(--pink-d)}
+  .sec-head h2{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.8rem,5vw,2.6rem);margin:0;letter-spacing:-.01em}
+  .svc{display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:start;padding:24px 0;border-bottom:1px solid var(--line)}
+  .svc .idx{font-family:'Playfair Display',serif;font-style:italic;font-size:1.3rem;color:var(--pink-d)}
+  .svc .nm{font-weight:700;font-size:1.12rem}
+  .svc .ds{color:#5c564e;font-size:.94rem;margin-top:2px}
+  .svc .pr{font-family:'Playfair Display',serif;font-weight:700;font-size:1.25rem;white-space:nowrap}
+  .book{background:#0d0d0d;color:#f7f3ee}
+  .book .sec-head{border-bottom-color:#f7f3ee}
+  .steps{display:grid;gap:26px;margin-top:8px}
+  @media(min-width:820px){.steps{grid-template-columns:1fr 1fr}}
+  .step-label{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--pink);font-weight:700;margin-bottom:12px}
+  .pickrow{display:flex;flex-wrap:wrap;gap:10px}
+  .pick{background:transparent;border:1px solid #3a3a3a;color:#f7f3ee;font-family:'Inter';font-weight:600;font-size:.92rem;
+    padding:12px 18px;cursor:pointer}
+  .pick.sel{border-color:var(--pink);color:var(--pink)}
+  .field{margin:14px 0}
+  .field label{display:block;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:#8a857e;margin-bottom:6px}
+  .field input,.field select{width:100%;background:#161616;border:1px solid #3a3a3a;color:#f7f3ee;padding:14px;font-size:1rem;font-family:'Inter'}
+  .go{width:100%;background:var(--pink);color:#0d0d0d;border:none;font-family:'Inter';font-weight:800;letter-spacing:.1em;
+    text-transform:uppercase;font-size:.95rem;padding:18px;cursor:pointer;margin-top:8px}
+  .go:disabled{opacity:.35;cursor:not-allowed}
+  .confirm{display:none;margin-top:18px;border:1px solid var(--pink);padding:22px;font-size:1rem}
+  .confirm b{color:var(--pink)}
+  .fine{font-size:.75rem;color:#8a857e;margin-top:12px}
+  .visit{display:grid;gap:30px}
+  @media(min-width:820px){.visit{grid-template-columns:1fr 1fr}}
+  .hours{width:100%;border-collapse:collapse}
+  .hours td{padding:12px 0;border-bottom:1px solid var(--line);font-size:.98rem}
+  .hours td:last-child{text-align:right;font-weight:600}
+  .hours .closed{color:var(--mut)}
+  address{font-style:normal;font-size:1.05rem;line-height:1.7}
+  address a{color:var(--pink-d);font-weight:700}
+  .rev-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .rev-score{font-family:'Playfair Display',serif;font-weight:900;font-size:3.6rem;line-height:1}
+  .rev-score small{font-size:1.1rem;color:var(--mut);font-family:'Inter';font-weight:400}
+  .rev-grid{display:grid;gap:0;margin-top:18px;border-top:1px solid var(--line)}
+  .rev{padding:22px 0;border-bottom:1px solid var(--line);font-size:1rem}
+  .rev .stars{color:var(--pink-d);letter-spacing:3px;font-size:.9rem}
+  .rev .who{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-top:8px}
+  .stars-in{font-size:2rem;letter-spacing:8px;color:#d8d0c2;cursor:pointer;user-select:none;margin:10px 0}
+  .stars-in .on{color:var(--pink-d)}
+  footer{background:#0d0d0d;color:#8a857e;text-align:center;padding:34px 20px;font-size:.8rem;letter-spacing:.06em}
+  footer .fb{font-family:'Playfair Display',serif;font-style:italic;color:#f7f3ee;font-size:1.2rem;letter-spacing:0}
+  .sticky{position:fixed;bottom:14px;left:14px;right:14px;z-index:60;display:flex;justify-content:center;pointer-events:none}
+  .sticky a{pointer-events:auto;background:var(--ink);color:#f7f3ee;text-decoration:none;font-weight:700;font-size:.85rem;
+    letter-spacing:.08em;text-transform:uppercase;padding:14px 30px;border:2px solid var(--pink)}
+  @media(min-width:700px){.sticky{display:none}}
+  body{padding-bottom:70px}
+</style>
+</head>
+<body>
+<div class="demo-banner">A concept preview — <b>not affiliated</b> with Le Zebra Zalon</div>
+<div class="stripe"></div>
+
+<header class="mast">
+  <div class="brand">Le Zebra <em>Zalon</em></div>
+  <a href="tel:+19894632377">(989) 463-2377</a>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="kick">Full-service salon &amp; nails · Alma, MI</div>
+    <h1>Bold looks for <em>bold</em> people.</h1>
+    <p class="deck">Le Zebra Zalon is Alma's full-service salon — precision cuts, dimensional color, manicures, pedicures, and waxing, all under one roof. Rated <b>4.8 across 102 reviews</b> by people who don't settle.</p>
+    <div class="cta-row">
+      <a class="btn" href="#book">Reserve your chair</a>
+      <a class="btn alt" href="#services">See services</a>
+    </div>
+  </div>
+  <figure class="hero-fig">
+    <div class="ph">Your photo<br>here on the<br>live site</div>
+    <figcaption>Salon interior / work showcase</figcaption>
+  </figure>
+</section>
+
+<section class="pull">
+  <blockquote>"Finally, a salon that <b>listens</b>."<span class="src">— Review sentiment</span></blockquote>
+  <blockquote><b>102 reviews</b> averaging 4.8 stars.<span class="src">— Google listing</span></blockquote>
+  <blockquote>Cut, color, nails &amp; waxing — <b>one appointment</b>.<span class="src">— Full-service menu</span></blockquote>
+</section>
+
+<div class="stripe inv"></div>
+
+<section class="sec" id="services">
+  <div class="sec-head"><span class="n">No. 1</span><h2>Services &amp; Pricing</h2></div>
+  <div class="svc"><div class="idx">01</div><div><div class="nm">Haircut &amp; Style</div><div class="ds">Cut, wash, and finish</div></div><div class="pr">from $30</div></div>
+  <div class="svc"><div class="idx">02</div><div><div class="nm">Color &amp; Highlights</div><div class="ds">Full color, partial and full foils</div></div><div class="pr">from $65</div></div>
+  <div class="svc"><div class="idx">03</div><div><div class="nm">Manicure &amp; Pedicure</div><div class="ds">Classic and gel options</div></div><div class="pr">from $25</div></div>
+  <div class="svc"><div class="idx">04</div><div><div class="nm">Waxing</div><div class="ds">Brows, lip, and facial waxing</div></div><div class="pr">from $12</div></div>
+  <p class="fine" style="color:var(--mut)">Sample pricing shown — the salon sets the real menu.</p>
+</section>
+
+<div class="book" id="book">
+  <div class="stripe"></div>
+  <section class="sec">
+    <div class="sec-head"><span class="n" style="color:var(--pink)">No. 2</span><h2>Reserve Your Chair</h2></div>
+    <p style="color:#b9b2a6;max-width:36em">Pick a service, pick a time. On the live site this books straight into the salon's schedule.</p>
+    <div class="steps">
+      <div>
+        <div class="step-label">Service</div>
+        <div class="pickrow" id="bSvc"></div>
+        <div class="step-label" style="margin-top:22px">Day</div>
+        <div class="pickrow" id="bDay"></div>
+      </div>
+      <div>
+        <div class="step-label">Time</div>
+        <div class="pickrow" id="bTime"></div>
+        <div class="field" style="margin-top:22px"><label>Name</label><input id="bName" type="text" placeholder="What name should we put this under?"></div>
+        <div class="field"><label>Phone</label><input id="bPhone" type="tel" placeholder="Phone number"></div>
+        <button class="go" id="bGo" disabled>Confirm reservation</button>
+        <div class="confirm" id="bOk"></div>
+        <p class="fine">Demo only — no real booking is made.</p>
+      </div>
+    </div>
+  </section>
+  <div class="stripe inv"></div>
+</div>
+
+<section class="sec">
+  <div class="sec-head"><span class="n">No. 3</span><h2>Visit</h2></div>
+  <div class="visit">
+    <div>
+      <table class="hours">
+        <tr><td>Monday – Friday</td><td>10 AM – 7 PM</td></tr>
+        <tr><td>Saturday</td><td>10 AM – 2 PM</td></tr>
+        <tr><td>Sunday</td><td class="closed">Closed</td></tr>
+      </table>
+    </div>
+    <address>
+      121 E Superior St<br>Alma, MI 48801<br><br>
+      <a href="tel:+19894632377">(989) 463-2377</a><br><br>
+      <a href="https://www.google.com/maps/search/?api=1&query=Le+Zebra+Zalon+121+E+Superior+St+Alma+MI" target="_blank" rel="noopener">Get directions →</a>
+    </address>
+  </div>
+</section>
+
+<section class="sec" id="reviews" style="padding-top:0" data-greviews="Le Zebra Zalon, 121 E Superior St, Alma, MI">
+  <div class="sec-head"><span class="n">No. 4</span><h2>Reviews</h2></div>
+  <div class="rev-head"><div class="rev-score"><span id="gNum">4.8</span><small> / 5 · <span id="gCount">102 reviews</span></small></div></div>
+  <div class="rev-grid" id="revGrid">
+    <div class="rev"><div class="stars">★★★★★</div>102 reviews averaging <b>4.8 stars</b> — read them all on Google, and add yours below.<div class="who">Google listing</div></div>
+  </div>
+  <div style="max-width:520px;margin-top:22px">
+    <div class="stars-in" id="starsIn"><span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span></div>
+    <div class="field"><label>Name</label><input id="rName" type="text" placeholder="What name should we put this under?" style="background:#fff;border:1px solid var(--line);color:var(--ink)"></div>
+    <div class="field"><label>Review</label><input id="rText" type="text" placeholder="How'd we do?" style="background:#fff;border:1px solid var(--line);color:var(--ink)"></div>
+    <button class="go" id="rGo" style="max-width:520px">Send my review</button>
+    <div class="confirm" id="rOk" style="display:none;border-color:var(--pink-d);color:var(--ink);max-width:520px">Thanks — on the live site this goes straight to the salon.</div>
+    <p class="fine"><a href="https://www.google.com/maps/search/?api=1&query=Le+Zebra+Zalon+121+E+Superior+St+Alma+MI" target="_blank" rel="noopener" style="color:var(--pink-d);font-weight:700">Post it on Google too →</a> · Example only — not a live feed in this demo</p>
+  </div>
+</section>
+
+<footer>
+  <div class="fb">Le Zebra Zalon · Alma, MI</div>
+  <p>Concept preview — not affiliated. Built by Rival Eclipse.</p>
+</footer>
+
+<div class="sticky"><a href="tel:+19894632377">Call to book — (989) 463-2377</a></div>
+
+<script>
+const SVCS=['Haircut & Style','Color & Highlights','Manicure & Pedicure','Waxing'];
+let sSvc=0,sDay=0,sTime=null;
+const svcEl=document.getElementById('bSvc'),dayEl=document.getElementById('bDay'),timeEl=document.getElementById('bTime');
+SVCS.forEach((s,i)=>{const b=document.createElement('button');b.className='pick'+(i===0?' sel':'');b.textContent=s;
+  b.onclick=()=>{sSvc=i;svcEl.querySelectorAll('.pick').forEach((el,j)=>el.classList.toggle('sel',j===i));check();};svcEl.appendChild(b);});
+const days=[];const now=new Date();
+for(let i=0;i<14;i++){const d=new Date(now);d.setDate(now.getDate()+i);const dow=d.getDay();
+  if(dow===0||dow===1)continue;
+  days.push(d);if(days.length>=7)break;}
+days.forEach((d,i)=>{const b=document.createElement('button');b.className='pick'+(i===0?' sel':'');
+  b.textContent=d.toLocaleDateString('en-US',{weekday:'short'})+' '+(d.getMonth()+1)+'/'+d.getDate();
+  b.onclick=()=>{sDay=i;sTime=null;dayEl.querySelectorAll('.pick').forEach((el,j)=>el.classList.toggle('sel',j===i));drawTimes();check();};dayEl.appendChild(b);});
+function drawTimes(){timeEl.innerHTML='';sTime=null;
+  const times=['9:00a','10:30a','12:00p','1:30p','3:00p','4:30p','6:00p'];
+  times.forEach((t,idx)=>{const taken=((sDay*5+idx*3)%4===0);
+    const b=document.createElement('button');b.className='pick';b.textContent=t+(taken?' ✕':'');b.disabled=taken;b.style.opacity=taken?.35:1;
+    if(!taken)b.onclick=()=>{sTime=t;timeEl.querySelectorAll('.pick').forEach(el=>el.classList.remove('sel'));b.classList.add('sel');check();};
+    timeEl.appendChild(b);});}
+drawTimes();
+const bName=document.getElementById('bName'),bPhone=document.getElementById('bPhone'),bGo=document.getElementById('bGo');
+function check(){bGo.disabled=!(sTime&&bName.value.trim()&&bPhone.value.trim());}
+[bName,bPhone].forEach(el=>el.addEventListener('input',check));
+bGo.onclick=()=>{const d=days[sDay];
+  const ok=document.getElementById('bOk');
+  ok.innerHTML='Reserved: <b>'+SVCS[sSvc]+'</b> — '+d.toLocaleDateString('en-US',{weekday:'long'})+' '+(d.getMonth()+1)+'/'+d.getDate()+' at <b>'+sTime+'</b> for '+bName.value.trim()+'.<br><span style="font-size:.85rem">The salon would confirm by text.</span>';
+  ok.style.display='block';};
+document.querySelectorAll('#starsIn span').forEach(s=>{s.addEventListener('click',()=>{
+  const v=parseInt(s.dataset.v);
+  document.querySelectorAll('#starsIn span').forEach(x=>x.classList.toggle('on',parseInt(x.dataset.v)<=v));});});
+document.getElementById('rGo').onclick=()=>{document.getElementById('rOk').style.display='block';};
+(function(){const sec=document.querySelector('[data-greviews]');if(!sec)return;
+  fetch('/api/google-reviews?q='+encodeURIComponent(sec.getAttribute('data-greviews')))
+    .then(r=>{if(!r.ok)throw 0;return r.json();}).then(d=>{if(!d||d.error)throw 0;
+      if(d.rating)document.getElementById('gNum').textContent=Number(d.rating).toFixed(1);
+      if(d.count)document.getElementById('gCount').textContent=d.count+' reviews';}).catch(()=>{});})();
+</script>
+</body>
+</html>
