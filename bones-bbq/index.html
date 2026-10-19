@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<!-- HAND-CUSTOMIZED for Bones BBQ (Ithaca, MI) — do NOT regenerate with build_local_demos.py or this gets clobbered. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bones BBQ — Ithaca MI (Concept Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rye&family=Special+Elite&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--smoke:#171310;--coal:#241c16;--paper:#f5ead6;--paper2:#efe0c3;--ember:#ea580c;--ember2:#c2410c;--gold:#d9a441;--ink:#2b2119;--mut:#8a7a63}
+*{box-sizing:border-box}
+body{margin:0;background:var(--smoke);color:var(--paper);font-family:'Special Elite','Courier New',monospace;line-height:1.65}
+.demo-banner{background:#000;color:#a89f8d;text-align:center;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;padding:9px 14px;font-family:'Oswald',sans-serif}
+.demo-banner b{color:var(--ember)}
+.wrap{max-width:1020px;margin:0 auto;padding:0 20px}
+.mast{padding:46px 0 10px;text-align:center}
+.mast .est{font-family:'Oswald',sans-serif;letter-spacing:.35em;font-size:.72rem;color:var(--gold);text-transform:uppercase}
+.mast h1{font-family:'Rye',serif;font-size:clamp(3rem,9vw,5.2rem);color:var(--paper);margin:.15em 0 .1em;text-shadow:0 3px 0 #000,0 0 42px rgba(234,88,12,.25)}
+.mast h1 .amp{color:var(--ember)}
+.mast .tag{font-size:1rem;color:var(--mut);max-width:34rem;margin:0 auto}
+.flame-rule{height:3px;margin:26px auto 0;max-width:640px;background:linear-gradient(90deg,transparent,var(--ember) 20%,var(--gold) 50%,var(--ember) 80%,transparent);position:relative}
+.flame-rule:after{content:"\1F525";position:absolute;left:50%;top:-24px;transform:translateX(-50%);font-size:1.4rem;filter:drop-shadow(0 0 8px rgba(234,88,12,.8))}
+.board{margin:34px 0;background:var(--coal);border:2px solid #3a2d22;border-radius:6px;padding:26px 24px;position:relative;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+.board:before,.board:after{content:"";position:absolute;top:-9px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#6b5b45,#2b2119)}
+.board:before{left:26px}.board:after{right:26px}
+.board h2{font-family:'Rye',serif;color:var(--gold);font-size:1.5rem;margin:0 0 4px}
+.board .sub{font-size:.85rem;color:var(--mut);margin-bottom:16px}
+.smoke-row{display:flex;gap:12px;flex-wrap:wrap}
+.smoke-item{flex:1 1 180px;background:#171310;border:1px dashed #5a4632;padding:12px 14px;border-radius:4px}
+.smoke-item .t{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--paper);font-size:.95rem}
+.smoke-item .w{color:var(--ember);font-size:.8rem}
+.pill{display:inline-block;font-family:'Oswald',sans-serif;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;padding:3px 10px;border-radius:99px;vertical-align:middle;margin-left:8px}
+.pill.example{background:#3a2d22;color:var(--gold);border:1px solid var(--gold)}
+.pill.opt{background:#12351f;color:#7ddf9a;border:1px solid #2c6b41}
+.ledger{margin:44px 0 8px}
+.ledger h2{font-family:'Rye',serif;color:var(--paper);font-size:2rem;text-align:center;margin:0 0 4px}
+.ledger .lede{text-align:center;color:var(--mut);margin-bottom:24px}
+.ticket{background:var(--paper);color:var(--ink);border-radius:4px;margin:0 0 22px;position:relative;overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.45)}
+.ticket .stub-band{display:flex;align-items:stretch}
+.ticket .main{flex:1;padding:20px 22px}
+.ticket .stub{width:120px;flex:none;background:var(--paper2);border-left:2px dashed #b9a075;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px 8px;text-align:center}
+.ticket h3{font-family:'Oswald',sans-serif;font-size:1.35rem;letter-spacing:.03em;margin:0 0 4px;text-transform:uppercase}
+.ticket p{margin:0 0 8px;font-size:.92rem;color:#5b4c38}
+.ticket .from{font-family:'Oswald',sans-serif;color:var(--ember2);font-weight:700;font-size:1.1rem}
+.ticket .pick{font-family:'Oswald',sans-serif;background:var(--ember);color:#fff;border:0;border-radius:4px;padding:10px 14px;font-size:.85rem;letter-spacing:.06em;cursor:pointer;text-transform:uppercase;margin-top:8px}
+.ticket .pick.added{background:#166534}
+.stub .n{font-family:'Oswald',sans-serif;font-size:2rem;color:var(--ember2);font-weight:700;line-height:1}
+.stub .lbl{font-size:.68rem;color:#8a7a63;text-transform:uppercase;letter-spacing:.1em}
+.order{margin:40px 0;background:#101010;border:2px solid var(--gold);border-radius:6px;padding:26px 24px}
+.order h2{font-family:'Rye',serif;color:var(--gold);margin:0 0 4px;font-size:1.6rem}
+.order .sub{color:var(--mut);font-size:.85rem;margin-bottom:18px}
+.olines{border-top:1px dashed #5a4632;border-bottom:1px dashed #5a4632;padding:10px 0;margin-bottom:14px;min-height:64px}
+.oline{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:.95rem}
+.oline button{background:none;border:0;color:var(--ember);cursor:pointer;font-size:1rem;font-family:inherit}
+.ototal{display:flex;justify-content:space-between;font-family:'Oswald',sans-serif;font-size:1.25rem;color:var(--paper);text-transform:uppercase;letter-spacing:.06em}
+.oform{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.oform input{font-family:'Special Elite',monospace;background:#1c1611;border:1px solid #4a3a28;color:var(--paper);padding:12px;border-radius:4px;font-size:1rem}
+.oform input::placeholder{color:#6e5f4b}
+.obtn{grid-column:1/-1;font-family:'Oswald',sans-serif;background:var(--ember);color:#fff;border:0;border-radius:4px;padding:15px;font-size:1.05rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.obtn:hover{background:var(--ember2)}
+.onote{display:none;margin-top:12px;background:#12351f;color:#b7f0c6;border:1px solid #2c6b41;padding:12px;border-radius:4px;font-size:.9rem}
+.fame{margin:44px 0}
+.fame h2{font-family:'Rye',serif;font-size:1.8rem;color:var(--paper);text-align:center;margin:0 0 4px}
+.fame .lede{text-align:center;color:var(--mut);margin-bottom:20px;font-size:.9rem}
+.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.quote{background:var(--coal);border-left:4px solid var(--ember);padding:16px 18px;border-radius:0 6px 6px 0}
+.quote p{margin:0 0 8px;font-size:.95rem}
+.quote .who{font-family:'Oswald',sans-serif;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.visit{margin:44px 0 60px;background:var(--paper);color:var(--ink);border-radius:6px;padding:28px 26px}
+.visit h2{font-family:'Rye',serif;margin:0 0 10px;font-size:1.6rem}
+.hrow{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed #c9b68c;font-size:.95rem}
+.addr{margin-top:14px;font-size:.95rem}
+.bigcall{display:inline-block;margin-top:16px;font-family:'Oswald',sans-serif;background:var(--ember);color:#fff;text-decoration:none;padding:14px 30px;border-radius:4px;font-size:1.15rem;letter-spacing:.08em;text-transform:uppercase}
+footer{text-align:center;padding:26px 16px 90px;color:#6e5f4b;font-size:.8rem}
+.sticky{position:fixed;left:0;right:0;bottom:0;background:var(--ember);color:#fff;text-align:center;padding:15px;font-family:'Oswald',sans-serif;font-size:1.1rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;display:none;z-index:50}
+@media(max-width:640px){.sticky{display:block}.oform{grid-template-columns:1fr}.ticket .stub{width:96px}}
+</style>
+</head>
+<body>
+<div class="demo-banner">Concept preview for <b>Bones BBQ</b> — not their official site. Built by Rival Eclipse.</div>
+
+<div class="wrap">
+  <div class="mast">
+    <div class="est">Ithaca, Michigan &middot; Slow-Smoked Daily</div>
+    <h1>BONES <span class="amp">&amp;</span> BBQ</h1>
+    <p class="tag">Smoked BBQ, pool table, family-friendly — the "best ribs around," straight off the smoker at 101 E Center St.</p>
+    <div class="flame-rule"></div>
+  </div>
+
+  <div class="board">
+    <h2>On the Smoker Right Now <span class="pill example">For example only — not a live feed in this demo</span></h2>
+    <p class="sub">On the real site this board would pull live from the pit — what's smoking, what's resting, what's about to sell out.</p>
+    <div class="smoke-row">
+      <div class="smoke-item"><div class="t">St. Louis Ribs</div><div class="w">On since 6 AM &middot; ready ~11</div></div>
+      <div class="smoke-item"><div class="t">Brisket</div><div class="w">Resting &middot; limited today</div></div>
+      <div class="smoke-item"><div class="t">Pulled Pork</div><div class="w">Fresh pull at noon</div></div>
+      <div class="smoke-item"><div class="t">Burnt Ends</div><div class="w">Weekends only</div></div>
+    </div>
+  </div>
+
+  <div class="ledger">
+    <h2>The Smokehouse Ledger</h2>
+    <p class="lede">Tap <b style="color:var(--ember)">ADD TO TICKET</b> to start an order — your ticket builds below, the way it would work on the real site.</p>
+    <div id="menu"></div>
+  </div>
+
+  <div class="order" id="orderbox">
+    <h2>Your Order Ticket</h2>
+    <p class="sub">Demo checkout — on the real site this would text your order straight to the counter for pickup.</p>
+    <div class="olines" id="olines"><div style="color:#6e5f4b">Ticket's empty — add something smoky above.</div></div>
+    <div class="ototal"><span>Total</span><span id="ototal">$0.00</span></div>
+    <div class="oform">
+      <input id="oname" placeholder="Name for the ticket">
+      <input id="ophone" placeholder="Phone (we'll text when ready)">
+      <button class="obtn" onclick="sendOrder()">Send Order to the Counter</button>
+    </div>
+    <div class="onote" id="onote">Order's in! In the live version this would go straight to Bones' counter with your ticket number. Demo only — nothing was sent.</div>
+  </div>
+
+  <div class="fame">
+    <h2>Wall of Fame <span class="pill example">For example only — not a live feed in this demo</span></h2>
+    <p class="lede">What folks around town say — live Google reviews would stream in here on the real site.</p>
+    <div class="quotes">
+      <div class="quote"><p>"Best ribs around, no contest. The bark on these things should be illegal."</p><div class="who">Local regular</div></div>
+      <div class="quote"><p>"Family pack fed six of us with leftovers. Brisket melts."</p><div class="who">Ithaca mom of three</div></div>
+      <div class="quote"><p>"Pool table, cold drinks, great smoke. Our Friday spot."</p><div class="who">Friday-night crew</div></div>
+    </div>
+  </div>
+
+  <div class="visit">
+    <h2>Come Hungry</h2>
+    <div class="hrow"><span>Tue – Thu</span><span>11 AM – 8 PM</span></div>
+    <div class="hrow"><span>Fri</span><span>11 AM – 9 PM</span></div>
+    <div class="hrow"><span>Sat</span><span>3 PM – 9 PM</span></div>
+    <div class="hrow"><span>Sun – Mon</span><span>Closed</span></div>
+    <p class="addr">101 E Center St, Ithaca, MI<br>Pool table &middot; Family-friendly &middot; Dine-in &amp; carryout</p>
+    <a class="bigcall" href="tel:9893884202">(989) 388-4202</a>
+  </div>
+</div>
+
+<footer>
+  <p><strong>Bones BBQ</strong> — Ithaca, MI &middot; Concept demo, not the official site.</p>
+</footer>
+<a class="sticky" href="tel:9893884202">Call Bones BBQ</a>
+
+<script>
+const MENU=[
+ {n:"Smoked Ribs",d:"Slow-smoked St. Louis ribs — the 'best ribs around.'",p:14,tag:"Pit Favorite"},
+ {n:"Pulled Pork Plate",d:"Plates and sandwiches, piled high with slaw.",p:10,tag:"Smokehouse"},
+ {n:"Brisket Plate",d:"When it's gone, it's gone. Get here early.",p:15,tag:"Limited"},
+ {n:"Family Pack",d:"Feeds the whole crew — ribs, pork, sides, and bread.",p:45,tag:"Feeds 4-6"},
+ {n:"Burnt Ends Basket",d:"Weekend-only caramelized brisket bites.",p:12,tag:"Weekends"},
+ {n:"Side Sampler",d:"Three scratch sides — pick at the counter.",p:8,tag:"Smokehouse"}
+];
+const ticket=[];
+const menuEl=document.getElementById('menu');
+MENU.forEach((m,i)=>{
+  const t=document.createElement('div');t.className='ticket';
+  t.innerHTML='<div class="stub-band"><div class="main"><h3>'+m.n+'</h3><p>'+m.d+'</p>'
+   +'<span class="from">from $'+m.p+'</span><br>'
+   +'<button class="pick" data-i="'+i+'">Add to ticket</button></div>'
+   +'<div class="stub"><div class="n">'+String(i+1).padStart(2,'0')+'</div><div class="lbl">'+m.tag+'</div></div></div>';
+  menuEl.appendChild(t);
+});
+menuEl.addEventListener('click',e=>{
+  const b=e.target.closest('.pick');if(!b)return;
+  const m=MENU[+b.dataset.i];ticket.push(m);
+  b.textContent='Added ✓';b.classList.add('added');
+  setTimeout(()=>{b.textContent='Add to ticket';b.classList.remove('added')},900);
+  render();
+});
+function render(){
+  const box=document.getElementById('olines');
+  if(!ticket.length){box.innerHTML='<div style="color:#6e5f4b">Ticket\'s empty — add something smoky above.</div>';}
+  else box.innerHTML=ticket.map((m,i)=>'<div class="oline"><span>'+m.n+'</span><span>$'+m.p.toFixed(2)+' <button onclick="rm('+i+')" aria-label="remove">✕</button></span></div>').join('');
+  const tot=ticket.reduce((s,m)=>s+m.p,0);
+  document.getElementById('ototal').textContent='$'+tot.toFixed(2);
+}
+function rm(i){ticket.splice(i,1);render();}
+function sendOrder(){
+  const n=document.getElementById('oname').value.trim(),p=document.getElementById('ophone').value.trim();
+  if(!ticket.length){alert('Add something to your ticket first!');return;}
+  if(!n||!p){alert('Add your name and phone so the counter can reach you.');return;}
+  document.getElementById('onote').style.display='block';
+  document.getElementById('onote').scrollIntoView({behavior:'smooth',block:'center'});
+}
+render();
+</script>
+</body>
+</html>
