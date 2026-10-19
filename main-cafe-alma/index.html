@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Main Cafe — Alma, MI | Made-From-Scratch Breakfasts & Lunches</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--teal:#134e4a;--teal-d:#0c3532;--amber:#f59e0b;--amber-d:#b45309;--paper:#faf6ee;--cream:#f3ead9;--ink:#2b2118;--muted:#7a6a55}
+body{font-family:Georgia,'Times New Roman',serif;background:var(--paper);color:var(--ink);line-height:1.6}
+.demo-banner{background:#fff3cd;color:#664d03;text-align:center;padding:8px;font-size:13px;border-bottom:2px solid #ffda6a;font-family:system-ui,sans-serif}
+.statusbar{background:var(--teal);color:#fff;text-align:center;padding:7px 12px;font-family:system-ui,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase}
+.statusbar b{color:var(--amber)}
+.masthead{background:var(--paper);border-bottom:3px double var(--ink);padding:26px 20px 18px;text-align:center}
+.masthead .est{font-family:system-ui,sans-serif;font-size:12px;letter-spacing:5px;text-transform:uppercase;color:var(--muted)}
+.masthead h1{font-size:clamp(52px,9vw,96px);font-weight:400;letter-spacing:2px;margin:6px 0 2px}
+.masthead h1 .amp{color:var(--amber-d);font-style:italic}
+.masthead .tag{font-style:italic;color:var(--muted);font-size:18px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;min-height:60vh}
+.hero .photo{position:relative;overflow:hidden;min-height:320px}
+.hero .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .photo figcaption{position:absolute;bottom:12px;left:12px;background:rgba(12,53,50,.85);color:#fff;font-family:system-ui,sans-serif;font-size:12px;letter-spacing:1px;padding:6px 12px;text-transform:uppercase}
+.hero .intro{background:var(--teal);color:#fff;padding:56px 44px;display:flex;flex-direction:column;justify-content:center}
+.hero .intro .kicker{font-family:system-ui,sans-serif;font-size:13px;letter-spacing:4px;text-transform:uppercase;color:var(--amber);margin-bottom:14px}
+.hero .intro h2{font-size:clamp(30px,4vw,44px);font-weight:400;line-height:1.2;margin-bottom:16px}
+.hero .intro p{color:#d9cfbb;font-size:17px;max-width:420px}
+.hero .intro .stars{margin-top:18px;font-family:system-ui,sans-serif;font-size:14px;letter-spacing:1px;color:var(--amber)}
+.ticket{background:var(--cream);border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);padding:54px 22px}
+.ticket-inner{max-width:760px;margin:0 auto;background:#fffdf7;border:1px dashed #b9a77f;padding:40px 36px;box-shadow:0 10px 30px rgba(43,33,24,.12);position:relative}
+.ticket-inner:before{content:"";position:absolute;top:10px;left:10px;right:10px;bottom:10px;border:1px solid #e3d5b8;pointer-events:none}
+.ticket h2{text-align:center;font-size:34px;font-weight:400;letter-spacing:3px;text-transform:uppercase;margin-bottom:4px}
+.ticket .sub{text-align:center;font-style:italic;color:var(--muted);margin-bottom:30px}
+.trow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:14px 4px;border-bottom:1px dotted #c9b892}
+.trow:last-child{border-bottom:0}
+.trow .dish b{display:block;font-size:19px;font-weight:700}
+.trow .dish span{font-style:italic;color:var(--muted);font-size:15px}
+.trow .price{font-family:system-ui,sans-serif;font-weight:700;color:var(--amber-d);white-space:nowrap;font-size:18px}
+.lunch{background:var(--teal-d);color:#fff;padding:60px 22px}
+.lunch-inner{max-width:1000px;margin:0 auto}
+.lunch h2{font-size:clamp(28px,4vw,40px);font-weight:400;text-align:center;letter-spacing:2px;margin-bottom:6px}
+.lunch .sub{text-align:center;color:#b8c9c2;font-style:italic;margin-bottom:34px}
+.boards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.board{background:var(--teal);border:1px solid #2b5b57;padding:30px 24px;border-top:5px solid var(--amber)}
+.board h3{font-family:system-ui,sans-serif;font-size:14px;letter-spacing:3px;text-transform:uppercase;color:var(--amber);margin-bottom:10px}
+.board p{font-size:16px;color:#e8e2d2}
+.board .price{font-family:system-ui,sans-serif;font-weight:700;font-size:20px;color:#fff;margin-top:8px;display:block}
+.baked{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
+.baked .copy{padding:64px 48px;background:var(--paper)}
+.baked .copy .kicker{font-family:system-ui,sans-serif;font-size:13px;letter-spacing:4px;text-transform:uppercase;color:var(--amber-d);margin-bottom:12px}
+.baked .copy h2{font-size:clamp(30px,4vw,42px);font-weight:400;margin-bottom:14px}
+.baked .copy p{color:var(--muted);font-size:17px;max-width:440px;margin-bottom:22px}
+.baked .copy ul{list-style:none;font-size:17px}
+.baked .copy li{padding:10px 0;border-bottom:1px dotted #c9b892}
+.baked .copy li b{color:var(--teal)}
+.baked .photo{min-height:340px;position:relative;overflow:hidden}
+.baked .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.visit{background:var(--ink);color:#f3ead9;padding:60px 22px;text-align:center}
+.visit h2{font-size:32px;font-weight:400;letter-spacing:3px;text-transform:uppercase;margin-bottom:20px}
+.hours{max-width:460px;margin:0 auto 26px;font-family:system-ui,sans-serif;font-size:16px}
+.hrow{display:flex;justify-content:space-between;padding:10px 4px;border-bottom:1px dashed #5a4c3a}
+.visit address{font-style:normal;font-size:17px;line-height:2}
+.visit address a{color:var(--amber);text-decoration:none;font-weight:700}
+footer{background:#1a140d;color:#8a7a5f;text-align:center;padding:22px;font-family:system-ui,sans-serif;font-size:13px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.boards{grid-template-columns:1fr}.baked{grid-template-columns:1fr}.hero .intro{padding:40px 26px}.baked .copy{padding:44px 26px}}
+</style>
+</head>
+<body>
+<div class="demo-banner">A friendly concept preview of what Main Cafe's website could look like — not their official site.</div>
+<div class="statusbar">Downtown Alma &nbsp;·&nbsp; <b>Breakfast &amp; lunch, made from scratch</b> &nbsp;·&nbsp; 4.8 ★ (20 reviews)</div>
+<header class="masthead">
+<div class="est">Est. Alma, Michigan</div>
+<h1>Main <span class="amp">Cafe</span></h1>
+<div class="tag">Made-from-scratch breakfasts &amp; lunches — 4.8 stars</div>
+</header>
+<section class="hero">
+<figure class="photo"><img src="img/pancakes.jpg" alt="Stack of pancakes with maple syrup"><figcaption>From the griddle</figcaption></figure>
+<div class="intro">
+<div class="kicker">The morning table</div>
+<h2>Alma's downtown breakfast spot, where everything's made from scratch.</h2>
+<p>No freezer bags, no shortcuts — just a hot griddle, strong coffee, and the kind of breakfast that keeps regulars coming back to Superior Street.</p>
+<div class="stars">★★★★★ &nbsp;4.8 — "the best breakfast in town"</div>
+</div>
+</section>
+<section class="ticket">
+<div class="ticket-inner">
+<h2>Breakfast</h2>
+<p class="sub">Served Mon–Fri from 7 AM, Saturdays from 8 — made from scratch, from $7</p>
+<div class="trow"><div class="dish"><b>The Main Stack</b><span>Buttermilk pancakes, real maple syrup</span></div><div class="price">from $7</div></div>
+<div class="trow"><div class="dish"><b>Skillet Special</b><span>Eggs any style with home fries &amp; toast</span></div><div class="price">from $8</div></div>
+<div class="trow"><div class="dish"><b>Biscuits &amp; Gravy</b><span>House-made sausage gravy, fresh biscuits</span></div><div class="price">from $7</div></div>
+<div class="trow"><div class="dish"><b>Morning Omelet</b><span>Three eggs, your pick of fillings</span></div><div class="price">from $8</div></div>
+</div>
+</section>
+<section class="lunch">
+<div class="lunch-inner">
+<h2>The Lunch Counter</h2>
+<p class="sub">Sandwiches, soups, salads — from $8, weekdays till 2</p>
+<div class="boards">
+<div class="board"><h3>Sandwiches</h3><p>Stacked high on fresh-baked bread — turkey club, BLT, grilled cheese, and the daily special.</p><span class="price">from $8</span></div>
+<div class="board"><h3>Soups</h3><p>A rotating pot every day, made that morning. Ask what's simmering.</p><span class="price">cup $4 · bowl $6</span></div>
+<div class="board"><h3>Salads</h3><p>Crisp, generous, and actually filling — chef, garden, and seasonal picks.</p><span class="price">from $8</span></div>
+</div>
+</div>
+</section>
+<section class="baked">
+<div class="copy">
+<div class="kicker">Baked daily · Bottomless drip</div>
+<h2>Fresh from the oven, all day long.</h2>
+<p>The case by the register is never the same twice — whatever came out of the oven this morning is what you're getting.</p>
+<ul>
+<li><b>Baked goods</b> — fresh daily, while they last</li>
+<li><b>Coffee</b> — bottomless drip, plus espresso drinks</li>
+</ul>
+</div>
+<figure class="photo"><img src="img/coffee.jpg" alt="Fresh cup of coffee"><figcaption style="position:absolute;bottom:12px;left:12px;background:rgba(12,53,50,.85);color:#fff;font-family:system-ui,sans-serif;font-size:12px;letter-spacing:1px;padding:6px 12px;text-transform:uppercase">Bottomless drip</figcaption></figure>
+</section>
+<section class="visit">
+<h2>Come hungry</h2>
+<div class="hours">
+<div class="hrow"><span>Monday – Friday</span><b>7 AM – 2 PM</b></div>
+<div class="hrow"><span>Saturday</span><b>8 AM – 1 PM</b></div>
+<div class="hrow"><span>Sunday</span><b>Closed</b></div>
+</div>
+<address>117 E Superior St, Alma, MI<br><a href="tel:+19892851280">(989) 285-1280</a></address>
+</section>
+<footer>Concept demo by Rival Eclipse — Main Cafe, Alma MI</footer>
+</body>
+</html>
