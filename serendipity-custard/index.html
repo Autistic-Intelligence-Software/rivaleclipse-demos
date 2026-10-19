@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Serendipity Frozen Custard & Doughnuts — Alma, MI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--pink:#ff5c8a;--hot:#e8457c;--peach:#ffb347;--mint:#5fd6a4;--lav:#b79cff;--sky:#7cc7ff;--choc:#5b3a29;--cream:#fff7ef}
+body{font-family:Georgia,'Times New Roman',serif;color:#4a2c2c;line-height:1.6;background-color:var(--cream);background-image:radial-gradient(#ffd6e7 2.2px,transparent 2.8px),radial-gradient(#d3f5e2 2.2px,transparent 2.8px),radial-gradient(#e6dcff 2.2px,transparent 2.8px);background-size:56px 56px,84px 84px,112px 112px;background-position:0 0,28px 40px,56px 80px}
+.demo-banner{background:#fff3cd;color:#664d03;text-align:center;padding:8px;font-size:13px;border-bottom:2px solid #ffda6a;font-family:system-ui,sans-serif}
+.hero{position:relative;text-align:center;color:#fff}
+.hero img{width:100%;max-height:380px;object-fit:cover;display:block}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(190,40,90,.82),rgba(255,140,80,.25));display:flex;flex-direction:column;justify-content:flex-end;padding:28px 20px}
+.hero h1{font-size:36px;margin-bottom:4px;text-shadow:0 2px 10px rgba(0,0,0,.35);letter-spacing:1px}
+.hero p{font-style:italic;opacity:.97;margin-bottom:14px;font-size:17px}
+.btn{display:inline-block;background:linear-gradient(135deg,var(--pink),var(--peach));color:#fff;padding:14px 32px;border-radius:40px;text-decoration:none;font-weight:800;font-size:18px;font-family:system-ui,sans-serif;box-shadow:0 6px 18px rgba(232,69,124,.45);border:3px solid #fff}
+.marquee{overflow:hidden;white-space:nowrap;background:linear-gradient(90deg,var(--pink),var(--peach),var(--mint),var(--sky),var(--lav),var(--pink));padding:10px 0;font-family:system-ui,sans-serif;font-weight:800;color:#fff;font-size:15px;letter-spacing:2px;text-shadow:0 1px 4px rgba(0,0,0,.25)}
+.marquee span{display:inline-block;padding-left:100%;animation:scroll 22s linear infinite}
+@keyframes scroll{to{transform:translateX(-100%)}}
+.band{padding:34px 0}
+.band-inner{max-width:760px;margin:0 auto;padding:0 20px}
+.band-pink{background:linear-gradient(180deg,#ffe9f1,#ffd9e8)}
+.band-mint{background:linear-gradient(180deg,#e2fbee,#d2f5e0)}
+.band-lav{background:linear-gradient(180deg,#efe8ff,#e2d6ff)}
+.band-peach{background:linear-gradient(180deg,#ffefe0,#ffe3c9)}
+.band-sky{background:linear-gradient(180deg,#e3f3ff,#d2e9ff)}
+h2{margin-bottom:6px;color:#c22a63;font-size:28px;text-align:center;text-decoration:underline wavy var(--peach) 3px;text-underline-offset:8px;padding-bottom:10px}
+.sub{color:#8a5a5a;margin-bottom:20px;font-style:italic;text-align:center}
+.specials{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.specials figure{background:#fff;padding:10px;border-radius:18px;box-shadow:0 6px 18px rgba(194,42,99,.15);border:3px solid #ffd6e7;transform:rotate(-1deg)}
+.specials figure:last-child{transform:rotate(1deg)}
+.specials img{width:100%;border-radius:12px;display:block}
+.specials figcaption{font-size:14px;color:#a05a5a;margin-top:8px;font-style:italic;text-align:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{border-radius:18px;padding:18px;box-shadow:0 4px 14px rgba(0,0,0,.08);border:3px solid #fff}
+.card:nth-child(6n+1){background:#ffe3ee}
+.card:nth-child(6n+2){background:#ddf9e8}
+.card:nth-child(6n+3){background:#fff3d6}
+.card:nth-child(6n+4){background:#e8e2ff}
+.card:nth-child(6n+5){background:#dff3ff}
+.card:nth-child(6n){background:#ffe8d9}
+.card h3{font-size:18px;margin-bottom:4px;color:#a11d54}
+.card p{font-size:14px;color:#6b4a4a;font-family:system-ui,sans-serif}
+.price{display:inline-block;margin-top:8px;font-weight:800;color:#c22a63;font-family:system-ui,sans-serif;background:#fff;padding:2px 12px;border-radius:20px}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.gallery img{width:100%;height:180px;object-fit:cover;border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.12);border:4px solid #fff}
+.gallery img.tall{grid-row:span 2;height:372px}
+.gallery img:nth-child(odd){transform:rotate(-1deg)}
+.gallery img:nth-child(even){transform:rotate(1deg)}
+.hrow{display:flex;justify-content:space-between;padding:10px 4px;border-bottom:3px dotted #f0b429;font-family:system-ui,sans-serif;font-weight:600}
+.visit-card{background:#fff;border-radius:20px;padding:22px;border:3px solid #ffd6e7;box-shadow:0 6px 18px rgba(194,42,99,.12);text-align:center}
+.visit-card p{margin-top:10px;font-family:system-ui,sans-serif}
+.visit-card a{color:#c22a63;font-weight:700}
+form input,form textarea{width:100%;padding:14px;margin-bottom:12px;border:3px solid #ffd6e7;border-radius:16px;font-size:16px;font-family:system-ui,sans-serif;background:#fff}
+form input:focus,form textarea:focus{outline:none;border-color:var(--pink)}
+form button{width:100%;background:linear-gradient(135deg,var(--pink),var(--peach));color:#fff;border:3px solid #fff;padding:15px;border-radius:40px;font-size:19px;font-weight:800;font-family:system-ui,sans-serif;box-shadow:0 6px 18px rgba(232,69,124,.45)}
+#form-note{display:none;background:#d4edda;color:#155724;padding:12px;border-radius:14px;margin-top:10px;font-family:system-ui,sans-serif}
+footer{background:linear-gradient(135deg,#5b2340,#8a2c5c);color:#ffe9f1;text-align:center;padding:30px 20px;font-size:14px;font-family:system-ui,sans-serif}
+footer a{color:#ffe9f1}
+.sticky-call{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(90deg,var(--pink),var(--peach));color:#fff;text-align:center;padding:16px;font-size:20px;font-weight:800;text-decoration:none;display:none;font-family:system-ui,sans-serif;box-shadow:0 -2px 12px rgba(0,0,0,.2)}
+@media(max-width:640px){.sticky-call{display:block}body{padding-bottom:62px}.grid,.specials{grid-template-columns:1fr}.hero h1{font-size:30px}.marquee span{animation-duration:14s}}
+/* ---- around the web: social + reviews ---- */
+.band-lemon{background:linear-gradient(180deg,#fff8e1,#ffefc2)}
+.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media(max-width:640px){.social-grid{grid-template-columns:1fr}}
+.soc-card{background:#fff;border-radius:20px;padding:20px;border:3px solid #fff;box-shadow:0 6px 18px rgba(0,0,0,.1);overflow:hidden}
+.soc-card h3{font-size:20px;color:#a11d54;margin-bottom:4px;text-align:center}
+.soc-card .why{text-align:center;font-size:13px;color:#a05a5a;font-style:italic;margin-bottom:12px}
+.g-score{text-align:center;margin-bottom:6px}
+.g-score .big{font-size:46px;font-weight:800;color:#c22a63;font-family:system-ui,sans-serif;line-height:1}
+.g-stars{color:#f0b429;font-size:22px;letter-spacing:3px}
+.g-count{font-family:system-ui,sans-serif;font-size:14px;color:#8a5a5a}
+.rev-card{background:#fff7ef;border-radius:14px;padding:12px 14px;margin:10px 0;font-size:14px;font-family:system-ui,sans-serif;color:#5a3a3a}
+.rev-card .who{font-weight:700;color:#a11d54}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.btn2{display:inline-block;background:linear-gradient(135deg,var(--pink),var(--peach));color:#fff;padding:11px 22px;border-radius:30px;text-decoration:none;font-weight:800;font-family:system-ui,sans-serif;font-size:15px;border:2px solid #fff;box-shadow:0 4px 12px rgba(232,69,124,.35)}
+.btn2.alt{background:#fff;color:#c22a63;border:2px solid #ffd6e7;box-shadow:none}
+.stars-in{font-size:32px;cursor:pointer;color:#e0d4d4;letter-spacing:5px;text-align:center;margin:10px 0 4px;user-select:none}
+.stars-in .on{color:#f0b429}
+#rev-ok{display:none;background:#d4edda;color:#155724;padding:12px;border-radius:14px;margin-top:10px;font-family:system-ui,sans-serif;text-align:center;font-size:14px}
+.fb-wrap{display:flex;justify-content:center}
+.pill{display:inline-block;font-family:system-ui,sans-serif;font-size:12px;font-weight:700;background:#fff;border:2px solid #e8b4c8;color:#a11d54;border-radius:999px;padding:4px 14px;margin:2px}
+</style>
+</head>
+<body>
+<div class="demo-banner">A friendly concept preview of what Serendipity's website could look like — not their official site.</div>
+
+<div class="hero">
+<img src="img/storefront-sign.jpg" alt="Serendipity Frozen Custard & Doughnuts storefront sign">
+<div class="hero-overlay">
+<h1>Serendipity</h1>
+<p>ser·en·dip·i·ty — an awesome accident</p>
+<a class="btn" href="tel:9892851061">&#128222; (989) 285-1061</a>
+</div>
+</div>
+
+<div class="marquee"><span>VANILLA &#10022; CHOCOLATE &#10022; STRAWBERRY &#10022; MINT CHIP &#10022; COOKIES &amp; CREAM &#10022; BUTTER PECAN &#10022; RASPBERRY &#10022; CARAMEL &#10022; COFFEE &#10022; LEMON &#10022;&nbsp;</span></div>
+
+<div class="band band-pink"><div class="band-inner">
+<h2>This Week at Serendipity</h2>
+<p class="sub">Fresh specials, made with love — 4.8 stars from 71 happy reviews</p>
+<div class="specials">
+<figure><img src="img/special-sunset-blast.jpg" alt="Sunset Blast Treats — Raspberry Mango Smoothie and Sundae"><figcaption>Sunset Blast Treats — Raspberry &amp; Mango</figcaption></figure>
+<figure><img src="img/special-week.jpg" alt="Sundae and Shake of the Week — Black Raspberry Sundae and White Chocolate Shake"><figcaption>Sundae &amp; Shake of the Week</figcaption></figure>
+</div>
+</div></div>
+
+<div class="band band-mint"><div class="band-inner">
+<h2>Customer Favorites</h2>
+<p class="sub">More than 50 flavors to choose from — there's something for everyone</p>
+<div class="grid">
+<div class="card"><h3>Extra Thick Shake</h3><p>Spoon-standing thick, any flavor you dream up</p><span class="price">$5.00</span></div>
+<div class="card"><h3>Banana Split</h3><p>The classic, piled high with toppings</p></div>
+<div class="card"><h3>Chocolate Covered Strawberries</h3><p>Sweet, fresh, and impossible to resist</p></div>
+<div class="card"><h3>Hot Fudge &amp; Hot Caramel</h3><p>Warmed to order over cold, creamy custard</p></div>
+<div class="card"><h3>Oreo Crumble</h3><p>A crowd favorite in every form</p></div>
+<div class="card"><h3>Custom Custard Cakes</h3><p>Sharks, Minecraft, birthdays — you dream it, we make it</p><span class="price">from $40</span></div>
+</div>
+</div></div>
+
+<div class="band band-lav"><div class="band-inner">
+<h2>Fresh From the Shop</h2>
+<p class="sub">A little peek inside — come see (and taste) for yourself</p>
+<div class="gallery">
+<img class="tall" src="img/storefront-night.jpg" alt="Serendipity storefront at night with string lights">
+<img src="img/banana-split.jpg" alt="Banana split with whipped cream and cherries">
+<img src="img/display-case.jpg" alt="Display case full of fresh treats">
+<img src="img/cake-shark.jpg" alt="Custom shark birthday cake">
+<img src="img/cake-minecraft.jpg" alt="Custom Minecraft birthday cake">
+<img src="img/shop-sign.jpg" alt="Serendipity definition sign inside the shop">
+</div>
+</div></div>
+
+<div class="band band-peach"><div class="band-inner">
+<h2>Order Ahead</h2>
+<p class="sub">Skip the line — we'll have it ready with a smile</p>
+<form onsubmit="document.getElementById('form-note').style.display='block';return false;">
+<input placeholder="What name should we put this under?" required>
+<input placeholder="Phone number" required>
+<textarea placeholder="What are you craving today? Tell us your order and we'll have it ready!" rows="3"></textarea>
+<button type="submit">Send My Order</button>
+</form>
+<p id="form-note">This is just a demo — on the real site, your order would go straight to the shop!</p>
+</div></div>
+
+<div class="band band-sky"><div class="band-inner">
+<h2>Come Visit Us</h2>
+<p class="sub">We'd love to see you — bring the family</p>
+<div class="visit-card">
+<div class="hrow"><span>Monday – Thursday</span><span>4 PM – 8 PM</span></div>
+<div class="hrow"><span>Friday – Saturday</span><span>4 PM – 9 PM</span></div>
+<div class="hrow"><span>Sunday</span><span>Closed</span></div>
+<p>&#128205; 119 E Superior St, Alma, MI</p>
+<p>&#128222; <a href="tel:9892851061">(989) 285-1061</a></p>
+</div>
+</div></div>
+
+<div class="band band-lemon"><div class="band-inner">
+<h2>Around the Web</h2>
+<p class="sub">Our latest posts and your kind words — live from our pages</p>
+<p style="text-align:center;margin:-6px 0 18px"><span class="pill">For example only — not a live feed in this demo</span> <span class="pill">Optional add-on</span></p>
+<div class="social-grid">
+<div class="soc-card">
+<h3>&#128153; Facebook</h3>
+<p class="why">Fresh posts, photos &amp; specials as we share them</p>
+<div class="fb-wrap">
+<div class="fb-page" data-href="https://www.facebook.com/SerendipityAlma" data-tabs="timeline" data-width="340" data-height="480" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/SerendipityAlma" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/SerendipityAlma">Serendipity</a></blockquote></div>
+</div>
+</div>
+<div class="soc-card" data-greviews="Serendipity Frozen Custard & Doughnuts, 119 E Superior St, Alma, MI">
+<h3>&#11088; Google Reviews</h3>
+<p class="why">What Alma is saying about us</p>
+<div class="g-score">
+<div class="big">4.8</div>
+<div class="g-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+<div class="g-count">71 Google reviews</div>
+</div>
+<div class="rev-list">
+<div class="rev-card" style="text-align:center">71 reviews averaging <b>4.8 stars</b> — read them all on our Google listing, and add yours below.</div>
+</div>
+<p class="why" style="margin-top:10px">Had a sweet visit? Leave us some stars:</p>
+<div class="stars-in" id="starsIn"><span data-v="1">&#9733;</span><span data-v="2">&#9733;</span><span data-v="3">&#9733;</span><span data-v="4">&#9733;</span><span data-v="5">&#9733;</span></div>
+<form onsubmit="document.getElementById('rev-ok').style.display='block';return false;">
+<input placeholder="Your name" required>
+<textarea placeholder="Tell us what you loved!" rows="2"></textarea>
+<button type="submit">Send My Review</button>
+</form>
+<p id="rev-ok">Thank you! On the live site this goes straight to the shop — and you can also post it on Google below.</p>
+<div class="btn-row">
+<a class="btn2" href="https://www.google.com/maps/search/?api=1&query=Serendipity+Frozen+Custard+Doughnuts+119+E+Superior+St+Alma+MI" target="_blank" rel="noopener">Post it on Google too</a>
+</div>
+</div>
+</div>
+</div></div>
+
+<footer>
+<p><strong>Serendipity Frozen Custard &amp; Doughnuts</strong> — Alma, MI</p>
+<p style="margin-top:6px;font-style:italic;">Serving up Alma's best frozen treats, and more!</p>
+<p style="margin-top:10px;font-size:12px;opacity:.7;">Made with care as a concept preview — not the official site.</p>
+</footer>
+<a class="sticky-call" href="tel:9892851061">&#128222; Call Us!</a>
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v21.0"></script>
+<script>
+document.querySelectorAll('#starsIn span').forEach(function(s){
+  s.addEventListener('click',function(){
+    var v=parseInt(s.getAttribute('data-v'));
+    document.querySelectorAll('#starsIn span').forEach(function(x){
+      x.classList.toggle('on',parseInt(x.getAttribute('data-v'))<=v);
+    });
+  });
+});
+/* ---- live Google reviews: tries /api/google-reviews, keeps static fallback ---- */
+(function(){
+  var card=document.querySelector('[data-greviews]');
+  if(!card) return;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  fetch('/api/google-reviews?q='+encodeURIComponent(card.getAttribute('data-greviews')))
+    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(d){
+      if(!d||d.error) throw 0;
+      var big=card.querySelector('.g-score .big'), cnt=card.querySelector('.g-count'), st=card.querySelector('.g-stars');
+      if(d.rating&&big) big.textContent=Number(d.rating).toFixed(1);
+      if(d.count&&cnt) cnt.textContent=d.count+' Google reviews';
+      if(d.rating&&st){ var f=Math.round(d.rating); st.textContent='★★★★★'.slice(0,f)+'☆☆☆☆☆'.slice(0,5-f); }
+      if(d.reviews&&d.reviews.length){
+        var box=card.querySelector('.rev-list');
+        if(box) box.innerHTML=d.reviews.slice(0,3).map(function(r){
+          var s='★'.repeat(Math.max(1,Math.min(5,r.rating||5)));
+          return '<div class="rev-card"><span class="who">'+s+'</span> &quot;'+esc((r.text||'').slice(0,220))+'&quot; <span class="who">— '+esc(r.author||'Google user')+'</span></div>';
+        }).join('');
+      }
+    })
+    .catch(function(){/* worker not deployed yet — static numbers stay */});
+})();
+</script>
+</body>
+</html>
