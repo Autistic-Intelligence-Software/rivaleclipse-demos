@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<!-- HAND-CUSTOMIZED for River Rock Bar & Grill (St. Louis, MI) — do NOT regenerate with build_local_demos.py or this gets clobbered. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>River Rock Bar &amp; Grill — St. Louis MI (Concept Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--river:#0a2540;--deep:#061627;--wave:#0e3a5f;--neon:#38bdf8;--amber:#fbbf24;--cream:#f4efe4;--ink:#0d1b2a;--mut:#93a7bd}
+*{box-sizing:border-box}
+body{margin:0;background:var(--deep);color:var(--cream);font-family:'Inter',system-ui,sans-serif;line-height:1.6}
+.demo-banner{background:#02070d;color:#7d8ea3;text-align:center;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;padding:9px 14px}
+.demo-banner b{color:var(--neon)}
+.pill{display:inline-block;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;padding:3px 10px;border-radius:99px;vertical-align:middle;margin-left:8px;font-weight:700}
+.pill.example{background:rgba(56,189,248,.12);color:var(--neon);border:1px solid var(--neon)}
+.pill.opt{background:rgba(125,223,154,.1);color:#7ddf9a;border:1px solid #2c6b41}
+/* neon masthead */
+.hero{text-align:center;padding:60px 20px 8px;position:relative;overflow:hidden}
+.hero .over{letter-spacing:.4em;font-size:.7rem;color:var(--mut);text-transform:uppercase}
+.hero h1{font-family:'Bungee',cursive;font-size:clamp(2.4rem,8vw,4.6rem);margin:.2em 0 .1em;line-height:1.05;
+ color:#fff;text-shadow:0 0 8px rgba(56,189,248,.9),0 0 28px rgba(56,189,248,.55),0 0 70px rgba(56,189,248,.3)}
+.hero h1 .grill{display:block;color:var(--amber);text-shadow:0 0 8px rgba(251,191,36,.9),0 0 28px rgba(251,191,36,.5),0 0 70px rgba(251,191,36,.3);font-size:.62em;letter-spacing:.12em}
+.hero p{color:var(--mut);max-width:32rem;margin:0 auto}
+.wave{display:block;width:100%;height:70px;margin-top:-2px}
+/* tap list */
+.tapwrap{background:var(--river);padding:56px 20px 60px}
+.inner{max-width:1000px;margin:0 auto}
+.tapwrap h2{font-family:'Bungee',cursive;font-size:1.7rem;margin:0 0 4px;color:#fff}
+.tapwrap .sub{color:var(--mut);margin-bottom:26px;font-size:.92rem}
+.taps{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}
+.tap{background:#0d2f52;border:1px solid #1c4a75;border-radius:12px;padding:18px 14px;text-align:center;cursor:pointer;transition:transform .15s,border-color .15s}
+.tap:hover{transform:translateY(-4px);border-color:var(--neon)}
+.tap.sel{border-color:var(--amber);box-shadow:0 0 18px rgba(251,191,36,.35)}
+.tap .handle{font-size:2.2rem}
+.tap .nm{font-weight:700;margin-top:6px;font-size:.95rem}
+.tap .st{font-size:.75rem;color:var(--mut)}
+.tapdetail{margin-top:22px;background:#081c33;border:1px solid #1c4a75;border-radius:12px;padding:22px;display:none}
+.tapdetail.show{display:block}
+.tapdetail h3{margin:0 0 6px;font-family:'Bungee',cursive;font-size:1.1rem;color:var(--amber)}
+.tapdetail p{margin:0;color:#c9d6e3;font-size:.92rem}
+.pourbar{height:10px;background:#081c33;border-radius:99px;margin-top:14px;overflow:hidden;border:1px solid #1c4a75}
+.pourbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--amber),var(--neon));border-radius:99px;transition:width 1.2s ease}
+/* menu river */
+.menu{background:var(--deep);padding:56px 20px 20px}
+.menu h2{font-family:'Bungee',cursive;font-size:1.7rem;text-align:center;margin:0 0 4px;color:#fff}
+.menu .lede{text-align:center;color:var(--mut);margin-bottom:30px;font-size:.92rem}
+.mrow{display:flex;gap:0;margin:0 0 26px;background:var(--river);border-radius:14px;overflow:hidden;border:1px solid #1c4a75}
+.mrow .mimg{flex:0 0 34%;min-height:150px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,#0e3a5f,#134e7c)}
+.mrow .mtxt{flex:1;padding:20px 22px}
+.mrow h3{margin:0 0 4px;font-size:1.2rem;color:var(--amber)}
+.mrow p{margin:0 0 6px;color:#c9d6e3;font-size:.92rem}
+.mrow .pr{font-weight:800;color:var(--neon)}
+.mrow.alt{flex-direction:row-reverse}
+/* reservation */
+.res{background:var(--river);padding:56px 20px 60px}
+.res h2{font-family:'Bungee',cursive;font-size:1.7rem;margin:0 0 4px;color:#fff;text-align:center}
+.res .sub{text-align:center;color:var(--mut);margin-bottom:24px;font-size:.92rem}
+.rform{max-width:560px;margin:0 auto;background:#081c33;border:1px solid #1c4a75;border-radius:14px;padding:26px}
+.rform .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rform label{display:block;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:4px}
+.rform input,.rform select{width:100%;background:#0d2f52;border:1px solid #1c4a75;color:#fff;padding:12px;border-radius:8px;font-size:1rem;font-family:inherit;margin-bottom:14px}
+.rbtn{width:100%;font-family:'Bungee',cursive;background:var(--amber);color:#1a1005;border:0;border-radius:10px;padding:15px;font-size:1.05rem;cursor:pointer}
+.rbtn:hover{filter:brightness(1.08)}
+.rnote{display:none;margin-top:14px;background:rgba(125,223,154,.1);border:1px solid #2c6b41;color:#b7f0c6;padding:14px;border-radius:8px;font-size:.92rem}
+/* visit */
+.visit{background:var(--deep);padding:56px 20px 70px;text-align:center}
+.visit h2{font-family:'Bungee',cursive;color:#fff;font-size:1.6rem;margin:0 0 8px}
+.hours{display:inline-block;text-align:left;background:var(--river);border:1px solid #1c4a75;border-radius:12px;padding:18px 26px;margin:14px 0}
+.hrow{display:flex;justify-content:space-between;gap:30px;padding:6px 0;font-size:.95rem}
+.addr{color:var(--mut);margin-top:10px}
+.bigcall{display:inline-block;margin-top:18px;font-family:'Bungee',cursive;background:var(--neon);color:#04121f;text-decoration:none;padding:15px 34px;border-radius:12px;font-size:1.05rem;box-shadow:0 0 24px rgba(56,189,248,.4)}
+footer{text-align:center;padding:24px 16px 90px;color:#5b6b7e;font-size:.8rem}
+.sticky{position:fixed;left:0;right:0;bottom:0;background:var(--neon);color:#04121f;text-align:center;padding:15px;font-weight:800;font-size:1.05rem;text-decoration:none;display:none;z-index:50}
+@media(max-width:640px){.sticky{display:block}.mrow,.mrow.alt{flex-direction:column}.mrow .mimg{min-height:110px}.rform .grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="demo-banner">Concept preview for <b>River Rock Bar &amp; Grill</b> — not their official site. Built by Rival Eclipse.</div>
+
+<div class="hero">
+  <div class="over">St. Louis, Michigan · On the River</div>
+  <h1>RIVER ROCK <span class="grill">BAR &amp; GRILL</span></h1>
+  <p>Hometown bar &amp; grill on the river — breakfast through dinner, full bar, and a seat with a view at 210 N Mill St.</p>
+</div>
+<svg class="wave" viewBox="0 0 1200 70" preserveAspectRatio="none"><path d="M0,35 C200,70 400,0 600,35 C800,70 1000,0 1200,35 L1200,70 L0,70 Z" fill="#0a2540"/></svg>
+
+<div class="tapwrap">
+  <div class="inner">
+    <h2>On Tap <span class="pill example">For example only — not a live feed in this demo</span></h2>
+    <p class="sub">Tap a handle to see what's pouring — on the real site this board would update live from the bar.</p>
+    <div class="taps" id="taps"></div>
+    <div class="tapdetail" id="tapdetail">
+      <h3 id="td-name"></h3>
+      <p id="td-desc"></p>
+      <div class="pourbar"><i id="td-pour"></i></div>
+    </div>
+  </div>
+</div>
+<svg class="wave" viewBox="0 0 1200 70" preserveAspectRatio="none" style="background:#0a2540"><path d="M0,35 C200,0 400,70 600,35 C800,0 1000,70 1200,35 L1200,70 L0,70 Z" fill="#061627"/></svg>
+
+<div class="menu">
+  <div class="inner">
+    <h2>From the Kitchen</h2>
+    <p class="lede">Breakfast at 8, burgers at noon, comfort plates at night.</p>
+    <div class="mrow"><div class="mimg">🍳</div><div class="mtxt"><h3>Breakfast</h3><p>Served all morning — skillets, omelets, and the lumberjack special.</p><div class="pr">from $7</div></div></div>
+    <div class="mrow alt"><div class="mimg">🍔</div><div class="mtxt"><h3>Burgers &amp; Sandwiches</h3><p>Bar-grill classics, hand-pattied and stacked.</p><div class="pr">from $9</div></div></div>
+    <div class="mrow"><div class="mimg">🍽️</div><div class="mtxt"><h3>Dinner Plates</h3><p>Comfort food done right — Friday fish fry is a local tradition.</p><div class="pr">from $12</div></div></div>
+    <div class="mrow alt"><div class="mimg">🍺</div><div class="mtxt"><h3>Drinks</h3><p>Full bar, riverfront seating, and a deck made for summer nights.</p><div class="pr">Full bar</div></div></div>
+  </div>
+</div>
+
+<div class="res">
+  <div class="inner">
+    <h2>Grab a Table</h2>
+    <p class="sub">Demo reservation — on the real site this would book straight into their book.</p>
+    <div class="rform">
+      <div class="grid2">
+        <div><label>Day</label><input type="date" id="rday"></div>
+        <div><label>Time</label><select id="rtime"><option>5:00 PM</option><option>5:30 PM</option><option>6:00 PM</option><option>6:30 PM</option><option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option></select></div>
+      </div>
+      <div class="grid2">
+        <div><label>Party size</label><select id="rparty"><option>2 people</option><option>3 people</option><option>4 people</option><option>5 people</option><option>6+ (call us)</option></select></div>
+        <div><label>Name</label><input id="rname" placeholder="Your name"></div>
+      </div>
+      <label>Seating</label>
+      <select id="rseat"><option>Riverside deck (weather permitting)</option><option>Inside — bar side</option><option>Inside — dining room</option></select>
+      <button class="rbtn" onclick="book()">Request This Table</button>
+      <div class="rnote" id="rnote"></div>
+    </div>
+  </div>
+</div>
+
+<div class="visit">
+  <h2>Find Us on the River</h2>
+  <div class="hours">
+    <div class="hrow"><span>Mon – Sat</span><span><b>9 AM – 9 PM</b></span></div>
+    <div class="hrow"><span>Sun</span><span>Closed</span></div>
+  </div>
+  <p class="addr">210 N Mill St, St. Louis, MI<br>Riverfront seating · Full bar · Breakfast through dinner</p><br>
+  <a class="bigcall" href="tel:9896812851">(989) 681-2851</a>
+</div>
+
+<footer><p><strong>River Rock Bar &amp; Grill</strong> — St. Louis, MI &middot; Concept demo, not the official site.</p></footer>
+<a class="sticky" href="tel:9896812851">Call River Rock</a>
+
+<script>
+const TAPS=[
+ {e:"🍺",n:"River Rock Lager",s:"House lager · 4.8%",d:"Crisp, easy-drinking house lager brewed for the deck. The one the regulars order without asking."},
+ {e:"🍻",n:"Pine River IPA",s:"Michigan IPA · 6.2%",d:"Piney Michigan IPA with a citrus finish. For when the lager isn't doing it."},
+ {e:"🥃",n:"Smoked Old Fashioned",s:"Signature cocktail",d:"Bourbon, smoked cherry, orange oils. The drink people drive across the county for."},
+ {e:"🍹",n:"River Mule",s:"Seasonal",d:"Rotating mule — ask what's in the copper mug this week."},
+ {e:"☕",n:"Bottomless Diner Coffee",s:"Mornings",d:"Hot, honest, and endless until 11 AM. Pairs with everything on the breakfast menu."}
+];
+const tapsEl=document.getElementById('taps');
+TAPS.forEach((t,i)=>{
+  const d=document.createElement('div');d.className='tap';
+  d.innerHTML='<div class="handle">'+t.e+'</div><div class="nm">'+t.n+'</div><div class="st">'+t.s+'</div>';
+  d.onclick=()=>{
+    document.querySelectorAll('.tap').forEach(x=>x.classList.remove('sel'));
+    d.classList.add('sel');
+    const det=document.getElementById('tapdetail');
+    det.classList.add('show');
+    document.getElementById('td-name').textContent=t.n+' — '+t.s;
+    document.getElementById('td-desc').textContent=t.d;
+    const pour=document.getElementById('td-pour');
+    pour.style.width='0';
+    setTimeout(()=>{pour.style.width=(55+Math.floor(Math.random()*40))+'%';},60);
+  };
+  tapsEl.appendChild(d);
+});
+document.getElementById('rday').valueAsDate=new Date();
+function book(){
+  const day=document.getElementById('rday').value,time=document.getElementById('rtime').value,
+        party=document.getElementById('rparty').value,name=document.getElementById('rname').value.trim(),
+        seat=document.getElementById('rseat').value;
+  const note=document.getElementById('rnote');
+  if(!name){alert('Add your name so we know who to expect!');return;}
+  note.style.display='block';
+  note.innerHTML='<b>Table requested!</b> '+party+' for <b>'+name+'</b> — '+day+' at '+time+', '+seat.toLowerCase()+'. Demo only — on the real site this would confirm straight into their book.';
+  note.scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+</body>
+</html>
