@@ -84,6 +84,16 @@ canvas.spark{width:100%;height:48px;display:block}
 .tothers{color:var(--mut);font-size:12px}
 .swline,.learnline{color:var(--mut);font-size:12px;margin-top:5px;line-height:1.55}
 .learnline{color:#b9b4d6}
+.pooline{color:var(--mut);font-size:12px;margin-top:3px;line-height:1.55}
+#oddsCoin{background:#0c0c18;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:8px 10px;font-size:14px}
+#oddsGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:10px;margin-top:14px}
+.ocard{background:#0c0c18;border:1px solid var(--line);border-radius:14px;padding:12px}
+.ocard .oh{font-size:12px;color:var(--mut);letter-spacing:.1em;text-transform:uppercase;display:flex;justify-content:space-between;gap:6px}
+.ocard .ocall{font-size:19px;font-weight:800;margin-top:6px}
+.ocard .ocall.over{color:var(--up)} .ocard .ocall.under{color:var(--down)} .ocard .ocall.noedge{color:var(--mut)}
+.ocard .opct{font-size:13.5px;color:var(--txt);margin-top:2px;font-variant-numeric:tabular-nums}
+.ocard .ostat{font-size:11.5px;color:var(--mut);margin-top:6px;line-height:1.5}
+.weak{color:var(--edge);font-weight:700}
 @media (max-width:460px){.charts{grid-template-columns:1fr}}
 .regime{color:var(--mut);font-size:12px;line-height:1.5;margin-top:4px}
 .snipe{
@@ -153,6 +163,26 @@ footer{max-width:1180px;margin:0 auto;padding:0 18px 34px;color:var(--mut);font-
     <div class="note">The floating panel in this browser edition uses Chrome's picture-in-picture. The Android app floats over any app instead — its download button activates when the build lands.</div>
   </section>
 
+  <section class="card" id="oddsCard">
+    <h2>Odds — the system's own calls</h2>
+    <p class="note" style="margin-top:0">Pick any crypto and a value. The system — the same global brain the watch panel learns into — returns its OVER / UNDER odds for the close at each horizon, computed server-side. It scores only its own predictions: every card shows that horizon's real global record, and a horizon running at coin-flip gets flagged weak instead of hiding behind the average.</p>
+    <div class="row" style="margin-top:10px">
+      <label class="note" for="oddsCoin">Crypto</label>
+      <select id="oddsCoin"></select>
+      <label class="note" for="oddsLine">Value (line)</label>
+      <input type="number" id="oddsLine" step="any" placeholder="Current price">
+      <span class="note" id="oddsPrice"></span>
+    </div>
+    <div class="line-ctl" style="border-top:none;padding-top:2px;margin-top:8px">
+      <label>Quick offset <span class="slider-val" id="oddsOffVal"></span></label>
+      <input type="range" id="oddsSlider" min="-10" max="10" step="0.1" value="0">
+      <div class="stops"><span>-10%</span><span>-5%</span><span><b>0%</b></span><span>+5%</span><span>+10%</span></div>
+    </div>
+    <div id="oddsGrid"></div>
+    <div class="note" id="oddsMeta" style="margin-top:10px"></div>
+    <div class="note" id="oddsSnipe"></div>
+  </section>
+
   <div id="panelSlot">
     <section class="card" id="watchPanel">
       <div id="watchHead">
@@ -179,6 +209,7 @@ const MODELS = {"ADA":{"vol":0.005383,"slope":0.000381,"pos":0.4306,"buckets":{"
 const SNIPE_PARAMS = {"squeeze_window_bars":6,"squeeze_pct_max":0.2,"pressure_min_z":1.0,"shock_mult":2.5,"vol_z_min":1.5,"move_multiple":1.5,"adverse_multiple":0.75};
 const ORDER = ["BTC","ETH","SOL","XRP","DOGE","ADA","LINK","AVAX","DOT","LTC","BCH","NEAR","UNI","ATOM","XLM","ETC","FIL","HBAR","SUI","PEPE"];
 const CB = "https://api.exchange.coinbase.com";
+const AUTH = "https://auth.rivaleclipse.dev";
 const LS_SEL = "ph.sel.v1", LS_LEN = "ph.len.v1", LS_SCORE = "ph.score.v1", LS_LEARN = "ph.learn.v1";
 const $ = s => document.querySelector(s);
 
@@ -302,7 +333,8 @@ function addCard(sym){
     '<div class="linemoved" hidden></div></div>' +
     '<div class="flashmsg"></div>' +
     '<div class="rec"></div>' +
-    '<div class="learnline"></div>';
+    '<div class="learnline"></div>' +
+    '<div class="pooline"></div>';
   $("#cards").appendChild(el);
   cs.els = {
     root: el, chg: el.querySelector(".chg"), price: el.querySelector(".price"),
@@ -313,7 +345,8 @@ function addCard(sym){
     pbar: el.querySelector(".pbar > div"), num: el.querySelector(".line-num"),
     slider: el.querySelector(".line-slider"), flash: el.querySelector(".flashmsg"),
     sval: el.querySelector(".slider-val"), lmoved: el.querySelector(".linemoved"),
-    rec: el.querySelector(".rec"), learn: el.querySelector(".learnline")
+    rec: el.querySelector(".rec"), learn: el.querySelector(".learnline"),
+    pool: el.querySelector(".pooline")
   };
   cs.els.slider.addEventListener("input", () => {
     let off = parseFloat(cs.els.slider.value);
@@ -741,8 +774,8 @@ function computeForecast(sym){
   // learned per-component weights — one brain, consistently tuned.
   // Momentum carries the trend-state slope; asymmetry (in [-1,1]) scales
   // to at most +-1 sigma/hour of drift before its weight applies.
-  const L = learnState(sym);
-  let mu = L.w.mom * (0.5 * slopePH) + L.w.reg * regimePH + L.w.asym * (asym * volH);
+  const W = effW(sym);
+  let mu = W.mom * (0.5 * slopePH) + W.reg * regimePH + W.asym * (asym * volH);
   mu = clamp(mu, -1.2 * volH, 1.2 * volH);
   cs.fcMu = mu;
   cs.fcHorizonH = clamp(2 * S.lenMin / 60, 0.5, 8);
@@ -822,7 +855,7 @@ function bucketFactor(L, key){
   return gap <= 0 ? 1 : clamp(1 - gap, 0.5, 1.05);
 }
 function applyCalib(sym, pRaw){
-  return 0.5 + (pRaw - 0.5) * bucketFactor(learnState(sym), bucketKey(pRaw));
+  return 0.5 + (pRaw - 0.5) * effBucketFactor(sym, bucketKey(pRaw));
 }
 function flipStats(L){
   const scored = L.log.slice(-20).filter(e => typeof e.flips === "number");
@@ -844,6 +877,113 @@ function liveSigma(sym){
   const s = (rec != null && rec > 0) ? 0.65 * feat + 0.35 * rec : feat;
   return clamp(s, base * 0.4, base * 3);
 }
+
+/* ---------- global learning pool (GLOBAL-SPEC) ----------
+   One shared brain: the auth service pools every user's scored
+   predictions (anonymous aggregates only) and publishes global tuning
+   per coin. Effective tuning here = global blended with this device's
+   own: local weight = min(0.5, own_scored/400) per coin, so a fresh
+   visitor runs ~fully on the crowd and a veteran keeps up to half
+   personal tuning. While a coin's pool is still warming up (< 200
+   pooled scored) the server publishes base params, so blending is a
+   no-op and behavior is exactly the local-only tuning. If the global
+   fetch fails, everything degrades to local-only, unchanged. */
+let GLOBAL_POOL = null, GLOBAL_TOTALS = null;
+async function loadGlobal(){
+  const j = await fetchJSON(AUTH + "/api/perp/global");
+  if (!j || !j.ok || !j.coins) return;
+  GLOBAL_POOL = j.coins; GLOBAL_TOTALS = j.totals || null;
+  S.selected.forEach(sym => { renderLearn(sym); if (S.cycle.active) predict(sym); });
+}
+function globalCoin(sym){
+  const g = GLOBAL_POOL && GLOBAL_POOL[sym];
+  return g && g.evidence === "live" ? g : null;
+}
+function ownScored(sym){ return learnState(sym).log.length; }
+function localWeight(sym){ return Math.min(0.5, ownScored(sym) / 400); }
+function effW(sym){
+  const L = learnState(sym), g = globalCoin(sym);
+  if (!g) return L.w;
+  const lw = localWeight(sym), out = {};
+  for (const k of ["mom", "reg", "asym"]) out[k] = clamp((1 - lw) * g.w[k] + lw * L.w[k], 0, 2);
+  return out;
+}
+function effBucketFactor(sym, key){
+  const lf = bucketFactor(learnState(sym), key), g = globalCoin(sym);
+  if (!g) return lf;
+  const gf = (g.buckets && g.buckets[key]) || 1, lw = localWeight(sym);
+  return clamp(1 + (1 - lw) * (gf - 1) + lw * (lf - 1), 0.5, 1.05);
+}
+function effBand(sym){
+  const g = globalCoin(sym);
+  if (!g) return bandFor(sym);
+  return (1 - localWeight(sym)) * g.band + localWeight(sym) * bandFor(sym);
+}
+function effDwell(sym){
+  const g = globalCoin(sym);
+  return dwellOn(sym) || !!(g && g.dwell && localWeight(sym) < 0.5);
+}
+function renderPool(sym){
+  const cs = coinState(sym);
+  if (!cs.els.pool) return;
+  let txt = "";
+  if (GLOBAL_POOL){
+    const g = GLOBAL_POOL[sym], tot = GLOBAL_TOTALS ? GLOBAL_TOTALS.scored : 0;
+    if (g && g.evidence === "live"){
+      const lw = localWeight(sym);
+      txt = "Global pool: " + tot + " scored across all users · " + sym + " global hit " +
+        (g.hitRate != null ? Math.round(g.hitRate * 100) + "%" : "—") + " (" + g.scored + " scored) · your tuning: " +
+        Math.round((1 - lw) * 100) + "% global / " + Math.round(lw * 100) + "% yours";
+    } else if (g) {
+      txt = "Global pool: " + tot + " scored across all users · " + sym + " warming up (" +
+        g.evidenceHave + "/" + g.evidenceNeed + ") — global tuning kicks in at " + g.evidenceNeed;
+    }
+  }
+  if (cs.els.pool.textContent !== txt) cs.els.pool.textContent = txt;
+}
+
+/* ---------- anonymous contributions to the pool ----------
+   Every scored close on this device queues one small record (coin,
+   the probability shown, the call, the outcome, flip count, cycle
+   length, and the per-component gradient contributions). Batches go
+   up on close #5, then every 10 closes, and when the page hides.
+   The server folds them into pooled aggregates only — no raw history,
+   no identifiers. Resetting the scoreboard does NOT clear the queue:
+   already-scored anonymous aggregates are historical facts. */
+const LS_CONTRIB = "ph.contrib.v1";
+function contribState(){ return lsGet(LS_CONTRIB, {queue: [], total: 0}); }
+function saveContrib(st){ lsSet(LS_CONTRIB, st); }
+function queueContribution(sym, cs, closedOver){
+  const lp = cs.lastPred;
+  if (!lp) return;
+  const st = contribState();
+  st.queue.push({coin: sym, p: lp.p, pRaw: lp.pRaw, call: cs.lastCall ? cs.lastCall.side : "none",
+                 outcome: closedOver, flips: cs.flips, lenMin: S.lenMin,
+                 comp: lp.comp || {mom: 0, reg: 0, asym: 0}});
+  st.total++;
+  saveContrib(st);
+  if (st.total === 5 || st.total % 10 === 0) flushContrib(false);
+}
+async function flushContrib(keepalive){
+  const st = contribState();
+  if (!st.queue.length) return;
+  const batch = st.queue.slice(0, 50);
+  try {
+    const r = await fetch(AUTH + "/api/perp/contribute", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({records: batch}), keepalive: !!keepalive
+    });
+    if (!r.ok) return;
+    const j = await r.json().catch(() => null);
+    if (j && j.ok){
+      const cur = contribState();
+      cur.queue.splice(0, batch.length);
+      saveContrib(cur);
+    }
+  } catch (e) { /* offline or blocked: the queue keeps the records */ }
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushContrib(true); });
+window.addEventListener("pagehide", () => flushContrib(true));
 function renderLearn(sym){
   const cs = coinState(sym);
   if (!cs.els.learn) return;
@@ -862,7 +1002,7 @@ function renderLearn(sym){
       if (b && b.n >= 4){ ceNum += Math.abs(BUCKET_MID[k] - b.hit / b.n) * b.n; ceDen += b.n; }
     }
     const ce = ceDen ? ceNum / ceDen : null;
-    const fs = flipStats(L), band = bandFor(sym), dw = dwellOn(sym);
+    const fs = flipStats(L), band = effBand(sym), dw = effDwell(sym);
     const tweaks = [];
     if (Math.abs(L.w.mom - 1) >= 0.05 || Math.abs(L.w.reg - 1) >= 0.05 || Math.abs(L.w.asym - 1) >= 0.05) tweaks.push("weights retuned");
     if (Object.keys(L.buckets).some(k => bucketFactor(L, k) < 0.99)) tweaks.push("hot confidence buckets shrunk");
@@ -880,6 +1020,7 @@ function renderLearn(sym){
       (tweaks.length ? " · active: " + tweaks.join(", ") : "");
   }
   if (cs.els.learn.textContent !== txt) cs.els.learn.textContent = txt;
+  renderPool(sym);
 }
 function updateLearn(sym, lp, closedOver){
   const L = learnState(sym);
@@ -893,9 +1034,16 @@ function updateLearn(sym, lp, closedOver){
     const f = bucketFactor(L, bucketKey(lp.pRaw != null ? lp.pRaw : lp.p));
     const phi = Math.exp(-lp.z * lp.z / 2) / Math.sqrt(2 * Math.PI);
     const grad = (p - y) / (p * (1 - p)) * f * phi;   // d log-loss / d z
+    // Per-component gradient contributions, stashed for the anonymous
+    // global-pool record (the server folds exactly these).
+    lp.comp = {mom: grad * (lp.driftRaw.mom / lp.sigmaT),
+               reg: grad * (lp.driftRaw.reg / lp.sigmaT),
+               asym: grad * (lp.driftRaw.asym / lp.sigmaT)};
     for (const k of ["mom", "reg", "asym"]){
       L.w[k] = clamp(L.w[k] - 0.25 * grad * (lp.driftRaw[k] / lp.sigmaT), 0, 2);
     }
+  } else {
+    lp.comp = {mom: 0, reg: 0, asym: 0};
   }
   // Per-bucket calibration record: which confidence bucket this call
   // fell in, and whether the called side won.
@@ -929,9 +1077,9 @@ function predict(sym){
   let asymC = 0;
   const sws = cs.swings && (cs.swings.h24 || cs.swings.d7);
   if (sws && (sws.avgUp + sws.avgDn) > 0) asymC = (sws.avgUp - sws.avgDn) / (sws.avgUp + sws.avgDn) * baseVol;
-  const L = learnState(sym);
+  const W = effW(sym);
   const driftRaw = {mom: momC * Th, reg: regC * Th, asym: asymC * Th};
-  const driftTotal = L.w.mom * driftRaw.mom + L.w.reg * driftRaw.reg + L.w.asym * driftRaw.asym;
+  const driftTotal = W.mom * driftRaw.mom + W.reg * driftRaw.reg + W.asym * driftRaw.asym;
   const z = (Math.log(cs.price / cs.line) + driftTotal) / sigmaT;
   const pRaw = normCdf(z);
   const p = applyCalib(sym, pRaw);
@@ -942,12 +1090,12 @@ function predict(sym){
   // (widened when its calls have been flip-flopping), with call-dwell
   // so a jumpy call can't strobe — a side change must lead the old
   // side by >= 4 points on 2 consecutive ticks while dwell is on.
-  const band = bandFor(sym);
+  const band = effBand(sym);
   let side = null;
   if (Math.abs(p - 0.5) >= band) side = p > 0.5 ? "over" : "under";
   if (side && cs.dispSide && side !== cs.dispSide){
     cs.flips++;
-    if (dwellOn(sym)){
+    if (effDwell(sym)){
       const adv = Math.abs(p - 0.5) - Math.abs((cs.dispP != null ? cs.dispP : 0.5) - 0.5);
       if (cs.dwellSide === side) cs.dwellCount++; else { cs.dwellSide = side; cs.dwellCount = 1; }
       if (!(adv >= 0.04 && cs.dwellCount >= 2)) side = cs.dispSide;   // hold the old call
@@ -1036,6 +1184,7 @@ async function scoreCycle(){
       if (L.log.length > 300) L.log.splice(0, L.log.length - 300);
       updateLearn(sym, cs.lastPred, closedOver);
       saveLearn();
+      queueContribution(sym, cs, closedOver);
     }
     renderRec(sym);
     renderLearn(sym);
@@ -1114,7 +1263,100 @@ setInterval(() => {
   }
   if (S.loopN % 3 === 0 && S.selected.length) priceTick();
   if (S.loopN % 60 === 0) S.selected.forEach(loadCoin);
+  if (S.loopN % 900 === 0) loadGlobal();
 }, 1000);
+
+/* ---------- odds panel (ODDS-SPEC) ----------
+   The user picks only a coin and a value; the server (the global
+   system itself) answers with OVER/UNDER odds for the closes at
+   5/15/30/45/60 minutes. The value entry mirrors the watch cards:
+   the % slider sets an offset that rides the live price; the number
+   box sets an exact value. Polls every 20s; the numbers are the
+   system's own issued predictions, scored by the server. */
+const ODDS = {coin: "BTC", mode: "off", off: 0, line: null, price: null, closes: {}};
+function oddsLine(){
+  if (ODDS.mode === "abs" && ODDS.line > 0) return ODDS.line;
+  if (ODDS.price > 0) return ODDS.price * (1 + ODDS.off / 100);
+  return null;
+}
+function oddsRenderOff(){
+  const v = $("#oddsOffVal");
+  if (ODDS.mode === "abs") v.textContent = "exact value set — slider takes over if moved";
+  else v.innerHTML = '<span class="off">' + (ODDS.off > 0 ? "+" : "") + ODDS.off.toFixed(1) + "%</span> vs live price → line " +
+    (oddsLine() ? fmtPrice(oddsLine()) : "—");
+}
+async function oddsSeedPrice(){
+  const t = await fetchJSON(CB + "/products/" + ODDS.coin + "-USD/ticker");
+  if (t && isFinite(+t.price)) ODDS.price = +t.price;
+}
+async function refreshOdds(){
+  const line = oddsLine();
+  if (!(line > 0)){ $("#oddsMeta").textContent = "Waiting for a live price to anchor the line…"; return; }
+  const j = await fetchJSON(AUTH + "/api/perp/odds?coin=" + ODDS.coin + "&line=" + encodeURIComponent(line));
+  if (!j || !j.ok){
+    $("#oddsMeta").textContent = "Odds are unavailable right now — the system's market feed didn't answer. Retrying on the next poll.";
+    return;
+  }
+  ODDS.price = j.price;
+  if (ODDS.mode === "off") $("#oddsLine").value = Math.round(oddsLine() * 100) / 100;
+  $("#oddsPrice").textContent = ODDS.coin + " live: " + fmtPrice(j.price) + " · line " + fmtPrice(line);
+  oddsRenderOff();
+  const pct = (p) => (p * 100).toFixed(1) + "%";
+  const HLBL = {5: "5 min", 15: "15 min", 30: "30 min", 45: "45 min", 60: "1 hour"};
+  $("#oddsGrid").innerHTML = [5, 15, 30, 45, 60].map(h => {
+    const hz = j.horizons[h];
+    ODDS.closes[h] = Date.parse(hz.close_at);
+    const cls = hz.call === "OVER" ? "over" : hz.call === "UNDER" ? "under" : "noedge";
+    const st = hz.stats.global, sc = hz.stats.coin;
+    const rec = st.calls ? st.calls + " calls · " + Math.round(st.hitRate * 100) + "% hit (" + st.scored + " scored, all coins)"
+                         : "no scored calls on this horizon yet";
+    const crec = sc.calls ? " · this coin " + Math.round(sc.hitRate * 100) + "% (" + sc.calls + ")" : "";
+    return '<div class="ocard"><div class="oh"><span>' + HLBL[h] + '</span><span data-odds-close="' + h + '"></span></div>' +
+      '<div class="ocall ' + cls + '">' + hz.call + (hz.weak ? ' <span class="weak">· weak horizon</span>' : "") + '</div>' +
+      '<div class="opct">OVER ' + pct(hz.p_over) + ' · UNDER ' + pct(hz.p_under) + '</div>' +
+      '<div class="ostat">Global record: ' + rec + crec + '</div></div>';
+  }).join("");
+  const r = j.record;
+  $("#oddsMeta").textContent =
+    ODDS.coin + " global record: " + r.scored + " scored predictions" +
+    (r.hitRate != null ? " · hit " + Math.round(r.hitRate * 100) + "% on its calls" : "") +
+    (r.evidence !== "live" ? " · pool still warming up — tuning is at base values until 200 scored per coin" : "") +
+    (j.stale ? " · MARKET DATA STALE — calls degraded to NO EDGE" : "");
+  const sn = j.snipes.pooled, snc = j.snipes.coin;
+  $("#oddsSnipe").textContent = sn.called
+    ? "Snipe record (server-tracked, ~4h windows): " + sn.called + " flagged · " + Math.round(sn.hitRate * 100) +
+      "% produced the big move vs " + (sn.baseRate != null ? Math.round(sn.baseRate * 100) + "%" : "—") + " unflagged base (" + sn.baseN + " windows)" +
+      (snc.called ? " · " + ODDS.coin + ": " + snc.called + " flagged, " + Math.round(snc.hitRate * 100) + "%" : "")
+    : "Snipe record: the server is tracking hourly snipe setups now — the first flagged windows score about 4 hours after they fire.";
+}
+(function oddsInit(){
+  const sel = $("#oddsCoin");
+  sel.innerHTML = ORDER.map(s => '<option value="' + s + '"' + (s === "BTC" ? " selected" : "") + ">" + s + "</option>").join("");
+  sel.addEventListener("change", async () => {
+    ODDS.coin = sel.value; ODDS.price = null;
+    await oddsSeedPrice(); refreshOdds();
+  });
+  const sl = $("#oddsSlider");
+  sl.addEventListener("input", () => {
+    let off = parseFloat(sl.value);
+    if (!isFinite(off)) return;
+    if (Math.abs(off) <= 0.2){ off = 0; sl.value = 0; }
+    ODDS.mode = "off"; ODDS.off = off;
+    oddsRenderOff(); refreshOdds();
+  });
+  $("#oddsLine").addEventListener("change", ev => {
+    const v = parseFloat(ev.target.value);
+    if (isFinite(v) && v > 0){ ODDS.mode = "abs"; ODDS.line = v; oddsRenderOff(); refreshOdds(); }
+  });
+  setInterval(() => {
+    for (const h of Object.keys(ODDS.closes)){
+      const el = document.querySelector('[data-odds-close="' + h + '"]');
+      if (el) el.textContent = "closes " + fmtClock(ODDS.closes[h] - Date.now());
+    }
+  }, 1000);
+  setInterval(refreshOdds, 20000);
+  oddsSeedPrice().then(refreshOdds);
+})();
 
 /* ---------- pop-out (document picture-in-picture) ---------- */
 $("#pipBtn").addEventListener("click", async () => {
@@ -1152,6 +1394,8 @@ buildCoinGrid();
     if (box){ box.checked = true; toggleCoin(sym, true, box); }
   });
   renderScore();
+  loadGlobal();
+  flushContrib(false);
 })();
 </script>
 </body>
