@@ -100,6 +100,13 @@ canvas.spark{width:100%;height:48px;display:block}
 .line-ctl label{font-size:12px;color:var(--mut);letter-spacing:.1em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .line-ctl input[type=range]{width:100%;accent-color:var(--gold);margin:8px 0 2px}
 .line-ctl input[type=number]{width:150px}
+.line-ctl input[type=range].pinned{opacity:.45}
+.stops{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-top:1px;font-variant-numeric:tabular-nums}
+.stops b{color:var(--gold2);font-weight:600}
+.slider-val{font-size:13px;color:var(--txt);font-variant-numeric:tabular-nums;white-space:nowrap}
+.slider-val .off{color:var(--gold2);font-weight:700}
+.linemoved{color:var(--edge);font-size:12px;margin-top:5px}
+.legend{color:var(--mut);font-size:11px;margin-top:5px;line-height:1.5}
 .snap{background:none;border:none;color:var(--gold2);cursor:pointer;font-size:12px;padding:0}
 .rec{color:var(--mut);font-size:12px;margin-top:9px}
 .flashmsg{font-size:13px;font-weight:700;margin-top:7px;min-height:16px}
@@ -164,7 +171,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 18px 34px;color:var(--mut);font-
   </div>
 </main>
 <footer>
-  Predictions are probabilities built from pattern statistics — barrier distance to your line, volatility, momentum, and each coin's 6-month base rates. They are not guarantees, and short-horizon crypto direction is close to a coin flip: the base models' held-out record is printed on every card, and the scoreboard above shows this page's real record, wins and losses alike. The snipe badge uses the hourly setup only, read on a ~4-hour window: on held-out data across all 20 coins, flagged setups produced the big move 23.1% of the time against a 14.4% unflagged base rate (1.61x lift). The 15-minute snipe tested as noise (lift under 1x) and is not used. The forecast chart beside each live chart is an estimate cone — the mean path and bands show where the price could plausibly wander given current volatility and drift, not a promised path; the tick marks are the times swings have typically arrived, not appointments. Data: Coinbase Exchange public feed. Not financial advice.
+  Predictions are probabilities built from pattern statistics — barrier distance to your line, volatility, momentum, and each coin's 6-month base rates. They are not guarantees, and short-horizon crypto direction is close to a coin flip: the base models' held-out record is printed on every card, and the scoreboard above shows this page's real record, wins and losses alike. The snipe badge uses the hourly setup only, read on a ~4-hour window: on held-out data across all 20 coins, flagged setups produced the big move 23.1% of the time against a 14.4% unflagged base rate (1.61x lift). The 15-minute snipe tested as noise (lift under 1x) and is not used. The forecast chart beside each live chart is an estimate cone — the mean path and bands show where the price could plausibly wander given current volatility and drift, not a promised path; the tick marks are the times swings have typically arrived, not appointments. The page also audits its own flaws, live: every scored close retunes separate weights for momentum, regime, and rise/fall asymmetry; confidence buckets that run hot get shrunk toward 50; a coin whose call keeps flip-flopping gets a wider no-call band and a steadier, dwell-held call; and the volatility inside every probability follows the last few hours of live market, blended with the 6-month base. The current state of all of it is printed on each card's Learning line. Data: Coinbase Exchange public feed. Not financial advice.
 </footer>
 <script>
 "use strict";
@@ -223,7 +230,9 @@ function coinState(sym){
     price: null, closesH: [], volsH: [], closes15: [], closes1: [],
     feat: {volH: null, ret24: null, ret7d: null},
     trend: null, swings: null, fcMu: 0, fcHorizonH: 0.5,
-    snipe: null, line: null, lineSet: false, lastCall: null, lastPred: null, els: {}
+    snipe: null, line: null, lineSet: false, lineMode: "abs", lineOff: 0, lineMoved: false,
+    flips: 0, dispSide: null, dispP: null, dwellSide: null, dwellCount: 0, dragging: false,
+    lastCall: null, lastPred: null, els: {}
   };
   return S.coins[sym];
 }
@@ -285,8 +294,12 @@ function addCard(sym){
     '<div class="swline"></div>' +
     '<div class="snipe" hidden></div>' +
     '<div class="pred"><div class="call noedge">NO CYCLE RUNNING</div><div class="conf">Set your line, then press Start — every call is for the close vs your line, never for right now.</div><div class="pbar"><div style="width:0%"></div></div></div>' +
-    '<div class="line-ctl"><label>Over / under line <span><input type="number" class="line-num" step="any"> <button class="snap" type="button">snap to price</button></span></label>' +
-    '<input type="range" class="line-slider"></div>' +
+    '<div class="line-ctl"><label>Over / under line <span class="slider-val"></span></label>' +
+    '<input type="range" class="line-slider" min="-10" max="10" step="0.1" value="0">' +
+    '<div class="stops"><span>-10%</span><span>-5%</span><span><b>0%</b></span><span>+5%</span><span>+10%</span></div>' +
+    '<div class="row" style="margin-top:6px"><input type="number" class="line-num" step="any" placeholder="Exact line price"> <button class="snap" type="button">snap to price</button></div>' +
+    '<div class="legend">Slider = the line\'s offset from the live price — a slider-set line rides the ticks at that offset. The number box sets an exact price and can go past ±10% (the slider then pins at the end and the readout shows the true offset).</div>' +
+    '<div class="linemoved" hidden></div></div>' +
     '<div class="flashmsg"></div>' +
     '<div class="rec"></div>' +
     '<div class="learnline"></div>';
@@ -299,30 +312,92 @@ function addCard(sym){
     call: el.querySelector(".pred .call"), conf: el.querySelector(".pred .conf"),
     pbar: el.querySelector(".pbar > div"), num: el.querySelector(".line-num"),
     slider: el.querySelector(".line-slider"), flash: el.querySelector(".flashmsg"),
+    sval: el.querySelector(".slider-val"), lmoved: el.querySelector(".linemoved"),
     rec: el.querySelector(".rec"), learn: el.querySelector(".learnline")
   };
-  cs.els.slider.addEventListener("input", () => { const v = parseFloat(cs.els.slider.value); if (isFinite(v)) setLine(sym, v, false); });
-  cs.els.num.addEventListener("change", () => { const v = parseFloat(cs.els.num.value); if (isFinite(v) && v > 0) setLine(sym, v, true); });
-  el.querySelector(".snap").addEventListener("click", () => { if (cs.price) setLine(sym, cs.price, true); });
+  cs.els.slider.addEventListener("input", () => {
+    let off = parseFloat(cs.els.slider.value);
+    if (!isFinite(off) || !cs.price) return;
+    if (Math.abs(off) <= 0.2){ off = 0; cs.els.slider.value = 0; }   // soft detent at 0
+    setLineOffset(sym, off);
+  });
+  cs.els.slider.addEventListener("pointerdown", () => { cs.dragging = true; });
+  cs.els.slider.addEventListener("pointerup", () => { cs.dragging = false; });
+  cs.els.slider.addEventListener("change", () => { cs.dragging = false; });
+  cs.els.num.addEventListener("change", () => { const v = parseFloat(cs.els.num.value); if (isFinite(v) && v > 0) setLine(sym, v); });
+  el.querySelector(".snap").addEventListener("click", () => { if (cs.price) setLine(sym, cs.price); });
   renderRec(sym);
   renderLearn(sym);
+  updateLineUI(sym);
 }
 function removeCard(sym){
   const el = document.getElementById("card-" + sym);
   if (el) el.remove();
   delete S.coins[sym];
 }
-function setLine(sym, v, syncSlider){
+function fmtOff(off){ return (off > 0 ? "+" : "") + off.toFixed(1) + "%"; }
+function updateLineUI(sym){
+  // O(1): slider position (never while the user is dragging it), the
+  // exact-price entry (never while it has focus), and the offset/line
+  // readout. Called from the slider handler, setLine, and the price tick.
   const cs = coinState(sym);
-  cs.line = v; cs.lineSet = true;
-  cs.els.num.value = v.toFixed(dp(v));
-  if (syncSlider && cs.price){
-    const lo = cs.price * 0.94, hi = cs.price * 1.06;
-    cs.els.slider.min = lo; cs.els.slider.max = hi; cs.els.slider.step = cs.price / 2000;
-    cs.els.slider.value = clamp(v, lo, hi);
+  if (!cs.els.slider) return;
+  const off = cs.price && cs.line ? (cs.line / cs.price - 1) * 100 : 0;
+  const pinned = Math.abs(off) > 10;
+  if (!cs.dragging) cs.els.slider.value = clamp(off, -10, 10);
+  cs.els.slider.classList.toggle("pinned", pinned);
+  if (document.activeElement !== cs.els.num) cs.els.num.value = cs.line ? cs.line.toFixed(dp(cs.line)) : "";
+  cs.els.sval.innerHTML = 'offset <span class="off">' + fmtOff(off) + "</span> · line " + fmtPrice(cs.line) +
+    (pinned ? " (past slider range)" : "");
+  cs.els.lmoved.hidden = !cs.lineMoved;
+  if (cs.lineMoved) cs.els.lmoved.textContent = "Line moved mid-cycle — the score judges the call against the line at the close.";
+}
+function noteLineChange(sym){
+  // A mid-cycle line move changes what the current prediction means. The
+  // move is flagged on the cycle's record (lineMoved), the stored
+  // prediction is rescored against the new line, and the flip counter
+  // absorbs any side change the move caused — scoring stays honest
+  // about what was predicted against what.
+  const cs = coinState(sym);
+  if (!S.cycle.active || cs.lineMoved) return;
+  cs.lineMoved = true;
+  if (cs.lastPred && cs.price){
+    const T = Math.max(1, (S.cycle.closeAt - Date.now()) / 1000);
+    const sigT = liveSigma(sym) * Math.sqrt(T / 3600);
+    const z = (Math.log(cs.price / cs.line) + cs.lastPred.driftTotal) / sigT;
+    const pRaw = normCdf(z);
+    cs.lastPred = {p: applyCalib(sym, pRaw), pRaw: pRaw, z: z, sigmaT: sigT,
+                   driftTotal: cs.lastPred.driftTotal, driftRaw: cs.lastPred.driftRaw,
+                   lineMoved: true};
+    if (cs.lastCall){
+      const p = cs.lastPred.p;
+      if (Math.abs(p - 0.5) < bandFor(sym)) { cs.lastCall = null; cs.flips++; }
+      else {
+        const side = p > 0.5 ? "over" : "under";
+        if (side !== cs.lastCall.side) cs.flips++;
+        cs.lastCall = {side: side, p: p};
+      }
+    }
   }
-  if (cs.els.trend){ computeTrend(sym); renderTrend(sym); drawSpark(sym); }
   if (S.cycle.active) predict(sym);
+}
+function setLine(sym, v, fromSlider){
+  const cs = coinState(sym);
+  const had = cs.lineSet, prev = cs._lastLine;
+  cs.line = v; cs.lineSet = true;
+  if (!fromSlider){ cs.lineMode = "abs"; cs.lineOff = cs.price ? (v / cs.price - 1) * 100 : 0; }
+  cs._lastLine = v;
+  if (had && prev != null && Math.abs(v - prev) > 1e-9) noteLineChange(sym);
+  updateLineUI(sym);
+  if (cs.els.trend){ computeTrend(sym); renderTrend(sym); }
+  drawSpark(sym);
+}
+function setLineOffset(sym, off){
+  // Slider path: the line becomes an offset that rides the live price.
+  const cs = coinState(sym);
+  if (!cs.price) return;
+  cs.lineMode = "off"; cs.lineOff = off;
+  setLine(sym, cs.price * (1 + off / 100), true);
 }
 
 /* ---------- data + features ---------- */
@@ -344,7 +419,7 @@ async function loadCoin(sym){
     cs.els.regime.textContent =
       "6-mo regime: " + (M.slope >= 0 ? "upward" : "downward") + " drift " + fmtPct(M.slope, true) + "/day · range position " +
       Math.round(M.pos * 100) + "% · base model held-out record " + (M.bt * 100).toFixed(1) + "% (n=" + M.btN + ")";
-    if (!cs.lineSet && cs.closesH.length) setLine(sym, cs.closesH[cs.closesH.length - 1], true);
+    if (!cs.lineSet && cs.closesH.length) setLine(sym, cs.closesH[cs.closesH.length - 1]);
   } else if (cs.els.regime) {
     cs.els.regime.innerHTML = '<span class="err">Candle feed hiccup — retrying on the next refresh.</span>';
   }
@@ -362,6 +437,10 @@ function computeFeatures(sym){
   const lr = [];
   for (let i = 1; i < n; i++) lr.push(Math.log(c[i] / c[i - 1]));
   cs.feat.volH = stdev(lr.slice(-168)) || MODELS[sym].vol;
+  // Realized vol over the last few hours of hourly candles — liveSigma()
+  // blends this into the model's base sigma so probabilities track the
+  // market as it is now, not just the 6-month base rate.
+  cs.feat.volRecent = lr.length >= 3 ? stdev(lr.slice(-6)) : null;
   cs.feat.ret24 = n > 24 ? c[n - 1] / c[n - 25] - 1 : null;
   cs.feat.ret7d = n > 168 ? c[n - 1] / c[n - 169] - 1 : null;
 }
@@ -407,7 +486,7 @@ function chartScale(sym){
   if (!isFinite(lo)) { const a = cs.price || 1; lo = a * 0.99; hi = a * 1.01; }
   if (cs.line){ lo = Math.min(lo, cs.line); hi = Math.max(hi, cs.line); }
   const anchor = cs.price || data[data.length - 1] || lo;
-  const volH = cs.feat.volH || MODELS[sym].vol, hz = cs.fcHorizonH || 0.5;
+  const volH = liveSigma(sym), hz = cs.fcHorizonH || 0.5;
   const sigEnd = volH * Math.sqrt(hz);
   lo = Math.min(lo, anchor * Math.exp(cs.fcMu * hz - sigEnd));
   hi = Math.max(hi, anchor * Math.exp(cs.fcMu * hz + sigEnd));
@@ -443,7 +522,7 @@ function drawForecast(sym, sc){
   if (!cv) return;
   const ctx = cv.getContext("2d"), W = cv.width, H = cv.height;
   ctx.clearRect(0, 0, W, H);
-  const volH = cs.feat.volH || MODELS[sym].vol, hz = cs.fcHorizonH || 0.5, mu = cs.fcMu || 0;
+  const volH = liveSigma(sym), hz = cs.fcHorizonH || 0.5, mu = cs.fcMu || 0;
   const y = p => H - 14 - (p - sc.lo) / (sc.hi - sc.lo) * (H - 26);
   const N = 48;
   const path = [];
@@ -658,11 +737,14 @@ function computeForecast(sym){
   let asym = 0;
   const s = cs.swings && (cs.swings.h24 || cs.swings.d7);
   if (s && (s.avgUp + s.avgDn) > 0) asym = (s.avgUp - s.avgDn) / (s.avgUp + s.avgDn);
-  // Blend: trend-state slope, 6-month regime slope, rise/fall asymmetry
-  // (asym in [-1,1] -> at most +-0.2 sigma/hour of extra drift, damped).
-  let mu = 0.5 * slopePH + 0.3 * regimePH + 0.2 * asym * volH;
+  // Same three drift components the barrier math uses, with the same
+  // learned per-component weights — one brain, consistently tuned.
+  // Momentum carries the trend-state slope; asymmetry (in [-1,1]) scales
+  // to at most +-1 sigma/hour of drift before its weight applies.
+  const L = learnState(sym);
+  let mu = L.w.mom * (0.5 * slopePH) + L.w.reg * regimePH + L.w.asym * (asym * volH);
   mu = clamp(mu, -1.2 * volH, 1.2 * volH);
-  cs.fcMu = mu * learnState(sym).w;
+  cs.fcMu = mu;
   cs.fcHorizonH = clamp(2 * S.lenMin / 60, 0.5, 8);
 }
 function computeAnalysis(sym){
@@ -676,52 +758,151 @@ function computeAnalysis(sym){
   drawSpark(sym);
 }
 
-/* ---------- self-adjustment (learning) ---------- */
+/* ---------- self-adjustment (learning, flaw-aware) ----------
+   Per coin, persisted in localStorage (ph.learn.v2):
+   - w.mom / w.reg / w.asym: separate bounded weights (clamp 0..2) for
+     the momentum, regime-slope and rise/fall-asymmetry drift
+     components. Each scored close steps only the components that were
+     in the prediction, along their own log-loss gradients, so a
+     component that has been hurting is down-weighted toward 0
+     without dragging the others down with it.
+   - buckets: per-confidence-bucket counts + hits (buckets in
+     |p-50| points: 7-15, 15-25, 25+). With >= 10 scored in a bucket,
+     realized accuracy below the bucket's claimed confidence shrinks
+     that bucket's probabilities toward 50 by the measured gap
+     (factor clamp 0.5..1.05) — "confident and wrong" gets fixed
+     specifically, not globally.
+   - flip control: within-cycle side flips of the displayed call are
+     counted per coin. A rolling flip rate over the last 20 scored
+     cycles above 1.5/cycle widens that coin's NO EDGE band (from
+     +/-7 up to +/-12 points) and enables call-dwell: the displayed
+     call changes side only when the new side leads the old by >= 4
+     points on 2 consecutive ticks. The band relaxes as flips recover.
+   - sigma: the barrier math and the forecast cone use an EMA-style
+     blend of the model's base sigma with the realized vol of the
+     last few hours of candles (liveSigma), so a wilder live market
+     widens probabilities honestly.
+   Every value is printed on the card's Learning line — no invisible
+   tweaks. The v1 store (ph.learn.v1, single drift weight + global
+   calibration) migrates forward: scored history carries over and the
+   old drift weight seeds all three component weights. */
+const LS_LEARN2 = "ph.learn.v2";
+const BAND_BASE = 0.07, BAND_MAX = 0.12, FLIP_HI = 1.5;
 function learnState(sym){
-  if (!S.learn[sym]) S.learn[sym] = {w: 1.0, calib: 1.0, log: []};
-  return S.learn[sym];
+  let L = S.learn[sym];
+  if (!L) L = S.learn[sym] = {w: {mom: 1, reg: 1, asym: 1}, buckets: {}, log: []};
+  if (!L.w) L.w = {mom: 1, reg: 1, asym: 1};
+  if (!L.buckets) L.buckets = {};
+  if (!Array.isArray(L.log)) L.log = [];
+  return L;
+}
+function migrateLearn(){
+  const v2 = lsGet(LS_LEARN2, null);
+  if (v2 && typeof v2 === "object"){ S.learn = v2; return; }
+  const v1 = lsGet(LS_LEARN, {});
+  const out = {};
+  for (const sym of Object.keys(v1 || {})){
+    const o = v1[sym] || {};
+    const w0 = clamp(typeof o.w === "number" ? o.w : 1, 0, 2);
+    out[sym] = {w: {mom: w0, reg: w0, asym: w0}, buckets: {}, log: Array.isArray(o.log) ? o.log : []};
+  }
+  S.learn = out;
+  lsSet(LS_LEARN2, out);
+}
+function saveLearn(){ lsSet(LS_LEARN2, S.learn); }
+function bucketKey(p){
+  const d = Math.abs(p - 0.5) * 100;
+  return d < 15 ? "b1" : d < 25 ? "b2" : "b3";
+}
+const BUCKET_MID = {b1: 0.61, b2: 0.70, b3: 0.85};
+function bucketFactor(L, key){
+  const b = L.buckets[key];
+  if (!b || b.n < 10) return 1;
+  const gap = BUCKET_MID[key] - b.hit / b.n;
+  return gap <= 0 ? 1 : clamp(1 - gap, 0.5, 1.05);
+}
+function applyCalib(sym, pRaw){
+  return 0.5 + (pRaw - 0.5) * bucketFactor(learnState(sym), bucketKey(pRaw));
+}
+function flipStats(L){
+  const scored = L.log.slice(-20).filter(e => typeof e.flips === "number");
+  return {cycles: scored.length,
+          rate: scored.length ? scored.reduce((s, e) => s + e.flips, 0) / scored.length : 0};
+}
+function bandFor(sym){
+  const fs = flipStats(learnState(sym));
+  if (fs.cycles < 5 || fs.rate <= FLIP_HI) return BAND_BASE;
+  return BAND_BASE + (BAND_MAX - BAND_BASE) * clamp((fs.rate - FLIP_HI) / FLIP_HI, 0, 1);
+}
+function dwellOn(sym){
+  const fs = flipStats(learnState(sym));
+  return fs.cycles >= 5 && fs.rate > FLIP_HI;
+}
+function liveSigma(sym){
+  const cs = coinState(sym), base = MODELS[sym].vol;
+  const feat = cs.feat.volH || base, rec = cs.feat.volRecent;
+  const s = (rec != null && rec > 0) ? 0.65 * feat + 0.35 * rec : feat;
+  return clamp(s, base * 0.4, base * 3);
 }
 function renderLearn(sym){
   const cs = coinState(sym);
   if (!cs.els.learn) return;
   const L = learnState(sym);
-  const calls = L.log.filter(e => e.call !== "none");
-  const corr = calls.filter(e => (e.call === "over") === e.over).length;
-  cs.els.learn.textContent = L.log.length
-    ? "Learning: " + L.log.length + " scored · " + (calls.length ? Math.round(corr / calls.length * 100) + "% hit" : "no calls yet") +
-      " · drift x" + L.w.toFixed(2) + " · calib " + L.calib.toFixed(2)
-    : "Learning: no scored closes yet — drift x1.00 · calib 1.00 (base model values)";
+  let txt;
+  if (!L.log.length){
+    txt = "Learning: no scored closes yet — momentum x1.0 · regime x1.0 · asym x1.0 · band ±7 (base model values)";
+  } else {
+    const calls = L.log.filter(e => e.call !== "none");
+    const corr = calls.filter(e => (e.call === "over") === e.over).length;
+    const last50 = L.log.slice(-50);
+    const brier = mean(last50.map(e => { const q = e.over ? 1 : 0; return (e.p - q) * (e.p - q); }));
+    let ceNum = 0, ceDen = 0;
+    for (const k of Object.keys(BUCKET_MID)){
+      const b = L.buckets[k];
+      if (b && b.n >= 4){ ceNum += Math.abs(BUCKET_MID[k] - b.hit / b.n) * b.n; ceDen += b.n; }
+    }
+    const ce = ceDen ? ceNum / ceDen : null;
+    const fs = flipStats(L), band = bandFor(sym), dw = dwellOn(sym);
+    const tweaks = [];
+    if (Math.abs(L.w.mom - 1) >= 0.05 || Math.abs(L.w.reg - 1) >= 0.05 || Math.abs(L.w.asym - 1) >= 0.05) tweaks.push("weights retuned");
+    if (Object.keys(L.buckets).some(k => bucketFactor(L, k) < 0.99)) tweaks.push("hot confidence buckets shrunk");
+    if (band > BAND_BASE + 0.001) tweaks.push("band widened");
+    if (dw) tweaks.push("dwell on");
+    const sigLive = cs.feat.volRecent != null && cs.feat.volH &&
+      Math.abs(liveSigma(sym) - cs.feat.volH) > 0.02 * cs.feat.volH;
+    if (sigLive) tweaks.push("sigma live");
+    txt = "Learning: " + L.log.length + " scored · " + (calls.length ? Math.round(corr / calls.length * 100) + "% hit" : "no calls yet") +
+      " · Brier " + brier.toFixed(2) +
+      " · flips " + (fs.cycles ? fs.rate.toFixed(1) : "—") + "/cycle" +
+      (ce != null ? " · calib err " + Math.round(ce * 100) + "pt" : "") +
+      " · momentum x" + L.w.mom.toFixed(1) + " · regime x" + L.w.reg.toFixed(1) + " · asym x" + L.w.asym.toFixed(1) +
+      " · band ±" + Math.round(band * 100) + (dw ? " (dwell on)" : "") +
+      (tweaks.length ? " · active: " + tweaks.join(", ") : "");
+  }
+  if (cs.els.learn.textContent !== txt) cs.els.learn.textContent = txt;
 }
 function updateLearn(sym, lp, closedOver){
   const L = learnState(sym);
-  // Drift weight: bounded gradient step on log-loss, mirroring
-  // predict.py's apply_outcome — the drift component is what gets graded.
   const y = closedOver ? 1 : 0, p = clamp(lp.p, 0.02, 0.98);
-  const g = (p - y) * (lp.driftZ || 0);
-  L.w = clamp(L.w - 0.05 * g, 0.2, 2.0);
-  // Calibration: bucket predicted confidence vs realized frequency over
-  // the stored log; shrink toward 50% when overconfident, relax slowly.
-  if (L.log.length >= 15){
-    const buckets = [[0.5, 0.6], [0.6, 0.7], [0.7, 0.85], [0.85, 1.01]];
-    let num = 0, den = 0;
-    for (const [lo, hi] of buckets){
-      const es = L.log.filter(e => { const cf = e.p >= 0.5 ? e.p : 1 - e.p; return cf >= lo && cf < hi; });
-      if (es.length >= 4){
-        const mc = mean(es.map(e => e.p >= 0.5 ? e.p : 1 - e.p));
-        const fr = es.filter(e => (e.p >= 0.5) === e.over).length / es.length;
-        num += (mc - fr) * es.length; den += es.length;
-      }
-    }
-    if (den > 0){
-      const diff = num / den;
-      if (diff > 0.03){
-        const target = clamp(1 - diff, 0.5, 1.0);
-        L.calib = clamp(L.calib + clamp(target - L.calib, -0.03, 0.03), 0.5, 1.0);
-      } else {
-        L.calib = clamp(L.calib + clamp(1.0 - L.calib, 0, 0.01), 0.5, 1.0);
-      }
+  // Per-component log-loss gradient steps. The prediction's z is
+  // (log price/line distance + sum_k w_k * raw_k) / sigmaT, so
+  // d(log-loss)/dw_k runs through the chain rule on the total drift;
+  // each weight moves only by its own component's share, clamped 0..2.
+  // p graded here is the calibrated probability the user actually saw.
+  if (lp.driftRaw && lp.sigmaT > 0){
+    const f = bucketFactor(L, bucketKey(lp.pRaw != null ? lp.pRaw : lp.p));
+    const phi = Math.exp(-lp.z * lp.z / 2) / Math.sqrt(2 * Math.PI);
+    const grad = (p - y) / (p * (1 - p)) * f * phi;   // d log-loss / d z
+    for (const k of ["mom", "reg", "asym"]){
+      L.w[k] = clamp(L.w[k] - 0.25 * grad * (lp.driftRaw[k] / lp.sigmaT), 0, 2);
     }
   }
+  // Per-bucket calibration record: which confidence bucket this call
+  // fell in, and whether the called side won.
+  const bk = bucketKey(lp.pRaw != null ? lp.pRaw : lp.p);
+  const b = L.buckets[bk] || (L.buckets[bk] = {n: 0, hit: 0});
+  b.n++;
+  if ((lp.p > 0.5) === closedOver) b.hit++;
 }
 
 /* ---------- prediction ---------- */
@@ -729,38 +910,69 @@ function predict(sym){
   const cs = coinState(sym);
   if (!S.cycle.active || !cs.price || !cs.line) return;
   const M = MODELS[sym], f = cs.feat;
-  const T = Math.max(1, (S.cycle.closeAt - Date.now()) / 1000);
-  const volH = f.volH || M.vol;
-  const sigmaT = volH * Math.sqrt(T / 3600);
-  let muH = 0;
-  if (f.ret24 != null) muH += 0.45 * (f.ret24 / 24);
-  if (f.ret7d != null) muH += 0.25 * (f.ret7d / 168);
-  muH += 0.30 * (M.slope / 24);
+  const T = Math.max(1, (S.cycle.closeAt - Date.now()) / 1000), Th = T / 3600;
+  const sigmaT = liveSigma(sym) * Math.sqrt(Th);
+  // Three drift components (per hour, log-return units), each carrying
+  // its own learned weight — the same components the forecast graph
+  // uses, so the whole page tunes as one brain.
+  const baseVol = f.volH || M.vol;
+  let momC = 0;
+  if (f.ret24 != null) momC += 0.45 * (f.ret24 / 24);
+  if (f.ret7d != null) momC += 0.25 * (f.ret7d / 168);
   const trend = (f.ret24 != null && f.ret24 < 0) ? "down" : "up";
-  const ratio = volH / M.vol, terc = ratio < 0.8 ? "t0" : ratio < 1.3 ? "t1" : "t2";
+  const ratio = baseVol / M.vol, terc = ratio < 0.8 ? "t0" : ratio < 1.3 ? "t1" : "t2";
   const bucketUp = (M.buckets || {})[trend + "_" + terc];
-  if (bucketUp != null) muH += (bucketUp - 0.5) * 2 * volH * 0.6;
-  const learn = learnState(sym);
-  const muBase = muH;
-  muH = muH * learn.w;
-  const z = (Math.log(cs.price / cs.line) + muH * (T / 3600)) / sigmaT;
+  if (bucketUp != null) momC += (bucketUp - 0.5) * 2 * baseVol * 0.6;
+  const tw = cs.trend ? cs.trend[matchedWin()] : null;
+  if (tw) momC += 0.5 * (tw.logret / tw.winHours);
+  const regC = 0.30 * (M.slope / 24);
+  let asymC = 0;
+  const sws = cs.swings && (cs.swings.h24 || cs.swings.d7);
+  if (sws && (sws.avgUp + sws.avgDn) > 0) asymC = (sws.avgUp - sws.avgDn) / (sws.avgUp + sws.avgDn) * baseVol;
+  const L = learnState(sym);
+  const driftRaw = {mom: momC * Th, reg: regC * Th, asym: asymC * Th};
+  const driftTotal = L.w.mom * driftRaw.mom + L.w.reg * driftRaw.reg + L.w.asym * driftRaw.asym;
+  const z = (Math.log(cs.price / cs.line) + driftTotal) / sigmaT;
   const pRaw = normCdf(z);
-  const p = 0.5 + (pRaw - 0.5) * learn.calib;
-  cs.lastPred = {p: p, driftZ: muBase * (T / 3600) / sigmaT};
-  if (Math.abs(p - 0.5) < 0.07){
+  const p = applyCalib(sym, pRaw);
+  cs.lastPred = {p: p, pRaw: pRaw, z: z, sigmaT: sigmaT, driftTotal: driftTotal,
+                 driftRaw: driftRaw,
+                 lineMoved: !!(cs.lastPred && cs.lastPred.lineMoved) || cs.lineMoved};
+  // The displayed call: judged against this coin's own NO EDGE band
+  // (widened when its calls have been flip-flopping), with call-dwell
+  // so a jumpy call can't strobe — a side change must lead the old
+  // side by >= 4 points on 2 consecutive ticks while dwell is on.
+  const band = bandFor(sym);
+  let side = null;
+  if (Math.abs(p - 0.5) >= band) side = p > 0.5 ? "over" : "under";
+  if (side && cs.dispSide && side !== cs.dispSide){
+    cs.flips++;
+    if (dwellOn(sym)){
+      const adv = Math.abs(p - 0.5) - Math.abs((cs.dispP != null ? cs.dispP : 0.5) - 0.5);
+      if (cs.dwellSide === side) cs.dwellCount++; else { cs.dwellSide = side; cs.dwellCount = 1; }
+      if (!(adv >= 0.04 && cs.dwellCount >= 2)) side = cs.dispSide;   // hold the old call
+    }
+  }
+  if (!side){
+    cs.dwellSide = null; cs.dwellCount = 0;
     cs.lastCall = null;
     cs.els.call.textContent = "NO EDGE"; cs.els.call.className = "call noedge";
-    cs.els.conf.textContent = "Probability sits at " + (p * 100).toFixed(0) + "% — inside the ±7pt no-call band around 50. The model won't dress up a coin flip.";
+    cs.els.conf.textContent = "Probability sits at " + (p * 100).toFixed(0) + "% — inside this coin's ±" + Math.round(band * 100) +
+      "pt no-call band around 50" + (band > BAND_BASE + 0.001 ? " (widened: its recent calls kept flip-flopping)" : "") +
+      ". The model won't dress up a coin flip.";
     cs.els.pbar.style.width = "0%";
   } else {
-    const over = p > 0.5, conf = over ? p : 1 - p;
-    cs.lastCall = {side: over ? "over" : "under", p: p};
+    const over = side === "over", conf = over ? p : 1 - p;
+    if (cs.dispSide === side) cs.dispP = p;
+    cs.lastCall = {side: side, p: p};
     cs.els.call.textContent = (over ? "OVER " : "UNDER ") + (conf * 100).toFixed(0) + "%";
     cs.els.call.className = "call " + (over ? "over" : "under");
     cs.els.conf.textContent = "Chance the close lands over your line: " + (p * 100).toFixed(1) + "% · closes in " + fmtClock(S.cycle.closeAt - Date.now());
     cs.els.pbar.style.width = (conf * 100).toFixed(0) + "%";
   }
+  if (side) cs.dispSide = side;
   drawSpark(sym);
+  renderLearn(sym);
 }
 
 /* ---------- cycle ---------- */
@@ -773,7 +985,7 @@ function startCycle(){
   S.cycle.closeAt = Math.floor(now / L) * L + L;
   S.cycle.active = true;
   $("#startBtn").disabled = true; $("#stopBtn").disabled = false;
-  S.selected.forEach(sym => { const cs = coinState(sym); if (!cs.lineSet && cs.price) setLine(sym, cs.price, true); predict(sym); });
+  S.selected.forEach(sym => { const cs = coinState(sym); if (!cs.lineSet && cs.price) setLine(sym, cs.price); predict(sym); });
   $("#cycleStatus").textContent = "Cycle running — " + S.lenMin + "m perpetuals, aligned to the wall clock. Every call below is for the close vs each coin's line.";
 }
 function stopCycle(){
@@ -786,6 +998,9 @@ function stopCycle(){
     cs.els.call.textContent = "NO CYCLE RUNNING"; cs.els.call.className = "call noedge";
     cs.els.conf.textContent = "Set your line, then press Start — every call is for the close vs your line, never for right now.";
     cs.els.pbar.style.width = "0%";
+    cs.dispSide = null; cs.dispP = null; cs.dwellSide = null; cs.dwellCount = 0;
+    cs.flips = 0; cs.lineMoved = false;
+    updateLineUI(sym);
   });
 }
 async function scoreCycle(){
@@ -816,10 +1031,11 @@ async function scoreCycle(){
     if (cs.lastPred){
       const L = learnState(sym);
       L.log.push({t: Date.now(), p: cs.lastPred.p, call: cs.lastCall ? cs.lastCall.side : "none",
-                  over: closedOver, close: final, line: cs.line});
+                  over: closedOver, close: final, line: cs.line, flips: cs.flips,
+                  lineMoved: !!cs.lastPred.lineMoved});
       if (L.log.length > 300) L.log.splice(0, L.log.length - 300);
       updateLearn(sym, cs.lastPred, closedOver);
-      lsSet(LS_LEARN, S.learn);
+      saveLearn();
     }
     renderRec(sym);
     renderLearn(sym);
@@ -828,7 +1044,14 @@ async function scoreCycle(){
   renderScore();
   const now = Date.now();
   while (S.cycle.closeAt <= now) S.cycle.closeAt += L;
-  S.selected.forEach(sym => { const c = coinState(sym); c.lastCall = null; c.lastPred = null; predict(sym); });
+  S.selected.forEach(sym => {
+    const c = coinState(sym);
+    c.lastCall = null; c.lastPred = null;
+    c.flips = 0; c.lineMoved = false;                    // fresh cycle record
+    c.dispSide = null; c.dispP = null; c.dwellSide = null; c.dwellCount = 0;
+    updateLineUI(sym);
+    predict(sym);
+  });
 }
 function renderRec(sym){
   const cs = coinState(sym), sc = S.score[sym];
@@ -851,7 +1074,7 @@ $("#startBtn").addEventListener("click", startCycle);
 $("#stopBtn").addEventListener("click", stopCycle);
 $("#resetScore").addEventListener("click", () => {
   S.score = {}; lsSet(LS_SCORE, {});
-  S.learn = {}; lsSet(LS_LEARN, {});
+  S.learn = {}; lsSet(LS_LEARN, {}); lsSet(LS_LEARN2, {});
   renderScore(); S.selected.forEach(sym => { renderRec(sym); renderLearn(sym); });
 });
 
@@ -869,8 +1092,16 @@ async function priceTick(){
         cs.els.chg.textContent = "24h " + fmtPct(chg, true);
         cs.els.chg.style.color = chg >= 0 ? "var(--up)" : "var(--down)";
       }
-      if (!cs.lineSet) setLine(sym, cs.price, true);
-      else if (S.cycle.active) predict(sym);
+      if (!cs.lineSet) setLine(sym, cs.price);
+      else {
+        if (cs.lineMode === "off"){
+          // A slider-set line rides the live price at its fixed offset.
+          const nl = cs.price * (1 + cs.lineOff / 100);
+          if (Math.abs(nl - cs.line) > 1e-12){ cs.line = nl; cs._lastLine = nl; }
+          updateLineUI(sym);
+        }
+        if (S.cycle.active) predict(sym);
+      }
       drawSpark(sym);
     }
   }
@@ -909,6 +1140,7 @@ $("#pipBtn").addEventListener("click", async () => {
 });
 
 /* ---------- init ---------- */
+migrateLearn();
 buildCoinGrid();
 (function init(){
   const len = S.lenMin;
