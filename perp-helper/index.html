@@ -63,7 +63,7 @@ input[type=number]{background:#0c0c18;border:1px solid var(--line);color:var(--t
 #watchHead{display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between}
 #countdown{font-size:26px;font-weight:700;color:var(--gold2);font-variant-numeric:tabular-nums}
 #cycleStatus{color:var(--mut);font-size:14px}
-#cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:6px}
+#cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:6px}
 .wcard{background:#0c0c18;border:1px solid var(--line);border-radius:16px;padding:14px;position:relative}
 .wcard.flash-right{border-color:var(--up);box-shadow:0 0 0 1px var(--up)}
 .wcard.flash-wrong{border-color:var(--down);box-shadow:0 0 0 1px var(--down)}
@@ -72,6 +72,19 @@ input[type=number]{background:#0c0c18;border:1px solid var(--line);color:var(--t
 .chg{font-size:13px;font-variant-numeric:tabular-nums}
 .price{font-size:27px;font-weight:700;margin:4px 0 2px;font-variant-numeric:tabular-nums}
 canvas.spark{width:100%;height:48px;display:block}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:2px}
+.charts canvas{width:100%;height:110px;display:block}
+.chartlbl{font-size:11px;color:var(--mut);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+.trend{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;min-height:22px}
+.tchip{font-size:12px;font-weight:800;letter-spacing:.05em;padding:3px 9px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.tchip.jump{color:var(--up);border-color:var(--up)}
+.tchip.drop{color:var(--down);border-color:var(--down)}
+.tchip.level{color:var(--mut)}
+.tchip.ride{color:var(--gold2);border-color:var(--gold)}
+.tothers{color:var(--mut);font-size:12px}
+.swline,.learnline{color:var(--mut);font-size:12px;margin-top:5px;line-height:1.55}
+.learnline{color:#b9b4d6}
+@media (max-width:460px){.charts{grid-template-columns:1fr}}
 .regime{color:var(--mut);font-size:12px;line-height:1.5;margin-top:4px}
 .snipe{
   margin-top:9px;border:1px solid var(--edge);color:#14100a;font-weight:700;font-size:14px;
@@ -151,7 +164,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 18px 34px;color:var(--mut);font-
   </div>
 </main>
 <footer>
-  Predictions are probabilities built from pattern statistics — barrier distance to your line, volatility, momentum, and each coin's 6-month base rates. They are not guarantees, and short-horizon crypto direction is close to a coin flip: the base models' held-out record is printed on every card, and the scoreboard above shows this page's real record, wins and losses alike. The snipe badge uses the hourly setup only, read on a ~4-hour window: on held-out data across all 20 coins, flagged setups produced the big move 23.1% of the time against a 14.4% unflagged base rate (1.61x lift). The 15-minute snipe tested as noise (lift under 1x) and is not used. Data: Coinbase Exchange public feed. Not financial advice.
+  Predictions are probabilities built from pattern statistics — barrier distance to your line, volatility, momentum, and each coin's 6-month base rates. They are not guarantees, and short-horizon crypto direction is close to a coin flip: the base models' held-out record is printed on every card, and the scoreboard above shows this page's real record, wins and losses alike. The snipe badge uses the hourly setup only, read on a ~4-hour window: on held-out data across all 20 coins, flagged setups produced the big move 23.1% of the time against a 14.4% unflagged base rate (1.61x lift). The 15-minute snipe tested as noise (lift under 1x) and is not used. The forecast chart beside each live chart is an estimate cone — the mean path and bands show where the price could plausibly wander given current volatility and drift, not a promised path; the tick marks are the times swings have typically arrived, not appointments. Data: Coinbase Exchange public feed. Not financial advice.
 </footer>
 <script>
 "use strict";
@@ -159,7 +172,7 @@ const MODELS = {"ADA":{"vol":0.005383,"slope":0.000381,"pos":0.4306,"buckets":{"
 const SNIPE_PARAMS = {"squeeze_window_bars":6,"squeeze_pct_max":0.2,"pressure_min_z":1.0,"shock_mult":2.5,"vol_z_min":1.5,"move_multiple":1.5,"adverse_multiple":0.75};
 const ORDER = ["BTC","ETH","SOL","XRP","DOGE","ADA","LINK","AVAX","DOT","LTC","BCH","NEAR","UNI","ATOM","XLM","ETC","FIL","HBAR","SUI","PEPE"];
 const CB = "https://api.exchange.coinbase.com";
-const LS_SEL = "ph.sel.v1", LS_LEN = "ph.len.v1", LS_SCORE = "ph.score.v1";
+const LS_SEL = "ph.sel.v1", LS_LEN = "ph.len.v1", LS_SCORE = "ph.score.v1", LS_LEARN = "ph.learn.v1";
 const $ = s => document.querySelector(s);
 
 function clamp(x, a, b){ return Math.min(b, Math.max(a, x)); }
@@ -201,14 +214,16 @@ const S = {
   coins: {},
   cycle: {active: false, closeAt: 0},
   score: lsGet(LS_SCORE, {}),
+  learn: lsGet(LS_LEARN, {}),
   loopN: 0
 };
 
 function coinState(sym){
   if (!S.coins[sym]) S.coins[sym] = {
-    price: null, closesH: [], volsH: [], closes15: [],
+    price: null, closesH: [], volsH: [], closes15: [], closes1: [],
     feat: {volH: null, ret24: null, ret7d: null},
-    snipe: null, line: null, lineSet: false, lastCall: null, els: {}
+    trend: null, swings: null, fcMu: 0, fcHorizonH: 0.5,
+    snipe: null, line: null, lineSet: false, lastCall: null, lastPred: null, els: {}
   };
   return S.coins[sym];
 }
@@ -246,6 +261,10 @@ function setLen(min, fromCustom){
   lsSet(LS_LEN, S.lenMin);
   document.querySelectorAll("#lenChips .chip").forEach(c => c.classList.toggle("on", +c.dataset.min === S.lenMin));
   if (!fromCustom) $("#lenCustom").value = "";
+  S.selected.forEach(sym => {
+    const c = S.coins[sym];
+    if (c && c.els.trend){ computeTrend(sym); computeForecast(sym); renderTrend(sym); drawSpark(sym); }
+  });
   if (S.cycle.active) startCycle();
 }
 document.querySelectorAll("#lenChips .chip").forEach(c => c.addEventListener("click", () => setLen(+c.dataset.min, false)));
@@ -259,28 +278,34 @@ function addCard(sym){
   el.innerHTML =
     '<div class="wtop"><h3>' + sym + '</h3><span class="chg">24h —</span></div>' +
     '<div class="price">—</div>' +
-    '<canvas class="spark" width="520" height="96"></canvas>' +
+    '<div class="charts"><div><div class="chartlbl">Live</div><canvas class="spark" width="520" height="220"></canvas></div>' +
+    '<div><div class="chartlbl">Estimate — forecast</div><canvas class="fc" width="520" height="220"></canvas></div></div>' +
     '<div class="regime">Loading 6 months of pattern stats…</div>' +
+    '<div class="trend"></div>' +
+    '<div class="swline"></div>' +
     '<div class="snipe" hidden></div>' +
     '<div class="pred"><div class="call noedge">NO CYCLE RUNNING</div><div class="conf">Set your line, then press Start — every call is for the close vs your line, never for right now.</div><div class="pbar"><div style="width:0%"></div></div></div>' +
     '<div class="line-ctl"><label>Over / under line <span><input type="number" class="line-num" step="any"> <button class="snap" type="button">snap to price</button></span></label>' +
     '<input type="range" class="line-slider"></div>' +
     '<div class="flashmsg"></div>' +
-    '<div class="rec"></div>';
+    '<div class="rec"></div>' +
+    '<div class="learnline"></div>';
   $("#cards").appendChild(el);
   cs.els = {
     root: el, chg: el.querySelector(".chg"), price: el.querySelector(".price"),
-    spark: el.querySelector(".spark"), regime: el.querySelector(".regime"),
+    spark: el.querySelector(".spark"), fc: el.querySelector(".fc"), regime: el.querySelector(".regime"),
+    trend: el.querySelector(".trend"), swline: el.querySelector(".swline"),
     snipe: el.querySelector(".snipe"), pred: el.querySelector(".pred"),
     call: el.querySelector(".pred .call"), conf: el.querySelector(".pred .conf"),
     pbar: el.querySelector(".pbar > div"), num: el.querySelector(".line-num"),
     slider: el.querySelector(".line-slider"), flash: el.querySelector(".flashmsg"),
-    rec: el.querySelector(".rec")
+    rec: el.querySelector(".rec"), learn: el.querySelector(".learnline")
   };
   cs.els.slider.addEventListener("input", () => { const v = parseFloat(cs.els.slider.value); if (isFinite(v)) setLine(sym, v, false); });
   cs.els.num.addEventListener("change", () => { const v = parseFloat(cs.els.num.value); if (isFinite(v) && v > 0) setLine(sym, v, true); });
   el.querySelector(".snap").addEventListener("click", () => { if (cs.price) setLine(sym, cs.price, true); });
   renderRec(sym);
+  renderLearn(sym);
 }
 function removeCard(sym){
   const el = document.getElementById("card-" + sym);
@@ -296,15 +321,17 @@ function setLine(sym, v, syncSlider){
     cs.els.slider.min = lo; cs.els.slider.max = hi; cs.els.slider.step = cs.price / 2000;
     cs.els.slider.value = clamp(v, lo, hi);
   }
+  if (cs.els.trend){ computeTrend(sym); renderTrend(sym); drawSpark(sym); }
   if (S.cycle.active) predict(sym);
 }
 
 /* ---------- data + features ---------- */
 async function loadCoin(sym){
   const cs = coinState(sym);
-  const [h, m15] = await Promise.all([
+  const [h, m15, m1] = await Promise.all([
     fetchJSON(CB + "/products/" + sym + "-USD/candles?granularity=3600"),
-    fetchJSON(CB + "/products/" + sym + "-USD/candles?granularity=900")
+    fetchJSON(CB + "/products/" + sym + "-USD/candles?granularity=900"),
+    fetchJSON(CB + "/products/" + sym + "-USD/candles?granularity=60")
   ]);
   if (Array.isArray(h) && h.length > 30){
     const rows = h.slice().reverse(); // ascending
@@ -325,6 +352,10 @@ async function loadCoin(sym){
     cs.closes15 = m15.slice().reverse().map(r => r[4]);
     drawSpark(sym);
   }
+  if (Array.isArray(m1) && m1.length > 30){
+    cs.closes1 = m1.slice().reverse().map(r => r[4]);
+  }
+  computeAnalysis(sym);
 }
 function computeFeatures(sym){
   const cs = coinState(sym), c = cs.closesH, n = c.length;
@@ -368,25 +399,327 @@ function computeSnipe(sym){
     '<div style="font-weight:400;font-size:12px;margin-top:3px">Hourly ' + cs.snipe.via + " setup — a ~4h watch, not a call on this cycle's close. Held-out on " + sym +
     ": flagged hit " + (M.sn4.hit * 100).toFixed(0) + "% vs " + (M.sn4.base * 100).toFixed(0) + "% base · " + M.sn4.lift.toFixed(2) + "x lift (n=" + M.sn4.n + ")</div>";
 }
-function drawSpark(sym){
+function chartScale(sym){
   const cs = coinState(sym);
   const data = cs.closes15.length > 10 ? cs.closes15.slice(-96) : cs.closesH.slice(-48);
-  const cv = cs.els.spark; if (!cv || data.length < 2) return;
+  let lo = Infinity, hi = -Infinity;
+  data.forEach(p => { if (p < lo) lo = p; if (p > hi) hi = p; });
+  if (!isFinite(lo)) { const a = cs.price || 1; lo = a * 0.99; hi = a * 1.01; }
+  if (cs.line){ lo = Math.min(lo, cs.line); hi = Math.max(hi, cs.line); }
+  const anchor = cs.price || data[data.length - 1] || lo;
+  const volH = cs.feat.volH || MODELS[sym].vol, hz = cs.fcHorizonH || 0.5;
+  const sigEnd = volH * Math.sqrt(hz);
+  lo = Math.min(lo, anchor * Math.exp(cs.fcMu * hz - sigEnd));
+  hi = Math.max(hi, anchor * Math.exp(cs.fcMu * hz + sigEnd));
+  const pad = (hi - lo) * 0.05 || hi * 0.01;
+  return {lo: lo - pad, hi: hi + pad, data: data, anchor: anchor};
+}
+function drawLive(sym, sc){
+  const cs = coinState(sym), cv = cs.els.spark;
+  if (!cv || sc.data.length < 2) return;
   const ctx = cv.getContext("2d"), W = cv.width, H = cv.height;
   ctx.clearRect(0, 0, W, H);
-  const lo = Math.min.apply(null, data), hi = Math.max.apply(null, data), rng = (hi - lo) || 1;
+  const y = p => H - 6 - (p - sc.lo) / (sc.hi - sc.lo) * (H - 12);
   ctx.beginPath();
-  data.forEach((p, i) => {
-    const x = i / (data.length - 1) * (W - 8) + 4, y = H - 6 - (p - lo) / rng * (H - 12);
-    i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  sc.data.forEach((p, i) => {
+    const x = i / (sc.data.length - 1) * (W - 8) + 4;
+    i ? ctx.lineTo(x, y(p)) : ctx.moveTo(x, y(p));
   });
-  ctx.strokeStyle = data[data.length - 1] >= data[0] ? "#3ddc84" : "#ff5e7a";
+  ctx.strokeStyle = sc.data[sc.data.length - 1] >= sc.data[0] ? "#3ddc84" : "#ff5e7a";
   ctx.lineWidth = 2; ctx.stroke();
   if (cs.line){
-    const y = H - 6 - (cs.line - lo) / rng * (H - 12);
-    if (y > 0 && y < H){
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y);
+    const yy = y(cs.line);
+    if (yy > 0 && yy < H){
+      ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(W, yy);
       ctx.strokeStyle = "#c9a227"; ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]);
+    }
+  }
+  ctx.fillStyle = "#9a96ad"; ctx.font = "17px system-ui";
+  ctx.fillText(fmtPrice(sc.hi), 5, 18);
+  ctx.fillText(fmtPrice(sc.lo), 5, H - 6);
+}
+function drawForecast(sym, sc){
+  const cs = coinState(sym), cv = cs.els.fc;
+  if (!cv) return;
+  const ctx = cv.getContext("2d"), W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  const volH = cs.feat.volH || MODELS[sym].vol, hz = cs.fcHorizonH || 0.5, mu = cs.fcMu || 0;
+  const y = p => H - 14 - (p - sc.lo) / (sc.hi - sc.lo) * (H - 26);
+  const N = 48;
+  const path = [];
+  for (let k = 0; k <= N; k++){
+    const t = hz * k / N, x = 4 + (W - 8) * k / N, m = mu * t, s = volH * Math.sqrt(Math.max(t, 1e-9));
+    path.push({x: x, mean: sc.anchor * Math.exp(m), u68: sc.anchor * Math.exp(m + s),
+               l68: sc.anchor * Math.exp(m - s), u95: sc.anchor * Math.exp(m + 1.96 * s),
+               l95: sc.anchor * Math.exp(m - 1.96 * s)});
+  }
+  const band = (up, dn, fill) => {
+    ctx.beginPath();
+    path.forEach((q, i) => i ? ctx.lineTo(q.x, y(q[up])) : ctx.moveTo(q.x, y(q[up])));
+    for (let i = N; i >= 0; i--) ctx.lineTo(path[i].x, y(path[i][dn]));
+    ctx.closePath(); ctx.fillStyle = fill; ctx.fill();
+  };
+  band("u95", "l95", "rgba(124,92,255,0.10)");
+  band("u68", "l68", "rgba(201,162,39,0.13)");
+  ctx.beginPath();
+  path.forEach((q, i) => i ? ctx.lineTo(q.x, y(q.mean)) : ctx.moveTo(q.x, y(q.mean)));
+  ctx.strokeStyle = "#f3d27a"; ctx.lineWidth = 2; ctx.stroke();
+  if (cs.line){
+    const yy = y(cs.line);
+    if (yy > 0 && yy < H){
+      ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(W, yy);
+      ctx.strokeStyle = "#c9a227"; ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]);
+    }
+  }
+  if (S.cycle.active && S.cycle.closeAt > Date.now()){
+    const frac = (S.cycle.closeAt - Date.now()) / 3600000 / hz;
+    if (frac > 0 && frac < 1){
+      const x = 4 + (W - 8) * frac;
+      ctx.beginPath(); ctx.moveTo(x, 8); ctx.lineTo(x, H - 14);
+      ctx.strokeStyle = "rgba(236,234,244,0.45)"; ctx.setLineDash([3, 4]); ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = "#9a96ad"; ctx.font = "15px system-ui"; ctx.fillText("close", x + 4, 22);
+    }
+  }
+  // Expected swing times: ticks on the time axis + dots on the mean path.
+  const med = cs.swings && cs.swings.medDurMin;
+  if (med && med > 0){
+    ctx.fillStyle = "#7c5cff"; ctx.strokeStyle = "#7c5cff";
+    for (let tt = med; tt < hz * 60; tt += med){
+      const f = tt / (hz * 60), x = 4 + (W - 8) * f;
+      ctx.beginPath(); ctx.moveTo(x, H - 14); ctx.lineTo(x, H - 6); ctx.lineWidth = 2; ctx.stroke();
+      const t = tt / 60, m = mu * t, s = volH * Math.sqrt(t);
+      const py = y(sc.anchor * Math.exp(m));
+      ctx.beginPath(); ctx.arc(x, py, 3, 0, 7); ctx.fill();
+    }
+  }
+  ctx.beginPath(); ctx.arc(4, y(sc.anchor), 3.5, 0, 7); ctx.fillStyle = "#eceaf4"; ctx.fill();
+  ctx.fillStyle = "#9a96ad"; ctx.font = "bold 16px system-ui";
+  ctx.fillText("ESTIMATE", 8, 20);
+  ctx.font = "15px system-ui";
+  ctx.fillText("+" + (hz >= 1 ? hz.toFixed(hz % 1 ? 1 : 0) + "h" : Math.round(hz * 60) + "m"), W - 44, H - 18);
+  ctx.fillText(fmtPrice(sc.hi), 5, 38);
+  ctx.fillText(fmtPrice(sc.lo), 5, H - 18);
+}
+function drawSpark(sym){
+  const cs = coinState(sym);
+  if (!cs.els.spark) return;
+  const sc = chartScale(sym);
+  drawLive(sym, sc);
+  drawForecast(sym, sc);
+}
+
+/* ---------- trend state, swings, forecast, learning ---------- */
+function median(a){
+  if (!a.length) return 0;
+  const s = a.slice().sort((x, y) => x - y), m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+function matchedWin(){ return S.lenMin < 15 ? "w15" : S.lenMin <= 60 ? "w1h" : "w4h"; }
+const WIN_LABEL = {w15: "15m", w1h: "1h", w4h: "4h"};
+
+// Pick the finest candle series that actually spans the window.
+function seriesFor(cs, winHours){
+  const cands = [[cs.closes1, 1 / 60], [cs.closes15, 0.25], [cs.closesH, 1]];
+  for (const [arr, bh] of cands){
+    if (arr && arr.length > 2 && (arr.length - 1) * bh >= winHours) return {arr: arr, barHours: bh};
+  }
+  return null;
+}
+function medRange(arr, bars){
+  const rs = [];
+  const step = Math.max(1, Math.floor(bars / 2));
+  for (let i = 0; i + bars < arr.length; i += step){
+    const seg = arr.slice(i, i + bars + 1);
+    rs.push((Math.max.apply(null, seg) - Math.min.apply(null, seg)) / seg[bars]);
+  }
+  return rs.length ? median(rs) : 0;
+}
+function trendFor(cs, winHours, volH){
+  const sf = seriesFor(cs, winHours);
+  if (!sf || !(volH > 0)) return null;
+  const arr = sf.arr, bars = Math.max(1, Math.round(winHours / sf.barHours));
+  if (arr.length < bars + 1) return null;
+  const seg = arr.slice(-(bars + 1));
+  const start = seg[0], end = seg[bars];
+  const logret = Math.log(end / start);
+  const sigW = volH * Math.sqrt(winHours);           // one window-sigma, in log terms
+  const stdSlope = logret / sigW;
+  let decel = false;
+  if (bars >= 4){
+    const mid = seg[Math.floor(bars / 2)];
+    const s1 = Math.log(mid / start), s2 = Math.log(end / mid);
+    if (s1 > 0 && s2 < 0.4 * s1) decel = true;
+    if (s1 < 0 && s2 > 0.4 * s1) decel = true;
+  }
+  const range = (Math.max.apply(null, seg) - Math.min.apply(null, seg)) / end;
+  const typical = medRange(arr, bars) || range;
+  const useLine = cs.lineSet && cs.line;
+  const ref = useLine ? cs.line : mean(seg);
+  let crossings = 0;
+  for (let i = 0; i < bars; i++) if ((seg[i] - ref) * (seg[i + 1] - ref) < 0) crossings++;
+  const distRef = Math.abs(end - ref) / (sigW * end);
+  let state;
+  if (crossings >= 2 && distRef < 0.25) state = useLine ? "RIDING THE LINE" : "RIDING THE AVERAGE";
+  else if (stdSlope >= 0.5 && !decel) state = "JUMPING";
+  else if (stdSlope <= -0.5 && !decel) state = "DROPPING";
+  else if (Math.abs(stdSlope) < 0.25 && range < 0.6 * typical) state = "LEVELING OUT";
+  else if (stdSlope >= 0.35) state = "JUMPING";
+  else if (stdSlope <= -0.35) state = "DROPPING";
+  else state = "LEVELING OUT";
+  return {state: state, stdSlope: stdSlope, logret: logret, winHours: winHours, decel: decel};
+}
+function computeTrend(sym){
+  const cs = coinState(sym), volH = cs.feat.volH || MODELS[sym].vol;
+  cs.trend = {
+    w15: trendFor(cs, 0.25, volH),
+    w1h: trendFor(cs, 1, volH),
+    w4h: trendFor(cs, 4, volH)
+  };
+}
+function renderTrend(sym){
+  const cs = coinState(sym);
+  if (!cs.els.trend) return;
+  if (!cs.trend){ cs.els.trend.innerHTML = '<span class="tothers">Trend: warming up…</span>'; return; }
+  const mw = matchedWin(), t = cs.trend[mw];
+  if (!t){ cs.els.trend.innerHTML = '<span class="tothers">Trend: not enough candle history yet.</span>'; return; }
+  const cls = t.state === "JUMPING" ? "jump" : t.state === "DROPPING" ? "drop" : t.state.indexOf("RIDING") === 0 ? "ride" : "level";
+  const others = ["w15", "w1h", "w4h"].filter(k => k !== mw)
+    .map(k => WIN_LABEL[k] + " " + (cs.trend[k] ? cs.trend[k].state : "—")).join(" · ");
+  cs.els.trend.innerHTML = '<span class="tchip ' + cls + '">' + WIN_LABEL[mw] + " · " + t.state + "</span>" +
+    '<span class="tothers">' + others + (t.decel && (t.state === "JUMPING" || t.state === "DROPPING") ? " · easing" : "") + "</span>";
+}
+function zigzagSwings(closes, barHours, theta){
+  // Pivot-to-pivot swings; a reversal of theta (fraction) confirms a pivot.
+  const pivots = [{i: 0, p: closes[0]}];
+  let dirn = 0, top = closes[0], topI = 0, bot = closes[0], botI = 0;
+  let last = {i: 0, p: closes[0]};
+  for (let i = 1; i < closes.length; i++){
+    const p = closes[i];
+    if (dirn >= 0){
+      if (p > top){ top = p; topI = i; }
+      if (top > 0 && (top - p) / top >= theta && topI > last.i){
+        pivots.push({i: topI, p: top}); last = {i: topI, p: top};
+        dirn = -1; bot = p; botI = i; continue;
+      }
+    }
+    if (dirn <= 0){
+      if (p < bot){ bot = p; botI = i; }
+      if (bot > 0 && (p - bot) / bot >= theta && botI > last.i){
+        pivots.push({i: botI, p: bot}); last = {i: botI, p: bot};
+        dirn = 1; top = p; topI = i;
+      }
+    }
+  }
+  const swings = [];
+  for (let k = 1; k < pivots.length; k++){
+    const a = pivots[k - 1], b = pivots[k];
+    swings.push({pct: b.p / a.p - 1, durMin: (b.i - a.i) * barHours * 60});
+  }
+  return swings;
+}
+function swingStats(closes, barHours, theta){
+  if (!closes || closes.length < 8) return null;
+  const sw = zigzagSwings(closes, barHours, theta);
+  if (sw.length < 2) return null;
+  const ups = sw.filter(s => s.pct > 0), dns = sw.filter(s => s.pct < 0);
+  const avgUp = ups.length ? mean(ups.map(s => s.pct)) : 0;
+  const avgDn = dns.length ? mean(dns.map(s => -s.pct)) : 0;
+  return {
+    avgUp: avgUp, avgDn: avgDn, nUp: ups.length, nDn: dns.length, n: sw.length,
+    ratio: avgDn > 0 ? avgUp / avgDn : null,
+    medDurMin: median(sw.map(s => s.durMin))
+  };
+}
+function computeSwings(sym){
+  const cs = coinState(sym), volH = cs.feat.volH || MODELS[sym].vol;
+  const theta = 0.5 * volH;
+  const s24 = cs.closes15.length >= 40 ? swingStats(cs.closes15.slice(-96), 0.25, theta)
+                                        : swingStats(cs.closesH.slice(-24), 1, theta);
+  const s7d = swingStats(cs.closesH.slice(-168), 1, theta);
+  cs.swings = {h24: s24, d7: s7d, medDurMin: (s24 && s24.medDurMin) || (s7d && s7d.medDurMin) || null};
+}
+function renderSwings(sym){
+  const cs = coinState(sym);
+  if (!cs.els.swline) return;
+  const sw = cs.swings;
+  if (!sw || (!sw.h24 && !sw.d7)){ cs.els.swline.textContent = ""; return; }
+  const line = (s, lbl) => "Avg rise +" + (s.avgUp * 100).toFixed(2) + "% vs avg fall -" + (s.avgDn * 100).toFixed(2) +
+    "% · ratio " + (s.ratio != null ? s.ratio.toFixed(2) : "—") + " (" + lbl + ", " + s.n + " swings)";
+  const parts = [];
+  if (sw.h24) parts.push(line(sw.h24, "24h"));
+  if (sw.d7) parts.push(line(sw.d7, "7d"));
+  cs.els.swline.innerHTML = parts.join("<br>");
+}
+function computeForecast(sym){
+  const cs = coinState(sym), M = MODELS[sym], volH = cs.feat.volH || M.vol;
+  const tw = cs.trend ? cs.trend[matchedWin()] : null;
+  const slopePH = tw ? tw.logret / tw.winHours : 0;                 // log drift per hour
+  const regimePH = M.slope / 24;
+  let asym = 0;
+  const s = cs.swings && (cs.swings.h24 || cs.swings.d7);
+  if (s && (s.avgUp + s.avgDn) > 0) asym = (s.avgUp - s.avgDn) / (s.avgUp + s.avgDn);
+  // Blend: trend-state slope, 6-month regime slope, rise/fall asymmetry
+  // (asym in [-1,1] -> at most +-0.2 sigma/hour of extra drift, damped).
+  let mu = 0.5 * slopePH + 0.3 * regimePH + 0.2 * asym * volH;
+  mu = clamp(mu, -1.2 * volH, 1.2 * volH);
+  cs.fcMu = mu * learnState(sym).w;
+  cs.fcHorizonH = clamp(2 * S.lenMin / 60, 0.5, 8);
+}
+function computeAnalysis(sym){
+  const cs = coinState(sym);
+  if (!cs.closesH.length && !cs.closes15.length && !cs.closes1.length) return;
+  computeTrend(sym);
+  computeSwings(sym);
+  computeForecast(sym);
+  renderTrend(sym);
+  renderSwings(sym);
+  drawSpark(sym);
+}
+
+/* ---------- self-adjustment (learning) ---------- */
+function learnState(sym){
+  if (!S.learn[sym]) S.learn[sym] = {w: 1.0, calib: 1.0, log: []};
+  return S.learn[sym];
+}
+function renderLearn(sym){
+  const cs = coinState(sym);
+  if (!cs.els.learn) return;
+  const L = learnState(sym);
+  const calls = L.log.filter(e => e.call !== "none");
+  const corr = calls.filter(e => (e.call === "over") === e.over).length;
+  cs.els.learn.textContent = L.log.length
+    ? "Learning: " + L.log.length + " scored · " + (calls.length ? Math.round(corr / calls.length * 100) + "% hit" : "no calls yet") +
+      " · drift x" + L.w.toFixed(2) + " · calib " + L.calib.toFixed(2)
+    : "Learning: no scored closes yet — drift x1.00 · calib 1.00 (base model values)";
+}
+function updateLearn(sym, lp, closedOver){
+  const L = learnState(sym);
+  // Drift weight: bounded gradient step on log-loss, mirroring
+  // predict.py's apply_outcome — the drift component is what gets graded.
+  const y = closedOver ? 1 : 0, p = clamp(lp.p, 0.02, 0.98);
+  const g = (p - y) * (lp.driftZ || 0);
+  L.w = clamp(L.w - 0.05 * g, 0.2, 2.0);
+  // Calibration: bucket predicted confidence vs realized frequency over
+  // the stored log; shrink toward 50% when overconfident, relax slowly.
+  if (L.log.length >= 15){
+    const buckets = [[0.5, 0.6], [0.6, 0.7], [0.7, 0.85], [0.85, 1.01]];
+    let num = 0, den = 0;
+    for (const [lo, hi] of buckets){
+      const es = L.log.filter(e => { const cf = e.p >= 0.5 ? e.p : 1 - e.p; return cf >= lo && cf < hi; });
+      if (es.length >= 4){
+        const mc = mean(es.map(e => e.p >= 0.5 ? e.p : 1 - e.p));
+        const fr = es.filter(e => (e.p >= 0.5) === e.over).length / es.length;
+        num += (mc - fr) * es.length; den += es.length;
+      }
+    }
+    if (den > 0){
+      const diff = num / den;
+      if (diff > 0.03){
+        const target = clamp(1 - diff, 0.5, 1.0);
+        L.calib = clamp(L.calib + clamp(target - L.calib, -0.03, 0.03), 0.5, 1.0);
+      } else {
+        L.calib = clamp(L.calib + clamp(1.0 - L.calib, 0, 0.01), 0.5, 1.0);
+      }
     }
   }
 }
@@ -407,8 +740,13 @@ function predict(sym){
   const ratio = volH / M.vol, terc = ratio < 0.8 ? "t0" : ratio < 1.3 ? "t1" : "t2";
   const bucketUp = (M.buckets || {})[trend + "_" + terc];
   if (bucketUp != null) muH += (bucketUp - 0.5) * 2 * volH * 0.6;
+  const learn = learnState(sym);
+  const muBase = muH;
+  muH = muH * learn.w;
   const z = (Math.log(cs.price / cs.line) + muH * (T / 3600)) / sigmaT;
-  const p = normCdf(z);
+  const pRaw = normCdf(z);
+  const p = 0.5 + (pRaw - 0.5) * learn.calib;
+  cs.lastPred = {p: p, driftZ: muBase * (T / 3600) / sigmaT};
   if (Math.abs(p - 0.5) < 0.07){
     cs.lastCall = null;
     cs.els.call.textContent = "NO EDGE"; cs.els.call.className = "call noedge";
@@ -475,13 +813,22 @@ async function scoreCycle(){
     cs.els.root.classList.remove("flash-right", "flash-wrong");
     if (cls) cs.els.root.classList.add(cls === "right" ? "flash-right" : "flash-wrong");
     setTimeout(((el, f) => () => { el.classList.remove("flash-right", "flash-wrong"); f.textContent = ""; })(cs.els.root, cs.els.flash), 12000);
+    if (cs.lastPred){
+      const L = learnState(sym);
+      L.log.push({t: Date.now(), p: cs.lastPred.p, call: cs.lastCall ? cs.lastCall.side : "none",
+                  over: closedOver, close: final, line: cs.line});
+      if (L.log.length > 300) L.log.splice(0, L.log.length - 300);
+      updateLearn(sym, cs.lastPred, closedOver);
+      lsSet(LS_LEARN, S.learn);
+    }
     renderRec(sym);
+    renderLearn(sym);
   }
   lsSet(LS_SCORE, S.score);
   renderScore();
   const now = Date.now();
   while (S.cycle.closeAt <= now) S.cycle.closeAt += L;
-  S.selected.forEach(sym => { coinState(sym).lastCall = null; predict(sym); });
+  S.selected.forEach(sym => { const c = coinState(sym); c.lastCall = null; c.lastPred = null; predict(sym); });
 }
 function renderRec(sym){
   const cs = coinState(sym), sc = S.score[sym];
@@ -502,7 +849,11 @@ function renderScore(){
 }
 $("#startBtn").addEventListener("click", startCycle);
 $("#stopBtn").addEventListener("click", stopCycle);
-$("#resetScore").addEventListener("click", () => { S.score = {}; lsSet(LS_SCORE, {}); renderScore(); S.selected.forEach(renderRec); });
+$("#resetScore").addEventListener("click", () => {
+  S.score = {}; lsSet(LS_SCORE, {});
+  S.learn = {}; lsSet(LS_LEARN, {});
+  renderScore(); S.selected.forEach(sym => { renderRec(sym); renderLearn(sym); });
+});
 
 /* ---------- main loop ---------- */
 async function priceTick(){
@@ -520,7 +871,7 @@ async function priceTick(){
       }
       if (!cs.lineSet) setLine(sym, cs.price, true);
       else if (S.cycle.active) predict(sym);
-      if (S.loopN % 20 === 0) drawSpark(sym);
+      drawSpark(sym);
     }
   }
 }
