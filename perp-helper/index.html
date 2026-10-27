@@ -71,8 +71,25 @@ input[type=number]{background:#0c0c18;border:1px solid var(--line);color:var(--t
 .wtop h3{margin:0;font-size:19px}
 .chg{font-size:13px;font-variant-numeric:tabular-nums}
 .price{font-size:27px;font-weight:700;margin:4px 0 2px;font-variant-numeric:tabular-nums}
-canvas.spark{width:100%;height:48px;display:block}
+canvas.spark{width:100%;height:150px;display:block}
+.readouts{display:flex;flex-wrap:wrap;gap:14px;align-items:baseline;margin-top:2px}
+.readouts .ro{font-size:12px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase}
+.readouts .ro b{font-size:16px;color:var(--txt);letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums}
+.ro-dist{font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.ro-dist.up{color:var(--up)} .ro-dist.down{color:var(--down)}
+.livewrap{position:relative}
+.pill{position:absolute;top:8px;right:8px;background:rgba(20,16,10,.92);border:1px solid var(--gold);color:var(--gold2);border-radius:999px;padding:3px 11px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.zoomrow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.zoomseg{display:flex;gap:4px}
+.zoomseg button{border:1px solid var(--line);background:#0c0c18;color:var(--mut);border-radius:999px;padding:4px 11px;font-size:12px;cursor:pointer;font-weight:700}
+.zoomseg button.on{border-color:var(--gold);color:var(--gold2);background:#1c1808}
+.past{font-size:14px;letter-spacing:3px}
+.past .up{color:var(--up)} .past .down{color:var(--down)}
+.pastlbl{font-size:11px;color:var(--mut);letter-spacing:.12em;text-transform:uppercase;margin-right:2px}
+.fc30stat{color:var(--mut);font-size:12px;margin-top:4px;line-height:1.5}
+.gateline{color:#b9b4d6;font-size:12px;margin-top:3px;line-height:1.55}
 .charts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:2px}
+.charts.single{grid-template-columns:1fr}
 .charts canvas{width:100%;height:110px;display:block}
 .chartlbl{font-size:11px;color:var(--mut);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
 .trend{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;min-height:22px}
@@ -256,16 +273,41 @@ const S = {
   loopN: 0
 };
 
+const LS_ZOOM = "ph.zoom.v1", LS_FC30 = "ph.fc30.v1";
 function coinState(sym){
   if (!S.coins[sym]) S.coins[sym] = {
-    price: null, closesH: [], volsH: [], closes15: [], closes1: [],
+    price: null, closesH: [], volsH: [], closes15: [], closes1: [], ticks: [],
     feat: {volH: null, ret24: null, ret7d: null},
     trend: null, swings: null, fcMu: 0, fcHorizonH: 0.5,
     snipe: null, line: null, lineSet: false, lineMode: "abs", lineOff: 0, lineMoved: false,
     flips: 0, dispSide: null, dispP: null, dwellSide: null, dwellCount: 0, dragging: false,
+    zoom: lsGet(LS_ZOOM, {})[sym] || "live",
+    fc30on: !!lsGet(LS_FC30, {})[sym],
     lastCall: null, lastPred: null, els: {}
   };
   return S.coins[sym];
+}
+function setZoom(sym, z){
+  const cs = coinState(sym);
+  cs.zoom = z;
+  const m = lsGet(LS_ZOOM, {}); m[sym] = z; lsSet(LS_ZOOM, m);
+  if (cs.els.zoombtns) cs.els.zoombtns.forEach(b => b.classList.toggle("on", b.dataset.zoom === z));
+  drawSpark(sym);
+}
+function setFC30(sym, on){
+  const cs = coinState(sym);
+  cs.fc30on = on;
+  const m = lsGet(LS_FC30, {}); m[sym] = on; lsSet(LS_FC30, m);
+  applyFC30(sym);
+  drawSpark(sym);
+}
+function applyFC30(sym){
+  const cs = coinState(sym);
+  if (!cs.els.fc30wrap) return;
+  cs.els.fc30wrap.hidden = !cs.fc30on;
+  cs.els.charts.classList.toggle("single", !cs.fc30on);
+  cs.els.fc30btn.textContent = "30-day forecast: " + (cs.fc30on ? "on" : "off");
+  if (cs.fc30on) renderFC30Stat(sym);
 }
 
 /* ---------- setup UI ---------- */
@@ -318,8 +360,14 @@ function addCard(sym){
   el.innerHTML =
     '<div class="wtop"><h3>' + sym + '</h3><span class="chg">24h —</span></div>' +
     '<div class="price">—</div>' +
-    '<div class="charts"><div><div class="chartlbl">Live</div><canvas class="spark" width="520" height="220"></canvas></div>' +
-    '<div><div class="chartlbl">Estimate — forecast</div><canvas class="fc" width="520" height="220"></canvas></div></div>' +
+    '<div class="readouts"><span class="ro">Line <b class="ro-line">—</b></span><span class="ro">Current <b class="ro-cur">—</b></span><span class="ro-dist">—</span></div>' +
+    '<div class="livewrap"><canvas class="spark" width="1040" height="300"></canvas><div class="pill" hidden></div></div>' +
+    '<div class="zoomrow"><div class="zoomseg">' +
+    '<button type="button" data-zoom="live">Live</button><button type="button" data-zoom="5">5M</button><button type="button" data-zoom="15">15M</button><button type="button" data-zoom="30">30M</button>' +
+    '</div><div class="past"></div></div>' +
+    '<div class="charts single"><div><div class="chartlbl">Estimate — forecast</div><canvas class="fc" width="520" height="220"></canvas></div>' +
+    '<div class="fc30wrap" hidden><div class="chartlbl">Estimate — 30-day forecast</div><canvas class="fc30" width="520" height="220"></canvas><div class="fc30stat"></div></div></div>' +
+    '<div class="row" style="margin-top:6px"><button class="fc30btn snap" type="button">30-day forecast: off</button></div>' +
     '<div class="regime">Loading 6 months of pattern stats…</div>' +
     '<div class="trend"></div>' +
     '<div class="swline"></div>' +
@@ -334,7 +382,8 @@ function addCard(sym){
     '<div class="flashmsg"></div>' +
     '<div class="rec"></div>' +
     '<div class="learnline"></div>' +
-    '<div class="pooline"></div>';
+    '<div class="pooline"></div>' +
+    '<div class="gateline"></div>';
   $("#cards").appendChild(el);
   cs.els = {
     root: el, chg: el.querySelector(".chg"), price: el.querySelector(".price"),
@@ -346,8 +395,20 @@ function addCard(sym){
     slider: el.querySelector(".line-slider"), flash: el.querySelector(".flashmsg"),
     sval: el.querySelector(".slider-val"), lmoved: el.querySelector(".linemoved"),
     rec: el.querySelector(".rec"), learn: el.querySelector(".learnline"),
-    pool: el.querySelector(".pooline")
+    pool: el.querySelector(".pooline"), gate: el.querySelector(".gateline"),
+    roLine: el.querySelector(".ro-line"), roCur: el.querySelector(".ro-cur"),
+    roDist: el.querySelector(".ro-dist"), pill: el.querySelector(".pill"),
+    past: el.querySelector(".past"), charts: el.querySelector(".charts"),
+    fc30wrap: el.querySelector(".fc30wrap"), fc30: el.querySelector(".fc30"),
+    fc30stat: el.querySelector(".fc30stat"), fc30btn: el.querySelector(".fc30btn"),
+    zoombtns: el.querySelectorAll(".zoomseg button")
   };
+  cs.els.zoombtns.forEach(b => {
+    b.classList.toggle("on", b.dataset.zoom === cs.zoom);
+    b.addEventListener("click", () => setZoom(sym, b.dataset.zoom));
+  });
+  cs.els.fc30btn.addEventListener("click", () => setFC30(sym, !cs.fc30on));
+  applyFC30(sym);
   cs.els.slider.addEventListener("input", () => {
     let off = parseFloat(cs.els.slider.value);
     if (!isFinite(off) || !cs.price) return;
@@ -384,6 +445,7 @@ function updateLineUI(sym){
     (pinned ? " (past slider range)" : "");
   cs.els.lmoved.hidden = !cs.lineMoved;
   if (cs.lineMoved) cs.els.lmoved.textContent = "Line moved mid-cycle — the score judges the call against the line at the close.";
+  renderReadouts(sym);
 }
 function noteLineChange(sym){
   // A mid-cycle line move changes what the current prediction means. The
@@ -464,6 +526,7 @@ async function loadCoin(sym){
     cs.closes1 = m1.slice().reverse().map(r => r[4]);
   }
   computeAnalysis(sym);
+  fcCheckpoint(sym);
 }
 function computeFeatures(sym){
   const cs = coinState(sym), c = cs.closesH, n = c.length;
@@ -526,29 +589,136 @@ function chartScale(sym){
   const pad = (hi - lo) * 0.05 || hi * 0.01;
   return {lo: lo - pad, hi: hi + pad, data: data, anchor: anchor};
 }
-function drawLive(sym, sc){
-  const cs = coinState(sym), cv = cs.els.spark;
-  if (!cv || sc.data.length < 2) return;
-  const ctx = cv.getContext("2d"), W = cv.width, H = cv.height;
-  ctx.clearRect(0, 0, W, H);
-  const y = p => H - 6 - (p - sc.lo) / (sc.hi - sc.lo) * (H - 12);
-  ctx.beginPath();
-  sc.data.forEach((p, i) => {
-    const x = i / (sc.data.length - 1) * (W - 8) + 4;
-    i ? ctx.lineTo(x, y(p)) : ctx.moveTo(x, y(p));
-  });
-  ctx.strokeStyle = sc.data[sc.data.length - 1] >= sc.data[0] ? "#3ddc84" : "#ff5e7a";
-  ctx.lineWidth = 2; ctx.stroke();
-  if (cs.line){
-    const yy = y(cs.line);
-    if (yy > 0 && yy < H){
-      ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(W, yy);
-      ctx.strokeStyle = "#c9a227"; ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]);
+/* ---------- WEB4 live chart: tight zoom windows, coin color,
+   gradient fill, glowing head dot, dashed line with edge chevron,
+   right-edge price labels. Windows end now; the y-axis scales
+   tightly to JUST the visible stretch on every zoom. Live frames
+   only the tick tail (<= ~60s): full-strength near the head dot,
+   easing back along its length; stale ticks are called out on the
+   chart instead of being stretched to fill the frame. */
+const COIN_COLORS = {BTC: "#f7931a", ETH: "#8a9cff", SOL: "#9945ff", XRP: "#4db2ff", DOGE: "#d3b755",
+  ADA: "#4a7dd4", LINK: "#5b83e6", AVAX: "#ff6b6b", DOT: "#ff4d9d", LTC: "#a5b8d3", BCH: "#8dc351",
+  NEAR: "#2ee6a8", UNI: "#ff5ca8", ATOM: "#b7bcd4", XLM: "#9d6bff", ETC: "#3ddc97", FIL: "#4da2ff",
+  HBAR: "#b388ff", SUI: "#6cb8ff", PEPE: "#69c24a"};
+const ZOOM_MS = {live: 60000, "5": 300000, "15": 900000, "30": 1800000};
+function seriesForZoom(sym){
+  const cs = coinState(sym), now = Date.now(), winMs = ZOOM_MS[cs.zoom] || 900000;
+  const pts = [];
+  if (cs.zoom !== "live"){
+    // Base layer: 1-minute candle closes (each stamped at its candle
+    // end). Already loaded by loadCoin — zooming never refetches.
+    const c1 = cs.closes1, n = c1.length;
+    if (n > 1){
+      const endT = Math.floor(now / 60000) * 60000 + 60000;
+      for (let i = 0; i < n; i++){
+        const t = endT - (n - 1 - i) * 60000;
+        if (t >= now - winMs) pts.push({t: t, p: c1[i]});
+      }
     }
   }
-  ctx.fillStyle = "#9a96ad"; ctx.font = "17px system-ui";
-  ctx.fillText(fmtPrice(sc.hi), 5, 18);
-  ctx.fillText(fmtPrice(sc.lo), 5, H - 6);
+  for (const tk of cs.ticks) if (tk.t >= now - winMs) pts.push(tk);
+  pts.sort((a, b) => a.t - b.t);
+  return pts;
+}
+function drawLive(sym){
+  const cs = coinState(sym), cv = cs.els.spark;
+  if (!cv) return;
+  const ctx = cv.getContext("2d"), W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  const col = COIN_COLORS[sym] || "#c9a227";
+  const now = Date.now(), winMs = ZOOM_MS[cs.zoom] || 900000, t0 = now - winMs;
+  const RP = 96;   // right-edge label room
+  const pts = seriesForZoom(sym);
+  ctx.font = "22px system-ui";
+  if (pts.length < 2){
+    ctx.fillStyle = "#9a96ad";
+    const msg = cs.zoom === "live"
+      ? (cs.ticks.length ? "Live tail forming — ticks landing…" : "Waiting for ticks…")
+      : "Loading candles…";
+    ctx.fillText(msg, 18, H / 2);
+    return;
+  }
+  let lo = Infinity, hi = -Infinity;
+  pts.forEach(q => { if (q.p < lo) lo = q.p; if (q.p > hi) hi = q.p; });
+  const pad = Math.max((hi - lo) * 0.12, hi * 0.0004);
+  lo -= pad; hi += pad;
+  const X = t => 8 + (t - t0) / winMs * (W - RP - 16);
+  const Y = p => H - 16 - (p - lo) / (hi - lo) * (H - 32);
+  // faint frame lines at top/bottom of the tight range
+  ctx.strokeStyle = "rgba(154,150,173,0.16)"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, Y(hi - pad)); ctx.lineTo(W - RP, Y(hi - pad)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, Y(lo + pad)); ctx.lineTo(W - RP, Y(lo + pad)); ctx.stroke();
+  const tracePath = () => {
+    ctx.moveTo(X(pts[0].t), Y(pts[0].p));
+    for (let i = 1; i < pts.length - 1; i++){
+      const xc = (X(pts[i].t) + X(pts[i + 1].t)) / 2, yc = (Y(pts[i].p) + Y(pts[i + 1].p)) / 2;
+      ctx.quadraticCurveTo(X(pts[i].t), Y(pts[i].p), xc, yc);
+    }
+    ctx.lineTo(X(pts[pts.length - 1].t), Y(pts[pts.length - 1].p));
+  };
+  // gradient fill beneath
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, col + "59"); grad.addColorStop(1, col + "00");
+  ctx.beginPath(); tracePath();
+  ctx.lineTo(X(pts[pts.length - 1].t), H - 2); ctx.lineTo(X(pts[0].t), H - 2); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+  // the line itself
+  if (cs.zoom === "live" && pts.length >= 3){
+    // Tail: full strength at the head, easing back along its length.
+    for (let i = 1; i < pts.length; i++){
+      const f = i / (pts.length - 1);
+      ctx.beginPath();
+      ctx.moveTo(X(pts[i - 1].t), Y(pts[i - 1].p));
+      ctx.lineTo(X(pts[i].t), Y(pts[i].p));
+      ctx.strokeStyle = col; ctx.globalAlpha = 0.22 + 0.78 * Math.pow(f, 1.4);
+      ctx.lineWidth = 1.4 + 1.8 * f; ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  } else {
+    ctx.beginPath(); tracePath();
+    ctx.strokeStyle = col; ctx.lineWidth = 2.6; ctx.stroke();
+  }
+  // the user's line: dashed across when in frame, edge chevron when not
+  if (cs.line){
+    if (cs.line >= lo && cs.line <= hi){
+      const yy = Y(cs.line);
+      ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(W - RP, yy);
+      ctx.strokeStyle = "#c9a227"; ctx.setLineDash([7, 5]); ctx.lineWidth = 1.6; ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = "#f3d27a"; ctx.font = "bold 19px system-ui";
+      ctx.fillText("LINE " + fmtPrice(cs.line), 10, yy - 8);
+    } else {
+      const above = cs.line > hi, yy = above ? 14 : H - 14;
+      ctx.fillStyle = "#c9a227";
+      ctx.beginPath();
+      if (above){ ctx.moveTo(W - RP - 26, yy + 12); ctx.lineTo(W - RP - 14, yy); ctx.lineTo(W - RP - 2, yy + 12); }
+      else { ctx.moveTo(W - RP - 26, yy - 12); ctx.lineTo(W - RP - 14, yy); ctx.lineTo(W - RP - 2, yy - 12); }
+      ctx.closePath(); ctx.fill();
+      ctx.font = "bold 19px system-ui"; ctx.fillStyle = "#f3d27a";
+      ctx.fillText("Line " + fmtPrice(cs.line), W - RP - 30 - ctx.measureText("Line " + fmtPrice(cs.line)).width, above ? yy + 16 : yy - 2);
+    }
+  }
+  // right-edge labels: range top/bottom + current at the head
+  ctx.font = "20px system-ui"; ctx.fillStyle = "#9a96ad";
+  ctx.fillText(fmtPrice(hi - pad), W - RP + 10, 24);
+  ctx.fillText(fmtPrice(lo + pad), W - RP + 10, H - 8);
+  const head = pts[pts.length - 1];
+  ctx.font = "bold 21px system-ui"; ctx.fillStyle = col;
+  ctx.fillText(fmtPrice(head.p), W - RP + 10, clamp(Y(head.p) + 7, 24, H - 8));
+  // glowing head dot
+  const hx = X(head.t), hy = Y(head.p);
+  ctx.save();
+  ctx.shadowColor = col; ctx.shadowBlur = 22;
+  ctx.beginPath(); ctx.arc(hx, hy, 7, 0, 7); ctx.fillStyle = col; ctx.fill();
+  ctx.restore();
+  ctx.beginPath(); ctx.arc(hx, hy, 3, 0, 7); ctx.fillStyle = "#fff"; ctx.fill();
+  // Live honesty: stale tail gets said out loud, not padded over.
+  if (cs.zoom === "live"){
+    const ageS = Math.round((now - head.t) / 1000);
+    if (ageS >= 10){
+      ctx.font = "20px system-ui"; ctx.fillStyle = "#ffd257";
+      ctx.fillText("Ticks stale — last update " + ageS + "s ago", 14, 28);
+    }
+  }
 }
 function drawForecast(sym, sc){
   const cs = coinState(sym), cv = cs.els.fc;
@@ -615,9 +785,158 @@ function drawForecast(sym, sc){
 function drawSpark(sym){
   const cs = coinState(sym);
   if (!cs.els.spark) return;
+  drawLive(sym);
   const sc = chartScale(sym);
-  drawLive(sym, sc);
   drawForecast(sym, sc);
+  if (cs.fc30on) drawFC30(sym);
+}
+function renderReadouts(sym){
+  const cs = coinState(sym);
+  if (!cs.els.roLine) return;
+  cs.els.roLine.textContent = cs.line ? fmtPrice(cs.line) : "—";
+  cs.els.roCur.textContent = cs.price ? fmtPrice(cs.price) : "—";
+  if (cs.price && cs.line){
+    const d = cs.price - cs.line, up = d >= 0;
+    cs.els.roDist.textContent = (up ? "▲ " : "▼ ") + fmtPrice(Math.abs(d)).slice(0) + " " + (up ? "above" : "below") + " the line";
+    cs.els.roDist.className = "ro-dist " + (up ? "up" : "down");
+  } else {
+    cs.els.roDist.textContent = "—";
+    cs.els.roDist.className = "ro-dist";
+  }
+}
+function renderPast(sym){
+  const cs = coinState(sym);
+  if (!cs.els.past) return;
+  const log = learnState(sym).log.slice(-8);
+  if (!log.length){ cs.els.past.innerHTML = '<span class="pastlbl">Past</span><span class="tothers">no scored closes yet</span>'; return; }
+  cs.els.past.innerHTML = '<span class="pastlbl">Past</span>' + log.map(e =>
+    '<span class="' + (e.over ? "up" : "down") + '" title="closed ' + (e.over ? "OVER" : "UNDER") + " the line at " + fmtPrice(e.close) + '">' +
+    (e.over ? "▲" : "▼") + "</span>").join("");
+}
+
+/* ---------- WEB4: 30-day forecast + self-grading checkpoints ------
+   30 daily expected-path points from the same tuned brain: regime
+   slope + learned component drift + rise/fall asymmetry, anchored
+   at the current price, cones from the coin's daily vol. Each day
+   the 1-day-ahead point projected yesterday is graded against the
+   actual price; the error accumulates per coin, is displayed under
+   the graph, and nudges the forecast drift (fc.bias) through the
+   same tuning loop — a coin whose checkpoints keep missing gets its
+   drift corrected instead of repeating the miss. */
+function forecast30(sym){
+  const cs = coinState(sym), M = MODELS[sym];
+  const anchor = cs.price || (cs.closesH.length ? cs.closesH[cs.closesH.length - 1] : null);
+  if (!anchor) return null;
+  const W = effW(sym), volH = cs.feat.volH || M.vol;
+  const tw = cs.trend ? cs.trend.w1h : null;
+  const slopePH = tw ? tw.logret / tw.winHours : 0;
+  let asym = 0;
+  const s = cs.swings && (cs.swings.h24 || cs.swings.d7);
+  if (s && (s.avgUp + s.avgDn) > 0) asym = (s.avgUp - s.avgDn) / (s.avgUp + s.avgDn);
+  const dailyVol = volH * Math.sqrt(24);
+  let muDay = 24 * (W.mom * 0.5 * slopePH + W.reg * (M.slope / 24) + W.asym * asym * volH);
+  muDay = clamp(muDay, -3 * dailyVol, 3 * dailyVol);
+  const L = learnState(sym);
+  const bias = (L.fc && L.fc.bias) || 0;
+  muDay += bias;
+  const pts = [];
+  for (let d = 0; d <= 30; d++){
+    const m = muDay * d, sd = dailyVol * Math.sqrt(d);
+    pts.push({d: d, mean: anchor * Math.exp(m), u68: anchor * Math.exp(m + sd),
+              l68: anchor * Math.exp(m - sd), u95: anchor * Math.exp(m + 1.96 * sd),
+              l95: anchor * Math.exp(m - 1.96 * sd)});
+  }
+  return {pts: pts, anchor: anchor, muDay: muDay, dailyVol: dailyVol, bias: bias,
+          medDurMin: (cs.swings && cs.swings.medDurMin) || null};
+}
+function drawFC30(sym){
+  const cs = coinState(sym), cv = cs.els.fc30;
+  if (!cv || !cs.fc30on) return;
+  const f = forecast30(sym);
+  const ctx = cv.getContext("2d"), Wd = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, Wd, H);
+  ctx.fillStyle = "#9a96ad"; ctx.font = "17px system-ui";
+  if (!f){ ctx.fillText("Not enough data yet.", 8, 24); return; }
+  let lo = Infinity, hi = -Infinity;
+  f.pts.forEach(q => { lo = Math.min(lo, q.l95); hi = Math.max(hi, q.u95); });
+  lo = Math.min(lo, cs.line || lo); hi = Math.max(hi, cs.line || hi);
+  const pad = (hi - lo) * 0.05 || hi * 0.01; lo -= pad; hi += pad;
+  const X = d => 4 + (Wd - 8) * d / 30;
+  const Y = p => H - 14 - (p - lo) / (hi - lo) * (H - 26);
+  const band = (up, dn, fill) => {
+    ctx.beginPath();
+    f.pts.forEach((q, i) => i ? ctx.lineTo(X(q.d), Y(q[up])) : ctx.moveTo(X(q.d), Y(q[up])));
+    for (let i = f.pts.length - 1; i >= 0; i--) ctx.lineTo(X(f.pts[i].d), Y(f.pts[i][dn]));
+    ctx.closePath(); ctx.fillStyle = fill; ctx.fill();
+  };
+  band("u95", "l95", "rgba(124,92,255,0.10)");
+  band("u68", "l68", "rgba(201,162,39,0.13)");
+  ctx.beginPath();
+  f.pts.forEach((q, i) => i ? ctx.lineTo(X(q.d), Y(q.mean)) : ctx.moveTo(X(q.d), Y(q.mean)));
+  ctx.strokeStyle = "#f3d27a"; ctx.lineWidth = 2; ctx.stroke();
+  if (cs.line){
+    const yy = Y(cs.line);
+    if (yy > 0 && yy < H){
+      ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(Wd, yy);
+      ctx.strokeStyle = "#c9a227"; ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]);
+    }
+  }
+  const med = f.medDurMin;
+  if (med && med > 0){
+    ctx.fillStyle = "#7c5cff"; ctx.strokeStyle = "#7c5cff";
+    for (let tt = med; tt < 30 * 1440; tt += med){
+      const d = tt / 1440, x = X(d);
+      ctx.beginPath(); ctx.moveTo(x, H - 14); ctx.lineTo(x, H - 6); ctx.lineWidth = 2; ctx.stroke();
+      const q = f.pts[Math.round(d)];
+      if (q){ ctx.beginPath(); ctx.arc(x, Y(q.mean), 3, 0, 7); ctx.fill(); }
+    }
+  }
+  ctx.beginPath(); ctx.arc(X(0), Y(f.anchor), 3.5, 0, 7); ctx.fillStyle = "#eceaf4"; ctx.fill();
+  ctx.fillStyle = "#9a96ad"; ctx.font = "bold 15px system-ui";
+  ctx.fillText("ESTIMATE — 30-day forecast", 8, 20);
+  ctx.font = "15px system-ui";
+  ctx.fillText("+30d", Wd - 40, H - 18);
+  ctx.fillText(fmtPrice(hi), 5, 38);
+  ctx.fillText(fmtPrice(lo), 5, H - 18);
+}
+function renderFC30Stat(sym){
+  const cs = coinState(sym);
+  if (!cs.els.fc30stat) return;
+  const L = learnState(sym), ck = (L.fc && L.fc.ck) || [];
+  let txt;
+  if (!ck.length){
+    txt = "Checkpoints: none yet — the first 1-day-ahead projection grades tomorrow, and its error starts correcting this forecast's drift.";
+  } else {
+    const avg = mean(ck.map(c => Math.abs(c.errPct)));
+    txt = "Checkpoints: " + ck.length + " · avg error " + (avg * 100).toFixed(1) + "%" +
+      (Math.abs(L.fc.bias) > 0.0001 ? " · drift corrected " + (L.fc.bias * 100).toFixed(2) + "%/day by checkpoint misses" : "");
+  }
+  if (cs.els.fc30stat.textContent !== txt) cs.els.fc30stat.textContent = txt;
+}
+function fcCheckpoint(sym){
+  const cs = coinState(sym);
+  const actual = cs.price || (cs.closesH.length ? cs.closesH[cs.closesH.length - 1] : null);
+  if (!actual) return;
+  const L = learnState(sym);
+  const today = new Date().toISOString().slice(0, 10);
+  const pend = L.fc.pending;
+  if (pend && pend.date <= today){
+    const errPct = actual / pend.proj - 1;
+    L.fc.ck.push({date: pend.date, proj: pend.proj, actual: actual, errPct: errPct});
+    if (L.fc.ck.length > 60) L.fc.ck.splice(0, L.fc.ck.length - 60);
+    L.fc.bias = clamp((L.fc.bias || 0) + 0.3 * Math.log(actual / pend.proj), -0.01, 0.01);
+    L.fc.pending = null;
+    saveLearn();
+  }
+  if (!L.fc.pending){
+    const f = forecast30(sym);
+    if (f){
+      const tmr = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+      L.fc.pending = {date: tmr, proj: f.pts[1].mean, anchor: f.anchor};
+      saveLearn();
+    }
+  }
+  renderFC30Stat(sym);
 }
 
 /* ---------- trend state, swings, forecast, learning ---------- */
@@ -820,6 +1139,7 @@ function computeAnalysis(sym){
    calibration) migrates forward: scored history carries over and the
    old drift weight seeds all three component weights. */
 const LS_LEARN2 = "ph.learn.v2";
+const LS_LEARN3 = "ph.learn.v3";
 const BAND_BASE = 0.07, BAND_MAX = 0.12, FLIP_HI = 1.5;
 function learnState(sym){
   let L = S.learn[sym];
@@ -827,11 +1147,24 @@ function learnState(sym){
   if (!L.w) L.w = {mom: 1, reg: 1, asym: 1};
   if (!L.buckets) L.buckets = {};
   if (!Array.isArray(L.log)) L.log = [];
+  // WEB4 additions: 30-day forecast self-grading (fc), adopted-fix
+  // adjustments (bucketAdj / bandAdj), and the fix-gate state (gate).
+  if (!L.fc) L.fc = {bias: 0, ck: [], pending: null};
+  if (!L.gate) L.gate = {};
+  if (!L.bucketAdj) L.bucketAdj = {};
+  if (typeof L.bandAdj !== "number") L.bandAdj = 0;
   return L;
 }
 function migrateLearn(){
+  const v3 = lsGet(LS_LEARN3, null);
+  if (v3 && typeof v3 === "object"){ S.learn = v3; return; }
   const v2 = lsGet(LS_LEARN2, null);
-  if (v2 && typeof v2 === "object"){ S.learn = v2; return; }
+  if (v2 && typeof v2 === "object"){
+    S.learn = v2;
+    for (const sym of Object.keys(S.learn)) learnState(sym);   // add WEB4 fields
+    lsSet(LS_LEARN3, S.learn);
+    return;
+  }
   const v1 = lsGet(LS_LEARN, {});
   const out = {};
   for (const sym of Object.keys(v1 || {})){
@@ -840,9 +1173,10 @@ function migrateLearn(){
     out[sym] = {w: {mom: w0, reg: w0, asym: w0}, buckets: {}, log: Array.isArray(o.log) ? o.log : []};
   }
   S.learn = out;
-  lsSet(LS_LEARN2, out);
+  for (const sym of Object.keys(S.learn)) learnState(sym);
+  lsSet(LS_LEARN3, out);
 }
-function saveLearn(){ lsSet(LS_LEARN2, S.learn); }
+function saveLearn(){ lsSet(LS_LEARN3, S.learn); }
 function bucketKey(p){
   const d = Math.abs(p - 0.5) * 100;
   return d < 15 ? "b1" : d < 25 ? "b2" : "b3";
@@ -850,9 +1184,13 @@ function bucketKey(p){
 const BUCKET_MID = {b1: 0.61, b2: 0.70, b3: 0.85};
 function bucketFactor(L, key){
   const b = L.buckets[key];
-  if (!b || b.n < 10) return 1;
-  const gap = BUCKET_MID[key] - b.hit / b.n;
-  return gap <= 0 ? 1 : clamp(1 - gap, 0.5, 1.05);
+  let f = 1;
+  if (b && b.n >= 10){
+    const gap = BUCKET_MID[key] - b.hit / b.n;
+    f = gap <= 0 ? 1 : clamp(1 - gap, 0.5, 1.05);
+  }
+  const adj = (L.bucketAdj || {})[key];
+  return adj ? clamp(f * adj, 0.5, 1.05) : f;
 }
 function applyCalib(sym, pRaw){
   return 0.5 + (pRaw - 0.5) * effBucketFactor(sym, bucketKey(pRaw));
@@ -863,9 +1201,10 @@ function flipStats(L){
           rate: scored.length ? scored.reduce((s, e) => s + e.flips, 0) / scored.length : 0};
 }
 function bandFor(sym){
-  const fs = flipStats(learnState(sym));
-  if (fs.cycles < 5 || fs.rate <= FLIP_HI) return BAND_BASE;
-  return BAND_BASE + (BAND_MAX - BAND_BASE) * clamp((fs.rate - FLIP_HI) / FLIP_HI, 0, 1);
+  const L = learnState(sym), fs = flipStats(L);
+  let band = BAND_BASE;
+  if (fs.cycles >= 5 && fs.rate > FLIP_HI) band = BAND_BASE + (BAND_MAX - BAND_BASE) * clamp((fs.rate - FLIP_HI) / FLIP_HI, 0, 1);
+  return clamp(band + (L.bandAdj || 0), BAND_BASE, BAND_MAX + 0.03);
 }
 function dwellOn(sym){
   const fs = flipStats(learnState(sym));
@@ -934,6 +1273,8 @@ function renderPool(sym){
       txt = "Global pool: " + tot + " scored across all users · " + sym + " global hit " +
         (g.hitRate != null ? Math.round(g.hitRate * 100) + "%" : "—") + " (" + g.scored + " scored) · your tuning: " +
         Math.round((1 - lw) * 100) + "% global / " + Math.round(lw * 100) + "% yours";
+      if (g.fix && g.fix.state === "testing") txt += " · global fix test running (" + g.fix.shadowScored + "/30): " + (g.fix.desc || "");
+      if (g.fix && g.fix.lastEvent) txt += " · " + g.fix.lastEvent;
     } else if (g) {
       txt = "Global pool: " + tot + " scored across all users · " + sym + " warming up (" +
         g.evidenceHave + "/" + g.evidenceNeed + ") — global tuning kicks in at " + g.evidenceNeed;
@@ -1021,6 +1362,7 @@ function renderLearn(sym){
   }
   if (cs.els.learn.textContent !== txt) cs.els.learn.textContent = txt;
   renderPool(sym);
+  renderGate(sym);
 }
 function updateLearn(sym, lp, closedOver){
   const L = learnState(sym);
@@ -1051,6 +1393,127 @@ function updateLearn(sym, lp, closedOver){
   const b = L.buckets[bk] || (L.buckets[bk] = {n: 0, hit: 0});
   b.n++;
   if ((lp.p > 0.5) === closedOver) b.hit++;
+}
+
+/* ---------- WEB4 fix gate (local layer) ----------
+   Same champion-vs-challenger discipline as the server pool, run on
+   this device's own closes. The WEB3 micro-steps above keep tuning
+   continuously; STRUCTURAL fixes (bucket recalibration, weight caps,
+   band changes) must first shadow-score >= 30 closes in parallel
+   and beat the champion by a real margin (Brier -0.01 or hit +3pts)
+   before they apply. An adopted fix is watched for the next 30
+   scored closes — a >= 5pt success drop auto-reverts to the
+   snapshot and that fix goes on a 48h cooldown. Champion snapshot +
+   challenger state persist in the v3 store. Note: the shadow call
+   is computed from the prediction's stored internals with the local
+   bucket factor; the champion's shown probability is the
+   global-blended one — the comparison is same-close, same-stream. */
+const GATE_COOLDOWN_MS = 48 * 3600 * 1000;
+function detectLocalFix(sym){
+  const L = learnState(sym);
+  for (const k of ["b1", "b2", "b3"]){
+    const b = L.buckets[k];
+    if (b && b.n >= 20 && bucketFactor(L, k) <= 0.88)
+      return {kind: "bucket", key: k, mult: 0.92, sig: "bucket:" + k,
+              desc: "bucket " + k + " calibration x0.92 (confident bucket running hot)"};
+  }
+  for (const k of ["mom", "reg", "asym"]){
+    if (Math.abs(L.w[k] - 1) >= 0.4){
+      const nv = 1 + (L.w[k] - 1) * 0.75;
+      return {kind: "weight", key: k, value: nv, sig: "weight:" + k,
+              desc: "weight " + k + " " + L.w[k].toFixed(2) + " → " + nv.toFixed(2) + " (pulled toward base)"};
+    }
+  }
+  const fs = flipStats(L);
+  if (fs.cycles >= 10 && fs.rate > FLIP_HI)
+    return {kind: "band", add: 0.02, sig: "band", desc: "no-edge band +2pts (flip-flop control)"};
+  return null;
+}
+function shadowPred(sym, chal){
+  const cs = coinState(sym), lp = cs.lastPred, L = learnState(sym);
+  if (!lp || lp.driftRaw == null || !(lp.sigmaT > 0)) return null;
+  let p = lp.p, pRaw = lp.pRaw;
+  if (chal.kind === "weight"){
+    pRaw = normCdf(lp.z + (chal.value - L.w[chal.key]) * lp.driftRaw[chal.key] / lp.sigmaT);
+    p = 0.5 + (pRaw - 0.5) * bucketFactor(L, bucketKey(pRaw));
+  } else if (chal.kind === "bucket"){
+    p = 0.5 + (lp.pRaw - 0.5) * clamp(bucketFactor(L, bucketKey(lp.pRaw)) * chal.mult, 0.5, 1.05);
+  }
+  const band = bandFor(sym) + (chal.kind === "band" ? chal.add : 0);
+  return {p: p, call: Math.abs(p - 0.5) >= band ? (p > 0.5 ? "over" : "under") : "none"};
+}
+function scoreGate(sym, closedOver){
+  const cs = coinState(sym), L = learnState(sym), G = L.gate, lp = cs.lastPred;
+  if (!lp) return;
+  const y = closedOver ? 1 : 0, hadWatch = !!G.watch;
+  if (G.challenger){
+    const sh = shadowPred(sym, G.challenger);
+    if (sh){
+      const c = G.challenger;
+      c.scored++;
+      c.brier += (sh.p - y) * (sh.p - y);
+      c.champBrier += (lp.p - y) * (lp.p - y);
+      if (sh.call !== "none"){ c.calls++; if ((sh.call === "over") === closedOver) c.hits++; }
+      if (cs.lastCall){ c.champCalls++; if ((cs.lastCall.side === "over") === closedOver) c.champHits++; }
+      if (c.scored >= 30){
+        const cb = c.brier / c.scored, hb = c.champBrier / c.scored;
+        const chHit = c.calls >= 10 ? c.hits / c.calls : null;
+        const hpHit = c.champCalls >= 10 ? c.champHits / c.champCalls : null;
+        if (cb <= hb - 0.01 || (chHit != null && hpHit != null && chHit >= hpHit + 0.03)){
+          if (c.kind === "bucket") L.bucketAdj[c.key] = ((L.bucketAdj || {})[c.key] || 1) * c.mult;
+          if (c.kind === "weight") L.w[c.key] = c.value;
+          if (c.kind === "band") L.bandAdj = (L.bandAdj || 0) + c.add;
+          G.watch = {desc: c.desc, sig: c.sig, scored: 0, calls: 0, hits: 0, baseHits: c.champHits, baseCalls: c.champCalls};
+          G.lastEvent = "Fix adopted: " + c.desc + " — shadow " + c.scored + " scored" +
+            (hpHit != null && chHit != null ? ", " + Math.round(chHit * 100) + "% vs " + Math.round(hpHit * 100) + "%"
+                                            : ", Brier " + cb.toFixed(3) + " vs " + hb.toFixed(3));
+          G.challenger = null;
+        } else if (cb >= hb + 0.01 || c.scored >= 80){
+          G.lastEvent = "Fix rejected in shadow test: " + c.desc + " — " + c.scored + " scored, Brier " + cb.toFixed(3) + " vs champion " + hb.toFixed(3);
+          G.rejectedSig = c.sig; G.cooldownUntil = Date.now() + GATE_COOLDOWN_MS;
+          G.challenger = null;
+        }
+      }
+    }
+  }
+  if (G.watch && hadWatch){
+    const w = G.watch;
+    w.scored++;
+    if (cs.lastCall){ w.calls++; if ((cs.lastCall.side === "over") === closedOver) w.hits++; }
+    if (w.scored >= 30){
+      const cur = w.calls >= 10 ? w.hits / w.calls : null;
+      const base = w.baseCalls >= 10 ? w.baseHits / w.baseCalls : null;
+      if (cur != null && base != null && cur <= base - 0.05){
+        const snap = G.champion;
+        if (snap){ L.w = {...snap.w}; L.bucketAdj = {...(snap.bucketAdj || {})}; L.bandAdj = snap.bandAdj || 0; }
+        G.lastEvent = "Fix reverted — success rate dropped after adoption (" + Math.round(cur * 100) + "% vs " + Math.round(base * 100) + "% baseline): " + w.desc;
+        G.rejectedSig = w.sig; G.cooldownUntil = Date.now() + GATE_COOLDOWN_MS;
+      } else {
+        G.lastEvent = "Fix confirmed: " + w.desc + " — held up over " + w.scored + " post-adoption closes";
+      }
+      G.watch = null;
+    }
+  }
+  if (!G.challenger && !G.watch && Date.now() >= (G.cooldownUntil || 0)){
+    const cand = detectLocalFix(sym);
+    if (cand && cand.sig !== G.rejectedSig){
+      G.champion = {w: {...L.w}, bucketAdj: {...(L.bucketAdj || {})}, bandAdj: L.bandAdj || 0};
+      G.challenger = {...cand, scored: 0, brier: 0, champBrier: 0, calls: 0, hits: 0, champCalls: 0, champHits: 0};
+      G.lastEvent = "Fix proposed: " + cand.desc + " — shadow testing";
+    }
+  }
+  saveLearn();
+}
+function renderGate(sym){
+  const cs = coinState(sym);
+  if (!cs.els.gate) return;
+  const G = learnState(sym).gate || {};
+  const parts = [];
+  if (G.challenger) parts.push("Fix test running: " + G.challenger.desc + " — shadow " + G.challenger.scored + "/30 scored");
+  if (G.watch) parts.push("Fix watch: " + G.watch.desc + " — " + G.watch.scored + "/30 post-adoption closes");
+  if (G.lastEvent) parts.push(G.lastEvent);
+  const txt = parts.join(" · ");
+  if (cs.els.gate.textContent !== txt) cs.els.gate.textContent = txt;
 }
 
 /* ---------- prediction ---------- */
@@ -1185,6 +1648,8 @@ async function scoreCycle(){
       updateLearn(sym, cs.lastPred, closedOver);
       saveLearn();
       queueContribution(sym, cs, closedOver);
+      scoreGate(sym, closedOver);
+      renderGate(sym);
     }
     renderRec(sym);
     renderLearn(sym);
@@ -1204,6 +1669,7 @@ async function scoreCycle(){
 }
 function renderRec(sym){
   const cs = coinState(sym), sc = S.score[sym];
+  renderPast(sym);
   if (!cs.els.rec) return;
   cs.els.rec.textContent = sc && (sc.hit + sc.miss + sc.nocall) > 0
     ? "Page record on " + sym + ": " + sc.hit + " right · " + sc.miss + " wrong · " + sc.nocall + " no-call"
@@ -1223,7 +1689,7 @@ $("#startBtn").addEventListener("click", startCycle);
 $("#stopBtn").addEventListener("click", stopCycle);
 $("#resetScore").addEventListener("click", () => {
   S.score = {}; lsSet(LS_SCORE, {});
-  S.learn = {}; lsSet(LS_LEARN, {}); lsSet(LS_LEARN2, {});
+  S.learn = {}; lsSet(LS_LEARN, {}); lsSet(LS_LEARN2, {}); lsSet(LS_LEARN3, {});
   renderScore(); S.selected.forEach(sym => { renderRec(sym); renderLearn(sym); });
 });
 
@@ -1234,7 +1700,10 @@ async function priceTick(){
     const t = await fetchJSON(CB + "/products/" + sym + "-USD/ticker");
     if (t && isFinite(+t.price)){
       cs.price = +t.price;
+      cs.ticks.push({t: Date.now(), p: cs.price});
+      if (cs.ticks.length > 700) cs.ticks.splice(0, cs.ticks.length - 700);
       cs.els.price.textContent = fmtPrice(cs.price);
+      renderReadouts(sym);
       const c = cs.closesH, n = c.length;
       if (n > 24){
         const chg = cs.price / c[n - 25] - 1;
@@ -1259,7 +1728,17 @@ setInterval(() => {
   S.loopN++;
   if (S.cycle.active){
     $("#countdown").textContent = "Perpetual closes in " + fmtClock(S.cycle.closeAt - Date.now());
+    for (const sym of S.selected){
+      const pill = coinState(sym).els.pill;
+      if (pill){
+        pill.hidden = false;
+        const txt = "Closes in " + fmtClock(S.cycle.closeAt - Date.now());
+        if (pill.textContent !== txt) pill.textContent = txt;
+      }
+    }
     if (Date.now() >= S.cycle.closeAt) scoreCycle();
+  } else {
+    for (const sym of S.selected){ const pill = coinState(sym).els.pill; if (pill) pill.hidden = true; }
   }
   if (S.loopN % 3 === 0 && S.selected.length) priceTick();
   if (S.loopN % 60 === 0) S.selected.forEach(loadCoin);
